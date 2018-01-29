@@ -1,14 +1,13 @@
 setFormat();
-var isMuted = false
-var musicVolume = 1;
-var sfxVolume = 1;
+isMuted = false;
 
 //set sound clips and music tracks here
-var track1 = new musicTrack("../Audio/Layer1");
-var track2 = new musicTrack("../Audio/Layer2");
-var backgroundMusic = new musicLoopSingle(track1);
+var track1 = new musicTrackLooping("../Audio/Layer1");
+var track2 = new musicTrackLooping("../Audio/Layer2");
+var backgroundMusic = new musicContainer(track1);
 
-
+track1.setTrackName("track1");
+track2.setTrackName("track2");
 
 
 
@@ -16,10 +15,22 @@ var backgroundMusic = new musicLoopSingle(track1);
 
 
 function setFormat() {
-  var audio = new Audio();
-  if (audio.canPlayType("audio/ogg")) {
-      audioFormat = ".ogg";
-  } else {
-      audioFormat = ".mp3";
-  }
+	var audio = new Audio();
+	if (audio.canPlayType("audio/ogg")) {
+		audioFormat = ".ogg";
+	} else {
+		audioFormat = ".mp3";
+	}
+}
+
+function toggleMute() {
+	isMuted = !isMuted;
+}
+
+function setMute(TorF) {
+	isMuted = TorF;
+}
+
+function getMute(TorF) {
+	return isMuted;
 }

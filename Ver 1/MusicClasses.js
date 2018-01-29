@@ -1,25 +1,11 @@
+var musicVolume = 1;
+var isMuted = false;
 
-
-if(musicVolume === null){
-	musicVolume = 1;
-}
-
-function setMusicVolume(amount)
-{
-	musicVolume = amount;
-	if(musicVolume > 1.0) {
-		musicVolume = 1.0;
-	} else if (musicVolume < 0.0) {
-		musicVolume = 0.0;
-	}
-}
-
-
-function musicTrack(filenameWithPath) {
+function musicTrackLooping(filenameWithPath) {
 	var musicFile = new Audio(filenameWithPath+audioFormat);
 	var duration = musicFile.duration;
 	var trackName = filenameWithPath;
-
+	var trackVolume = 1;
 	musicFile.pause();
 	musicFile.loop = true;
 
@@ -47,17 +33,22 @@ function musicTrack(filenameWithPath) {
 	}
 
 	this.startOrStop = function() {
-    	if(musicFile.paused) {
-      		musicFile.play();
-    	} else {
-      		musicFile.pause();
-    	}
-    }
+		if(musicFile.paused) {
+			musicFile.play();
+		} else {
+			musicFile.pause();
+		}
+	}
+
+	this.updateVolume = function() {
+		musicFile.volume = Math.pow(musicVolume * !isMuted, 2);
+	}
 
 	this.setVolume = function(newVolume) {
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
 		musicFile.volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
+		trackVolume = newVolume;
 	}
 
 	this.setTime = function(time) {
@@ -95,9 +86,9 @@ function musicTrack(filenameWithPath) {
 
 }
 
-function musicLoopSingle(track) {
+function musicContainer(track) {
 	var musicTrack = track;
-	var volume = 1;
+	var trackvolume = 1;
 
 	this.play = function() {
 		musicTrack.play();
@@ -120,7 +111,7 @@ function musicLoopSingle(track) {
 	}
 
 	this.startOrStop = function() {
-    	musicTrack.startOrStop();
+		musicTrack.startOrStop();
 	}
 
 	this.loadTrack = function(newTrack) {
@@ -129,17 +120,21 @@ function musicLoopSingle(track) {
 			musicTrack.pause();
 			musicTrack.setTime(0);
 			musicTrack = newTrack;
-			musicTrack.setVolume(volume);
+			musicTrack.setVolume(trackvolume);
 			musicTrack.playFrom(timeNow);
 		} else {
 			musicTrack = newTrack;
-			musicTrack.setVolume(volume);
+			musicTrack.setVolume(trackvolume);
 			musicTrack.setTime(timeNow);
 		}
 	}
 
+	this.updateVolume = function() {
+		musicTrack.updateVolume();
+	}
+
 	this.setVolume = function(newVolume) {
-		volume = newVolume;
+		trackvolume = newVolume;
 		musicTrack.setVolume(newVolume);
 	}
 

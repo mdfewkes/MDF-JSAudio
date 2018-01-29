@@ -7,30 +7,22 @@
 <body>
 <canvas id="gameCanvas" width="800" height="600"></canvas>
 
-<script src="AudioEngine.js"></script>
-<script src="MusicClasses.js"></script>
+<script src="musicClasses.js"></script>
 <script src="SFXClasses.js"></script>
+<script src="AudioEngine.js"></script>
 <script>
   var canvas, canvasContext;
-  var track1 = new musicTrack("../Audio/Layer1");
-  var track2 = new musicTrack("../Audio/Layer2");
-  var backgroundMusic = new musicLoopSingle(track1);
-
-  track1.setTrackName("track1");
-  track2.setTrackName("track2");
   
   function mouseupHandler() {
-    backgroundMusic.startOrStop();
-  }
-
-  function keyPressed(evt) {
     if(backgroundMusic.getTrackName() == "track1") {
       backgroundMusic.loadTrack(track2);
     } else {
       backgroundMusic.loadTrack(track1);
     }
+  }
 
-    
+  function keyPressed(evt) {
+    backgroundMusic.startOrStop();
     evt.preventDefault(); // without this, arrow keys scroll the browser!
   }
   
@@ -42,7 +34,7 @@
     document.addEventListener("keydown",keyPressed);
     canvasContext.fillRect(0, 0, canvas.width, canvas.height);
 
-    backgroundMusic.play();
+  backgroundMusic.play();
     
   }
 </script>
