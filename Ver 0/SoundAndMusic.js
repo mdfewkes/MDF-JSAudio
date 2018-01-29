@@ -36,11 +36,12 @@ function BackgroundMusicClass() {
 
 
 function musicTrack(filenameWithPath) {
-	musicFile = new Audio(filenameWithPath+audioFormat);
+	var musicFile = new Audio(filenameWithPath+audioFormat);
+	var duration = musicFile.duration;
+	var trackName = filenameWithPath;
+
 	musicFile.pause();
 	musicFile.loop = true;
-	duration = musicFile.duration;
-	trackName = filenameWithPath;
 
 	this.play = function() {
 		musicFile.currentTime = 0;
@@ -120,7 +121,7 @@ function musicTrack(filenameWithPath) {
 }
 
 function musicLoopSingle(track) {
-	musicTrack = track;
+	var musicTrack = track;
 
 	this.play = function() {
 		musicTrack.play();
@@ -147,15 +148,13 @@ function musicLoopSingle(track) {
 	}
 
 	this.loadTrack = function(newTrack) {
+		timeNow = musicTrack.getTime();
 		if(!musicTrack.getPaused()) {
 			musicTrack.pause();
-			timeNow = musicTrack.getTime();
 			musicTrack.setTime(0);
 			musicTrack = newTrack;
 			musicTrack.playFrom(timeNow);
 		} else {
-			timeNow = musicTrack.getTime();
-			musicTrack.setTime(0);
 			musicTrack = newTrack;
 			musicTrack.setTime(timeNow);
 		}
