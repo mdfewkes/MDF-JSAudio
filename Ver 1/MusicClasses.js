@@ -1,16 +1,26 @@
 var musicVolume = 1;
 var isMuted = false;
 
+function setMusicVolume(amount) {
+	musicVolume = amount;
+}
+
+function getMusicVolume() {
+	return musicVolume;
+}
+
 function musicTrackLooping(filenameWithPath) {
 	var musicFile = new Audio(filenameWithPath+audioFormat);
 	var duration = musicFile.duration;
 	var trackName = filenameWithPath;
 	var trackVolume = 1;
+	
 	musicFile.pause();
 	musicFile.loop = true;
 
 	this.play = function() {
 		musicFile.currentTime = 0;
+		this.updateVolume();
 		musicFile.play();
 	}
 
@@ -34,14 +44,14 @@ function musicTrackLooping(filenameWithPath) {
 
 	this.startOrStop = function() {
 		if(musicFile.paused) {
-			musicFile.play();
+			this.play();
 		} else {
-			musicFile.pause();
+			this.pause();
 		}
 	}
 
 	this.updateVolume = function() {
-		musicFile.volume = Math.pow(musicVolume * !isMuted, 2);
+		musicFile.volume = Math.pow(musicVolume  * trackVolume * !isMuted, 2);
 	}
 
 	this.setVolume = function(newVolume) {
@@ -49,6 +59,10 @@ function musicTrackLooping(filenameWithPath) {
 		if(newVolume < 0) {newVolume = 0;}
 		musicFile.volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
 		trackVolume = newVolume;
+	}
+
+	this.getVolume = function() {
+		return musicVolume  * trackVolume * !isMuted;
 	}
 
 	this.setTime = function(time) {
@@ -88,7 +102,7 @@ function musicTrackLooping(filenameWithPath) {
 
 function musicContainer(track) {
 	var musicTrack = track;
-	var trackvolume = 1;
+	var trackVolume = 1;
 
 	this.play = function() {
 		musicTrack.play();
@@ -120,11 +134,11 @@ function musicContainer(track) {
 			musicTrack.pause();
 			musicTrack.setTime(0);
 			musicTrack = newTrack;
-			musicTrack.setVolume(trackvolume);
+			musicTrack.setVolume(trackVolume);
 			musicTrack.playFrom(timeNow);
 		} else {
 			musicTrack = newTrack;
-			musicTrack.setVolume(trackvolume);
+			musicTrack.setVolume(trackVolume);
 			musicTrack.setTime(timeNow);
 		}
 	}
@@ -134,8 +148,12 @@ function musicContainer(track) {
 	}
 
 	this.setVolume = function(newVolume) {
-		trackvolume = newVolume;
+		trackVolume = newVolume;
 		musicTrack.setVolume(newVolume);
+	}
+
+	this.getVolume = function() {
+		return musicTrack.getVolume();
 	}
 
 	this.setTime = function(time) {

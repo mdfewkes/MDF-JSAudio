@@ -6,6 +6,8 @@ var track1 = new musicTrackLooping("../Audio/Layer1");
 var track2 = new musicTrackLooping("../Audio/Layer2");
 var backgroundMusic = new musicContainer(track1);
 
+var clip1 = new sfxClip("../Audio/Death");
+
 track1.setTrackName("track1");
 track2.setTrackName("track2");
 
