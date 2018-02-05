@@ -96,8 +96,6 @@ function musicTrackLooping(filenameWithPath) {
 	this.getPaused = function() {
 		return musicFile.paused;
 	}
-
-
 }
 
 function musicContainer(track) {
