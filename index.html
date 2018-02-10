@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+</head>
+<body>
+<canvas id="gameCanvas" width="800" height="600"></canvas>
+
+<script src="Ver 1/musicClasses.js"></script>
+<script src="Ver 1/SFXClasses.js"></script>
+<script src="Ver 1/AudioManager.js"></script>
+<script>
+  var canvas, canvasContext;
+  
+  function mouseupHandler() {
+    if(backgroundMusic.getTrackName() == "track1") {
+      backgroundMusic.loadTrack(track2);
+    } else {
+      backgroundMusic.loadTrack(track1);
+    }
+  }
+
+  function keyPressed(evt) {
+    backgroundMusic.startOrStop();
+    evt.preventDefault(); // without this, arrow keys scroll the browser!
+  }
+  
+  window.onload = function() {
+    canvas = document.getElementById('gameCanvas');
+    canvasContext = canvas.getContext('2d');
+    canvas = document.getElementById('gameCanvas');
+    canvas.addEventListener('mouseup',mouseupHandler);
+    document.addEventListener("keydown",keyPressed);
+    canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+
+    backgroundMusic.setVolume(0.75);
+    backgroundMusic.play();
+    
+  }
+</script>
+
+</body>
+</html>
