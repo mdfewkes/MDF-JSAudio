@@ -72,7 +72,7 @@ function sfxClipSingle(filenameWithPath) {
 	}
 
 	this.getVolume = function() {
-		return sfxVolume  * clipVolume * !isMuted;
+		return sfxVolume * clipVolume * !isMuted;
 	}
 
 	this.setTime = function(time) {
@@ -177,7 +177,7 @@ function sfxClipDouble(filenameWithPath) {
 	}
 
 	this.getVolume = function() {
-		return sfxVolume  * clipVolume * !isMuted;
+		return sfxVolume * clipVolume * !isMuted;
 	}
 
 	this.setTime = function(time) {
@@ -215,5 +215,109 @@ function sfxClipDouble(filenameWithPath) {
 
 	this.getPaused = function() {
 		return soundFile0.paused;
+	}
+}
+
+function sfxClipOverlap(filenameWithPath, voices) {
+	var soundFile = new array(voices);
+	var maxVoices = soundfile.length;
+
+	for (var i in soundFile) {
+		soundFile[i] = new Audio(filenameWithPath+audioFormat);
+		soundFile[i].pause();
+	}
+
+	var currentClip = 0;
+	var clipVolume = 1;
+	var randVolume = true;
+	var randRate = true
+	var clipName = filenameWithPath;
+	var duration = soundFile[0].duration;
+
+	this.play = function() {
+		currentClip++;
+		if (currentClip >= maxVoices) {currentClip = 0;}
+
+		soundFile[currentClip].currentTime = 0;
+		this.updateVolume();
+		soundFile[currentClip].play();
+	}
+
+	this.stop = function() {
+		for (var i in soundFile) {
+			soundFile[i].pause();
+			soundFile[i].currentTime = 0;
+		}
+	}
+
+	this.resume = function() {
+		soundFile[currentClip].play();
+
+	}
+
+	this.pause = function() {
+		for (var i in soundFile) {
+			soundFile[i].pause();
+		}
+	}
+
+	function setRandomRate() {
+		this.setPlaybackRate(getRandomRate());
+	}
+
+	this.updateVolume = function() {
+		if (randVolume) {
+			for (var i in soundFile) {
+				soundFile[i].volume = Math.pow(sfxVolume * clipVolume * getRandomVolume() * !isMuted, 2);
+			}
+		} else {
+			for (var i in soundFile) {
+				soundFile[i].volume = Math.pow(sfxVolume * clipVolume * !isMuted, 2);
+			}
+		}
+	}
+
+	this.setVolume = function(newVolume) {
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
+		for (var i in soundFile) {
+			soundFile[i].volume = Math.pow(newVolume * sfxVolume * !isMuted, 2);
+		}
+		clipVolume = newVolume;
+	}
+
+	this.getVolume = function() {
+		return sfxVolume * clipVolume * !isMuted;
+	}
+
+	this.setTime = function(time) {
+		soundFile.currentTime[currentClip] = time;
+
+	this.getTime = function() {
+		return soundFile[currentClip].currentTime;
+	}
+
+	this.setPlaybackRate = function(rate) {
+		soundFile.playbackRate[currentClip] = rate;
+	}
+
+	this.getPlaybackRate = function() {
+		return soundFile[currentClip].playbackRate;
+	}
+	
+	this.setClipName = function(name) {
+		clipName = name;
+	}
+
+	this.getClipName = function() {
+		return clipName;
+	}
+	
+	this.getDuration = function() {
+		return duration;
+	}
+
+	this.getPaused = function() {
+		return soundFile[currentClip].paused;
 	}
 }
