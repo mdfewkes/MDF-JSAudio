@@ -4,6 +4,8 @@ const LOOP = 2; // Arrayformat [LOOP, track, endtime]
 
 var date = new Date();
 
+var musicManager = new musicEventManager();
+
 function musicEventManager() {
 	var eventList = [];
 	var now = date.now();
@@ -15,9 +17,9 @@ function musicEventManager() {
 	}
 
 	this.addFadeEvent = function(track, duration, endVol) {
-	var check = checkListFor(FADE, track);
-	var endTime = duration * 1000 + now;
-	var startvolume = track.getVolume();
+		var check = checkListFor(FADE, track);
+		var endTime = duration * 1000 + now;
+		var startvolume = track.getVolume();
 
 		if (check == "none") {
 			eventList.push([FADE, track, now, endTime, startVolume, endVol]);
@@ -43,10 +45,11 @@ function musicEventManager() {
 
 			}
 			if (eventList[i][0] == LOOP) {
-				if (!eventList[i][1].getPaused()) {
+				if (eventList[i][1].getPaused() = false) {
 					if (eventList[i][2] < now) {
-						eventList[i][1].triggerLoop();
-						eventList[i][2] = eventList[i][1].getDuration() * 1000 + now;
+						thisTrack = eventList[i][1];
+						eventList[i] = [REMOVE];
+						thisTrack.triggerLoopEnded();
 					}
 				} else {eventList[i] = [REMOVE];}
 			}
