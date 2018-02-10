@@ -125,8 +125,6 @@ function sfxClipDouble(filenameWithPath) {
 		currentClip++;
 		if (currentClip >1) {currentClip = 0;}
 
-		
-
 		if (currentClip == 0) {
 			soundFile0.currentTime = 0;
 			this.updateVolume();

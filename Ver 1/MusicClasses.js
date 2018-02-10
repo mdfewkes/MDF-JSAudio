@@ -98,6 +98,95 @@ function musicTrackLooping(filenameWithPath) {
 	}
 }
 
+function musicTrackStinger(filenameWithPath) {
+	var musicFile = new Audio(filenameWithPath+audioFormat);
+	var duration = musicFile.duration;
+	var trackName = filenameWithPath;
+	var trackVolume = 1;
+	
+	musicFile.pause();
+	musicFile.loop = false;
+
+	this.play = function() {
+		musicFile.currentTime = 0;
+		this.updateVolume();
+		musicFile.play();
+	}
+
+	this.stop = function() {
+		musicFile.pause();
+		musicFile.currentTime = 0;
+	}
+
+	this.resume = function() {
+		musicFile.play();
+	}
+
+	this.pause = function() {
+		musicFile.pause();
+	}
+
+	this.playFrom = function(time) {
+		musicFile.currentTime = time;
+		musicFile.play();
+	}
+
+	this.startOrStop = function() {
+		if(musicFile.paused) {
+			this.play();
+		} else {
+			this.pause();
+		}
+	}
+
+	this.updateVolume = function() {
+		musicFile.volume = Math.pow(musicVolume  * trackVolume * !isMuted, 2);
+	}
+
+	this.setVolume = function(newVolume) {
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
+		musicFile.volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
+		trackVolume = newVolume;
+	}
+
+	this.getVolume = function() {
+		return musicVolume  * trackVolume * !isMuted;
+	}
+
+	this.setTime = function(time) {
+		musicFile.currentTime = time;
+	}
+
+	this.getTime = function() {
+		return musicFile.currentTime;
+	}
+
+	this.setPlaybackRate = function(rate) {
+		musicFile.playbackRate = rate;
+	}
+
+	this.getPlaybackRate = function() {
+		return musicFile.playbackRate;
+	}
+	
+	this.setTrackName = function(name) {
+		trackName = name;
+	}
+
+	this.getTrackName = function() {
+		return trackName;
+	}
+	
+	this.getDuration = function() {
+		return duration;
+	}
+
+	this.getPaused = function() {
+		return musicFile.paused;
+	}
+}
+
 function musicContainer(track) {
 	var musicTrack = track;
 	var trackVolume = 1;

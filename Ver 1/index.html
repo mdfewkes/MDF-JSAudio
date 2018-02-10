@@ -20,11 +20,11 @@
       backgroundMusic.loadTrack(track1);
     }
 
-    clip1.play();
+    //clip1.play();
   }
 
   function keyPressed(evt) {
-    //backgroundMusic.startOrStop();
+    backgroundMusic.startOrStop();
     evt.preventDefault(); // without this, arrow keys scroll the browser!
   }
   
@@ -36,8 +36,8 @@
     document.addEventListener("keydown",keyPressed);
     canvasContext.fillRect(0, 0, canvas.width, canvas.height);
 
-    setMusicVolume(0.5);
-    //backgroundMusic.play();
+    backgroundMusic.setVolume(0.75);
+    backgroundMusic.play();
     
   }
 </script>
