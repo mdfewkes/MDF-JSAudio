@@ -7,9 +7,9 @@
 <body>
 <canvas id="gameCanvas" width="800" height="600"></canvas>
 
-<script src="Ver 1/MusicClasses.js"></script>
-<script src="Ver 1/SFXClasses.js"></script>
-<script src="Ver 1/AudioManager.js"></script>
+<script src="MusicClasses.js"></script>
+<script src="SFXClasses.js"></script>
+<script src="AudioManager.js"></script>
 <script>
   var canvas, canvasContext;
   
@@ -19,6 +19,8 @@
     } else {
       backgroundMusic.loadTrack(track1);
     }
+
+    //clip1.play();
   }
 
   function keyPressed(evt) {
