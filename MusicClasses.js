@@ -44,7 +44,7 @@ function musicTrackLooping(filenameWithPath) {
 
 	this.startOrStop = function() {
 		if(musicFile.paused) {
-			this.play();
+			this.resume();
 		} else {
 			this.pause();
 		}
@@ -133,7 +133,7 @@ function musicTrackStinger(filenameWithPath) {
 
 	this.startOrStop = function() {
 		if(musicFile.paused) {
-			this.play();
+			this.resume();
 		} else {
 			this.pause();
 		}
