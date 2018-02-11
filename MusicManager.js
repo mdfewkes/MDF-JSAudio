@@ -53,7 +53,15 @@ function musicEventManager() {
 		for (var i = 0; i < eventList.length; i++) {
 			//console.log("looping run list");
 			if (eventList[i][0] == FADE) {
+				thisTrack = eventList[i][1];
+				//console.log("found fade event for " + thisTrack.getTrackName());
+				if (thisTrack.getPaused() == false) {
+					//console.log(thisTrack.getTrackName() + " is Playing");
 
+					if (eventList[i][2] < now) {
+						eventList[i] = [REMOVE];
+					}
+				}
 			}
 			if (eventList[i][0] == LOOP) {
 				thisTrack = eventList[i][1];

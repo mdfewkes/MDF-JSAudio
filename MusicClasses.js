@@ -321,7 +321,7 @@ function musicContainer(track) {
 	}
 
 	this.loadTrack = function(newTrack) {
-		timeNow = musicTrack.getTime();
+		var timeNow = musicTrack.getTime();
 		if(!musicTrack.getPaused()) {
 			musicTrack.pause();
 			musicTrack.setTime(0);
@@ -381,3 +381,98 @@ function musicContainer(track) {
 	}
 }
 
+function musicContainerCrossfade(track1, track2) {
+	var musicTrack = new Array(track1, track2);
+	var currentTrack = 0;
+	var trackVolume = 1;
+
+	this.play = function() {
+		musicTrack[currentTrack].play();
+	}
+
+	this.stop = function() {
+		musicTrack[0].stop();
+		musicTrack[1].stop();
+	}
+
+	this.resume = function() {
+		musicTrack[currentTrack].resume();
+	}
+
+	this.pause = function() {
+		musicTrack[0].pause();
+		musicTrack[1].pause();
+	}
+
+	this.playFrom = function(time) {
+		musicTrack[currentTrack].playFrom(time);
+	}
+
+	this.startOrStop = function() {
+		musicTrack[0].startOrStop();
+		musicTrack[1].startOrStop();
+	}
+
+	this.loadTrack = function(newTrack, fadeTime = 1) {
+		var timeNow = musicTrack[currentTrack].getTime();
+		var altTrack = abs(currentTrack - 1);
+		if(musicTrack[currentTrack].getPaused() = false) {
+			musicTrack[altTrack] = newTrack;
+			musicTrack[altTrack].setVolume(0);
+			musicTrack[altTrack].playFrom(timeNow);
+			musicManager.addFadeEvent(musicTrack[currentTrack], fadeTime, 0);
+			musicManager.addFadeEvent(musicTrack[altTrack], fadeTime, trackVolume);
+			currentTrack = altTrack;
+		} else {
+			musicTrack[currentTrack] = newTrack;
+			musicTrack[currentTrack].stop();
+			musicTrack[currentTrack].setTime(timeNow);
+		}
+	}
+
+	this.updateVolume = function() {
+		musicTrack[0].updateVolume();
+		musicTrack[1].updateVolume();
+	}
+
+	this.setVolume = function(newVolume) {
+		trackVolume = newVolume;
+		musicTrack[currentTrack].setVolume(newVolume);
+	}
+
+	this.getVolume = function() {
+		return musicTrack[currentTrack].getVolume();
+	}
+
+	this.setTime = function(time) {
+		musicTrack[currentTrack].setTime(time);
+	}
+
+	this.getTime = function() {
+		return musicTrack[currentTrack].getTime();
+	}
+
+	this.setPlaybackRate = function(rate) {
+		musicTrack[currentTrack].setPlaybackRate(rate);
+	}
+
+	this.getPlaybackRate = function() {
+		return musicTrack[currentTrack].getPlaybackRate();
+	}
+	
+	this.setTrackName = function(name) {
+		musicTrack[currentTrack].setTrackName(name);
+	}
+
+	this.getTrackName = function() {
+		return musicTrack[currentTrack].getTrackName();
+	}
+	
+	this.getDuration = function() {
+		return musicTrack[currentTrack].getDuration();
+	}
+
+	this.getPaused = function() {
+		return musicTrack[currentTrack].getPaused();
+	}
+}
