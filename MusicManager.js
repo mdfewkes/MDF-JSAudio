@@ -13,8 +13,8 @@ function musicEventManager() {
 	}
 
 	this.updateEvents = function() {
-		//console.log("update music manager");
-		var now = Date.now();
+		now = Date.now();
+		//console.log("updating music manager at " + now);
 		runList();
 		cleanupList();
 	}
@@ -32,19 +32,19 @@ function musicEventManager() {
 	}
 
 	this.addLoopEvent = function(track) {
-		console.log("Adding loop event for " + track.getTrackName());
+		//console.log("Adding loop event for " + track.getTrackName());
 		thisTrack = track;
 		var check = checkListFor(LOOP, thisTrack);
 		var endTime = (thisTrack.getDuration() - thisTrack.getTime()) * 1000 + now;
 
 		if (check == "none") {
 			eventList.push([LOOP, track, endTime]);
-			console.log("Added loop event for " + track.getTrackName());
-			console.log("Endtime is " + endTime);
+			//console.log("Added loop event for " + track.getTrackName());
+			//console.log("Endtime is " + endTime);
 		} else {
 			eventList[check] = [LOOP, track, endTime];
-			console.log("Updated loop event for " + track.getTrackName());
-			console.log("Endtime is " + endTime);
+			//console.log("Updated loop event for " + track.getTrackName());
+			//console.log("Endtime is " + endTime);
 		}
 	}
 
@@ -59,15 +59,15 @@ function musicEventManager() {
 				thisTrack = eventList[i][1];
 				//console.log("found loop event for " + thisTrack.getTrackName());
 				if (thisTrack.getPaused() == false) {
-					console.log(thisTrack.getTrackName() + " is Playing");
+					//console.log(thisTrack.getTrackName() + " is Playing");
 					if (eventList[i][2] <= now) {
 						eventList[i] = [REMOVE];
-						console.log("removing loop event for " + thisTrack.getTrackName());
+						//console.log("removing loop event for " + thisTrack.getTrackName());
 						thisTrack.triggerLoopEnded();
 					}
 				} else {
 					eventList[i] = [REMOVE];
-					console.log("removing loop event for " + thisTrack.getTrackName() + "(Not playing)");
+					//console.log("removing loop event for " + thisTrack.getTrackName() + "(Not playing)");
 				}
 			}
 		}
@@ -84,19 +84,19 @@ function musicEventManager() {
 	}
 
 	function checkListFor(eventType, track){
-		console.log("Checking for " + thisTrack.getTrackName() + " events");
+		//console.log("Checking for " + thisTrack.getTrackName() + " events");
 		var foundItem = false;
 		for (var i = 0; i < eventList.length; i++) {
 			if (eventList[i][0] == eventType) {
 				if (eventList[i][1] == track) {
 					foundItem = true;
-					console.log("Found " + thisTrack.getTrackName() + " event");
+					//console.log("Found " + thisTrack.getTrackName() + " event");
 					return i;
 				}
 			}
 		}
 		if (!foundItem) {
-			console.log("Found no " + thisTrack.getTrackName() + " event");
+			//console.log("Found no " + thisTrack.getTrackName() + " event");
 			return "none";
 		}
 	}

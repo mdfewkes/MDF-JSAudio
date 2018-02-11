@@ -139,7 +139,7 @@ function musicTrackLoopingWTail(filenameWithPath, playLength) {
 	}
 
 	this.startOrStop = function() {
-		if(musicFile.paused) {
+		if(musicFile[currentTrack].paused) {
 			this.resume();
 		} else {
 			this.pause();
@@ -147,7 +147,7 @@ function musicTrackLoopingWTail(filenameWithPath, playLength) {
 	}
 
 	this.triggerLoopEnded = function() {
-		console.log("Trigger 'loop ended' for " + this.getTrackName());
+		//console.log("Trigger 'loop ended' for " + this.getTrackName());
 		currentTrack++;
 		if (currentTrack > 1) {currentTrack = 0;}
 		this.play();
