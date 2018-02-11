@@ -1,6 +1,6 @@
 const REMOVE = 0; // Arrayformat [REMOVE]
-const FADE = 1; // Arrayformat [FADE, track, starttime, endtime, startvolume, endvolume]
-const LOOP = 2; // Arrayformat [LOOP, track, endtime]
+const FADE = 1; // Arrayformat [FADE, track, startTime, endTime, startVolume, endVolume]
+const LOOP = 2; // Arrayformat [LOOP, track, endTime]
 
 var musicManager = new musicEventManager();
 
@@ -22,7 +22,7 @@ function musicEventManager() {
 	this.addFadeEvent = function(track, duration, endVol) {
 		var check = checkListFor(FADE, track);
 		var endTime = duration * 1000 + now;
-		var startvolume = track.getVolume();
+		var startVolume = track.getVolume();
 
 		if (check == "none") {
 			eventList.push([FADE, track, now, endTime, startVolume, endVol]);
@@ -57,8 +57,8 @@ function musicEventManager() {
 				//console.log("found fade event for " + thisTrack.getTrackName());
 				if (thisTrack.getPaused() == false) {
 					//console.log(thisTrack.getTrackName() + " is Playing");
-
-					if (eventList[i][2] < now) {
+						thisTrack.setVolume(interpolateFade(eventList[i][2], eventList[i][3], eventList[i][4], eventList[i][5], now));
+					if (eventList[i][3] < now) {
 						eventList[i] = [REMOVE];
 					}
 				}
@@ -108,4 +108,20 @@ function musicEventManager() {
 			return "none";
 		}
 	}
+}
+
+function interpolateFade(startTime, endTime, startVolume, endVolume, now) {
+	var finish = endTime - startTime;
+	var currentTime = endTime - now;
+	var offset = Math.min(startVolume, endVolume);
+	var scale = Math.max(startVolume, endVolume) - offset;
+	var output = startVolume;
+
+	if (startVolume >= endVolume) {
+		output = (startVolume - offset - (1 -currentTime/finish)) * scale + offset;
+	} else {
+		output = Math.abs(startVolume - offset - (1 -currentTime/finish)) * scale + offset;
+	}
+	console.log(output);
+	return output;
 }

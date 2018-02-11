@@ -415,8 +415,8 @@ function musicContainerCrossfade(track1, track2) {
 
 	this.loadTrack = function(newTrack, fadeTime = 1) {
 		var timeNow = musicTrack[currentTrack].getTime();
-		var altTrack = abs(currentTrack - 1);
-		if(musicTrack[currentTrack].getPaused() = false) {
+		var altTrack = Math.abs(currentTrack - 1);
+		if(musicTrack[currentTrack].getPaused() == false) {
 			musicTrack[altTrack] = newTrack;
 			musicTrack[altTrack].setVolume(0);
 			musicTrack[altTrack].playFrom(timeNow);

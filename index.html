@@ -10,6 +10,8 @@
 <button id="B_Track1">Track 1</button>
 <button id="B_Track2">Track 2</button>
 <button id="B_Track3">Track 3</button>
+<button id="B_FadeOut">Fade Out</button>
+<button id="B_FadeIn">Fade In</button>
 <P>Volume<input type="range" min="0" max="100" value="75" class="slider" id="S_Volume"><P/>
 
 <script src="MusicManager.js"></script>
@@ -24,6 +26,8 @@
 	var track2Button = document.getElementById("B_Track2");
 	var track3Button = document.getElementById("B_Track3");
 	var volumeSlider = document.getElementById("S_Volume");
+	var fadeOutButton = document.getElementById("B_FadeOut");
+	var fadeInButton = document.getElementById("B_FadeIn");
 	
 	playButton.addEventListener('click', function(){backgroundMusic.resume();});
 	pauseButton.addEventListener('click', function(){backgroundMusic.pause();});
@@ -37,6 +41,10 @@
 	track3Button.addEventListener('click', function(){
 		if (backgroundMusic.getTrackName() != "track3") {backgroundMusic.loadTrack(track3);}
 	});
+
+	fadeOutButton.addEventListener('click', function(){musicManager.addFadeEvent(track1, 2, 0)});
+	fadeInButton.addEventListener('click', function(){musicManager.addFadeEvent(track1, 2, volumeSlider.value/100)});
+
 
 	volumeSlider.oninput = function(){backgroundMusic.setVolume(this.value/100);}
 	
