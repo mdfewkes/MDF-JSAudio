@@ -98,6 +98,110 @@ function musicTrackLooping(filenameWithPath) {
 	}
 }
 
+function musicTrackLoopingWTail(filenameWithPath, playLength) {
+	var musicFile = new Array(new Audio(filenameWithPath+audioFormat), new Audio(filenameWithPath+audioFormat));
+	var currentTrack = 0;
+	var duration = playLength;
+	var trackName = filenameWithPath;
+	var trackVolume = 1;
+	
+	musicFile[0].pause();
+	musicFile[1].pause();
+
+	this.play = function() {
+		musicFile[currentTrack].currentTime = 0;
+		this.updateVolume();
+		musicFile[currentTrack].play();
+		musicManager.addLoopEvent(this);
+	}
+
+	this.stop = function() {
+		musicFile[0].pause();
+		musicFile[0].currentTime = 0;
+		musicFile[1].pause();
+		musicFile[1].currentTime = 0;
+	}
+
+	this.resume = function() {
+		musicFile[currentTrack].play();
+		musicManager.addLoopEvent(this);
+	}
+
+	this.pause = function() {
+		musicFile[0].pause();
+		musicFile[1].pause();
+	}
+
+	this.playFrom = function(time) {
+		musicFile[currentTrack].currentTime = time;
+		musicFile[currentTrack].play();
+	}
+
+	this.startOrStop = function() {
+		if(musicFile.paused) {
+			this.resume();
+		} else {
+			this.pause();
+		}
+	}
+
+	this.triggerLoopEnded = function() {
+		currentTrack++;
+		if (currentTrack > 1) {currentTrack = 0;}
+		this.play();
+		console.log("Trigger loop ended for " + this.getTrackName());
+	}
+
+	this.updateVolume = function() {
+		musicFile[0].volume = Math.pow(musicVolume  * trackVolume * !isMuted, 2);
+		musicFile[1].volume = Math.pow(musicVolume  * trackVolume * !isMuted, 2);
+	}
+
+	this.setVolume = function(newVolume) {
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
+		musicFile[currentTrack].volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
+		trackVolume = newVolume;
+	}
+
+	this.getVolume = function() {
+		return trackVolume * !isMuted;
+	}
+
+	this.setTime = function(time) {
+		musicFile[currentTrack].currentTime = time;
+	}
+
+	this.getTime = function() {
+		return musicFile[currentTrack].currentTime;
+	}
+
+	this.setPlaybackRate = function(rate) {
+		musicFile[0].playbackRate = rate;
+		musicFile[1].playbackRate = rate;
+	}
+
+	this.getPlaybackRate = function() {
+		return musicFile[currentTrack].playbackRate;
+	}
+	
+	this.setTrackName = function(name) {
+		trackName = name;
+	}
+
+	this.getTrackName = function() {
+		return trackName;
+	}
+	
+	this.getDuration = function() {
+		return duration;
+	}
+
+	this.getPaused = function() {
+		return musicFile.paused;
+	}
+}
+
 function musicTrackStinger(filenameWithPath) {
 	var musicFile = new Audio(filenameWithPath+audioFormat);
 	var duration = musicFile.duration;
@@ -276,107 +380,3 @@ function musicContainer(track) {
 	}
 }
 
-function musicTrackLoopingWTail(filenameWithPath, playLength) {
-	var musicFile = new Array(2);
-	var musicFile[0] = new Audio(filenameWithPath+audioFormat);
-	var musicFile[1] = new Audio(filenameWithPath+audioFormat);
-	var currentTrack = 0;
-	var duration = playLength;
-	var trackName = filenameWithPath;
-	var trackVolume = 1;
-	
-	musicFile[0].pause();
-	musicFile[1].pause();
-
-	this.play = function() {
-		musicFile[currentTrack].currentTime = 0;
-		this.updateVolume();
-		musicFile[currentTrack].play();
-		musicEventManager.addLoopEvent(this);
-	}
-
-	this.stop = function() {
-		musicFile[0].pause();
-		musicFile[0].currentTime = 0;
-		musicFile[1].pause();
-		musicFile[1].currentTime = 0;
-	}
-
-	this.resume = function() {
-		musicFile[currentTrack].play();
-		musicEventManager.addLoopEvent(this);
-	}
-
-	this.pause = function() {
-		musicFile[0].pause();
-		musicFile[1].pause();
-	}
-
-	this.playFrom = function(time) {
-		musicFile[currentTrack].currentTime = time;
-		musicFile[currentTrack].play();
-	}
-
-	this.startOrStop = function() {
-		if(musicFile.paused) {
-			this.resume();
-		} else {
-			this.pause();
-		}
-	}
-
-	this.triggerLoopEnd = function() {
-		currentTrack++;
-		if (currentTrack >= 1) {currentTrack = 0;}
-		this.play();
-	}
-
-	this.updateVolume = function() {
-		musicFile[0].volume = Math.pow(musicVolume  * trackVolume * !isMuted, 2);
-		musicFile[1].volume = Math.pow(musicVolume  * trackVolume * !isMuted, 2);
-	}
-
-	this.setVolume = function(newVolume) {
-		if(newVolume > 1) {newVolume = 1;}
-		if(newVolume < 0) {newVolume = 0;}
-		musicFile[currentTrack].volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
-		trackVolume = newVolume;
-	}
-
-	this.getVolume = function() {
-		return trackVolume * !isMuted;
-	}
-
-	this.setTime = function(time) {
-		musicFile[currentTrack].currentTime = time;
-	}
-
-	this.getTime = function() {
-		return musicFile[currentTrack].currentTime;
-	}
-
-	this.setPlaybackRate = function(rate) {
-		musicFile[0].playbackRate = rate;
-		musicFile[1].playbackRate = rate;
-	}
-
-	this.getPlaybackRate = function() {
-		return musicFile[currentTrack].playbackRate;
-	}
-	
-	this.setTrackName = function(name) {
-		trackName = name;
-	}
-
-	this.getTrackName = function() {
-		return trackName;
-	}
-	
-	this.getDuration = function() {
-		return duration;
-	}
-
-	this.getPaused = function() {
-		return musicFile.paused;
-	}
-}

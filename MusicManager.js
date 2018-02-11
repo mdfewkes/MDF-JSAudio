@@ -8,11 +8,16 @@ var musicManager = new musicEventManager();
 
 function musicEventManager() {
 	var eventList = [];
-	var now = date.now();
+	var now = date.now;
 
-	this.update = function() {
-		var now = date.now();
-		runlist();
+	this.returnEventList = function() {
+		return eventList;
+	}
+
+	this.updateEvents = function() {
+		console.log("update music manager");
+		var now = date.now;
+		runList();
 		cleanupList();
 	}
 
@@ -24,7 +29,7 @@ function musicEventManager() {
 		if (check == "none") {
 			eventList.push([FADE, track, now, endTime, startVolume, endVol]);
 		} else {
-			eventList[check]] = [FADE, track, now, endTime, startVolume, endVol];
+			eventList[check] = [FADE, track, now, endTime, startVolume, endVol];
 		}
 	}
 
@@ -37,17 +42,23 @@ function musicEventManager() {
 		} else {
 			eventList[check] = [LOOP, track, endTime];
 		}
+		console.log("Added loop event for " + track.getTrackName());
 	}
 
 	function runList(){
-		for (var i in eventList) {
+		console.log("running list");
+		for (var i = 0; i < eventList.length; i++) {
+			console.log("looping run list");
+			console.log("investigating " + eventList[i][1]);
 			if (eventList[i][0] == FADE) {
 
 			}
 			if (eventList[i][0] == LOOP) {
-				if (eventList[i][1].getPaused() = false) {
-					if (eventList[i][2] < now) {
-						thisTrack = eventList[i][1];
+				thisTrack = eventList[i][1];
+				console.log("found loop event for " + thisTrack);
+				if (thisTrack.getPaused() == false) {
+					console.log(thisTrack.getTrackName() + " is Playing");
+					if (eventList[i][2] > now) {
 						eventList[i] = [REMOVE];
 						thisTrack.triggerLoopEnded();
 					}
@@ -58,14 +69,14 @@ function musicEventManager() {
 	}
 
 	function cleanupList() {
-		eventList.sort(function(a, b){return b-a};
+		eventList.sort(function(a, b){return b-a});
 		while (eventList[eventList.length - 1] == REMOVE) {
 			eventList.pop();
 		}
 	}
 
 	function checkListFor(eventType, track){
-		for (var i in eventList) {
+		for (var i = 0; i < eventList.length; i++) {
 			if (eventList[i][0] == eventType) {
 				if (eventList[i][1] == track) {
 					return i;
