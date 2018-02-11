@@ -2,7 +2,6 @@ const REMOVE = 0; // Arrayformat [REMOVE]
 const FADE = 1; // Arrayformat [FADE, track, startTime, endTime, startVolume, endVolume]
 const TIMER = 2; // Arrayformat [TIMER, track, endTime, callSign]
 const STOP = 3; // Arrayformat [STOP, track, endTime]
-const LOAD_CHECK = 4; // Arrayformat [LOAD_CHECK, track]
 
 var musicManager = new musicEventManager();
 
@@ -24,6 +23,7 @@ function musicEventManager() {
 		var check = checkListFor(FADE, track);
 		var endTime = duration * 1000 + now;
 		var startVolume = track.getVolume();
+		console.log("Adding Fade Event for " + track.getTrackName());
 
 		if (check == "none") {
 			eventList.push([FADE, track, now, endTime, startVolume, endVol]);
@@ -38,6 +38,7 @@ function musicEventManager() {
 		var endTime = (thisTrack.getDuration() - thisTrack.getTime()) * 1000 + now;
 
 		if (check == "none") {
+			console.log("Adding Timer Event for " + track.getTrackName());
 			eventList.push([TIMER, track, endTime, callSign]);
 		} else {
 			eventList[check] = [TIMER, track, endTime, callSign];
@@ -50,19 +51,10 @@ function musicEventManager() {
 		var endTime = (thisTrack.getDuration() - thisTrack.getTime()) * 1000 + now;
 
 		if (check == "none") {
+			console.log("Adding Stop Event for " + track.getTrackName());
 			eventList.push([STOP, track, endTime]);
 		} else {
 			eventList[check] = [STOP, track, endTime];
-		}
-	}
-
-	this.addLoadCheckEvent = function(track) {
-		var thisTrack = track;
-		var check = checkListFor(LOAD_CHECK, thisTrack);
-
-		if (check == "none") {
-			console.log("Adding Load Check Event for " + track.getTrackName());
-			eventList.push([STOP, track]);
 		}
 	}
 
@@ -73,6 +65,7 @@ function musicEventManager() {
 		if (check == "none") {
 			return;
 		} else {
+			console.log("Removing Stop Event for " + track.getTrackName());
 			eventList[check] = [REMOVE];
 		}
 	}
@@ -84,6 +77,7 @@ function musicEventManager() {
 				if (thisTrack.getPaused() == false) {
 						thisTrack.setVolume(interpolateFade(eventList[i][2], eventList[i][3], eventList[i][4], eventList[i][5], now));
 					if (eventList[i][3] < now) {
+						console.log("Ending Fade Event for " + thisTrack.getTrackName());
 						eventList[i] = [REMOVE];
 					}
 				}
@@ -92,6 +86,7 @@ function musicEventManager() {
 				thisTrack = eventList[i][1];
 				if (thisTrack.getPaused() == false) {
 					if (eventList[i][2] <= now) {
+						console.log("Ending Timer Event for " + thisTrack.getTrackName());
 						eventList[i] = [REMOVE];
 						thisTrack.triggerTimerEnded(eventList[i][3]);
 					}
@@ -103,17 +98,11 @@ function musicEventManager() {
 				thisTrack = eventList[i][1];
 				if (thisTrack.getPaused() == false) {
 					if (eventList[i][2] <= now) {
+						console.log("Executing Stop Event for " + thisTrack.getTrackName());
 						eventList[i] = [REMOVE];
 						thisTrack.stop();
 					}
 				}
-			}
-
-			if (eventList[i][0] == LOAD_CHECK) {
-				thisTrack = eventList[i][1];
-				if (thisTrack.readyState == 4) { thisTrack.setLoaded(true);}
-				console.log("Marking Loaded for " + thisTrack.getTrackName());
-				eventList[i] = [REMOVE];
 			}
 		}
 
