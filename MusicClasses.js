@@ -419,6 +419,7 @@ function musicContainerCrossfade(track1, track2) {
 			musicTrack[altTrack] = newTrack;
 			musicTrack[altTrack].setVolume(0);
 			musicTrack[altTrack].playFrom(timeNow);
+			musicManager.removeStopEvent(musicTrack[currentTrack]);
 			musicManager.addFadeEvent(musicTrack[currentTrack], fadeTime, 0);
 			musicManager.addFadeEvent(musicTrack[altTrack], fadeTime, trackVolume);
 			musicManager.addStopEvent(musicTrack[currentTrack], fadeTime);

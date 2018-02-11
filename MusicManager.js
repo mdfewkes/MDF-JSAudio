@@ -32,7 +32,7 @@ function musicEventManager() {
 	}
 
 	this.addLoopEvent = function(track) {
-		thisTrack = track;
+		var thisTrack = track;
 		var check = checkListFor(LOOP, thisTrack);
 		var endTime = (thisTrack.getDuration() - thisTrack.getTime()) * 1000 + now;
 
@@ -43,7 +43,7 @@ function musicEventManager() {
 		}
 	}
 	this.addStopEvent = function(track) {
-		thisTrack = track;
+		var thisTrack = track;
 		var check = checkListFor(STOP, thisTrack);
 		var endTime = (thisTrack.getDuration() - thisTrack.getTime()) * 1000 + now;
 
@@ -51,6 +51,17 @@ function musicEventManager() {
 			eventList.push([STOP, track, endTime]);
 		} else {
 			eventList[check] = [STOP, track, endTime];
+		}
+	}
+
+	this.removeStopEvent = function(track) {
+		var thisTrack = track;
+		var check = checkListFor(STOP, thisTrack);
+
+		if (check == "none") {
+			return;
+		} else {
+			eventList[check] = [REMOVE];
 		}
 	}
 
