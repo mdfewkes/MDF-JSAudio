@@ -29,10 +29,10 @@
 	pauseButton.addEventListener('click', function(){backgroundMusic.pause();});
 
 	track1Button.addEventListener('click', function(){
-		if (backgroundMusic.getTrackName() != "track1") {backgroundMusic.loadTrack(track1);}
+		if (backgroundMusic.getTrackName() != "track1") {backgroundMusic.loadTrack(track1, 0.5);}
 	});
 	track2Button.addEventListener('click', function(){
-		if (backgroundMusic.getTrackName() != "track2") {backgroundMusic.loadTrack(track2);}
+		if (backgroundMusic.getTrackName() != "track2") {backgroundMusic.loadTrack(track2, 0.25);}
 	});
 	track3Button.addEventListener('click', function(){
 		if (backgroundMusic.getTrackName() != "track3") {backgroundMusic.loadTrack(track3);}

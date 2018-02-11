@@ -14,6 +14,7 @@ function musicTrackLooping(filenameWithPath) {
 	var duration = musicFile.duration;
 	var trackName = filenameWithPath;
 	var trackVolume = 1;
+	var mixVolume = 1;
 	
 	musicFile.pause();
 	musicFile.loop = true;
@@ -51,18 +52,26 @@ function musicTrackLooping(filenameWithPath) {
 	}
 
 	this.updateVolume = function() {
-		musicFile.volume = Math.pow(musicVolume  * trackVolume * !isMuted, 2);
+		musicFile.volume = Math.pow(mixVolume * musicVolume  * trackVolume * !isMuted, 2);
 	}
 
 	this.setVolume = function(newVolume) {
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		musicFile.volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
+		musicFile.volume = Math.pow(mixVolume * newVolume * musicVolume * !isMuted, 2);
 		trackVolume = newVolume;
 	}
 
 	this.getVolume = function() {
 		return trackVolume * !isMuted;
+	}
+
+	this.setMixVolume = function(volume) {
+		mixVolume = volume;
+	}
+
+	this.getMixVolume = function() {
+		return mixVolume;
 	}
 
 	this.setTime = function(time) {
@@ -104,6 +113,7 @@ function musicTrackLoopingWTail(filenameWithPath, playLength) {
 	var duration = playLength;
 	var trackName = filenameWithPath;
 	var trackVolume = 1;
+	var mixVolume = 1;
 	
 	musicFile[0].pause();
 	musicFile[1].pause();
@@ -153,19 +163,27 @@ function musicTrackLoopingWTail(filenameWithPath, playLength) {
 	}
 
 	this.updateVolume = function() {
-		musicFile[0].volume = Math.pow(musicVolume  * trackVolume * !isMuted, 2);
-		musicFile[1].volume = Math.pow(musicVolume  * trackVolume * !isMuted, 2);
+		musicFile[0].volume = Math.pow(mixVolume * musicVolume  * trackVolume * !isMuted, 2);
+		musicFile[1].volume = Math.pow(mixVolume * musicVolume  * trackVolume * !isMuted, 2);
 	}
 
 	this.setVolume = function(newVolume) {
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		musicFile[currentTrack].volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
+		musicFile[currentTrack].volume = Math.pow(mixVolume * newVolume * musicVolume * !isMuted, 2);
 		trackVolume = newVolume;
 	}
 
 	this.getVolume = function() {
 		return trackVolume * !isMuted;
+	}
+
+	this.setMixVolume = function(volume) {
+		mixVolume = volume;
+	}
+
+	this.getMixVolume = function() {
+		return mixVolume;
 	}
 
 	this.setTime = function(time) {
@@ -207,6 +225,7 @@ function musicTrackStinger(filenameWithPath) {
 	var duration = musicFile.duration;
 	var trackName = filenameWithPath;
 	var trackVolume = 1;
+	var mixVolume = 1;
 	
 	musicFile.pause();
 	musicFile.loop = false;
@@ -244,18 +263,26 @@ function musicTrackStinger(filenameWithPath) {
 	}
 
 	this.updateVolume = function() {
-		musicFile.volume = Math.pow(musicVolume  * trackVolume * !isMuted, 2);
+		musicFile.volume = Math.pow(mixVolume * musicVolume  * trackVolume * !isMuted, 2);
 	}
 
 	this.setVolume = function(newVolume) {
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		musicFile.volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
+		musicFile.volume = Math.pow(mixVolume * newVolume * musicVolume * !isMuted, 2);
 		trackVolume = newVolume;
 	}
 
 	this.getVolume = function() {
 		return trackVolume * !isMuted;
+	}
+
+	this.setMixVolume = function(volume) {
+		mixVolume = volume;
+	}
+
+	this.getMixVolume = function() {
+		return mixVolume;
 	}
 
 	this.setTime = function(time) {

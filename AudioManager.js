@@ -12,6 +12,8 @@ var backgroundMusic = new musicContainerCrossfade(track1);
 track1.setTrackName("track1");
 track2.setTrackName("track2");
 track3.setTrackName("track3");
+track2.setMixVolume(0.85);
+track3.setMixVolume(0.5);
 
 
 
