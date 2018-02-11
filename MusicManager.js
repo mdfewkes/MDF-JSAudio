@@ -2,21 +2,19 @@ const REMOVE = 0; // Arrayformat [REMOVE]
 const FADE = 1; // Arrayformat [FADE, track, starttime, endtime, startvolume, endvolume]
 const LOOP = 2; // Arrayformat [LOOP, track, endtime]
 
-var date = new Date();
-
 var musicManager = new musicEventManager();
 
 function musicEventManager() {
 	var eventList = [];
-	var now = date.now;
+	var now = Date.now();
 
 	this.returnEventList = function() {
 		return eventList;
 	}
 
 	this.updateEvents = function() {
-		console.log("update music manager");
-		var now = date.now;
+		//console.log("update music manager");
+		var now = Date.now();
 		runList();
 		cleanupList();
 	}
@@ -34,55 +32,72 @@ function musicEventManager() {
 	}
 
 	this.addLoopEvent = function(track) {
-		var check = checkListFor(LOOP, track);
-		var endTime = (track.getDuration() - track.getTime()) * 1000 + now;
+		console.log("Adding loop event for " + track.getTrackName());
+		thisTrack = track;
+		var check = checkListFor(LOOP, thisTrack);
+		var endTime = (thisTrack.getDuration() - thisTrack.getTime()) * 1000 + now;
 
 		if (check == "none") {
 			eventList.push([LOOP, track, endTime]);
+			console.log("Added loop event for " + track.getTrackName());
+			console.log("Endtime is " + endTime);
 		} else {
 			eventList[check] = [LOOP, track, endTime];
+			console.log("Updated loop event for " + track.getTrackName());
+			console.log("Endtime is " + endTime);
 		}
-		console.log("Added loop event for " + track.getTrackName());
 	}
 
 	function runList(){
-		console.log("running list");
+		//console.log("running list");
 		for (var i = 0; i < eventList.length; i++) {
-			console.log("looping run list");
-			console.log("investigating " + eventList[i][1]);
+			//console.log("looping run list");
 			if (eventList[i][0] == FADE) {
 
 			}
 			if (eventList[i][0] == LOOP) {
 				thisTrack = eventList[i][1];
-				console.log("found loop event for " + thisTrack);
+				//console.log("found loop event for " + thisTrack.getTrackName());
 				if (thisTrack.getPaused() == false) {
 					console.log(thisTrack.getTrackName() + " is Playing");
-					if (eventList[i][2] > now) {
+					if (eventList[i][2] <= now) {
 						eventList[i] = [REMOVE];
+						console.log("removing loop event for " + thisTrack.getTrackName());
 						thisTrack.triggerLoopEnded();
 					}
-				} else {eventList[i] = [REMOVE];}
+				} else {
+					eventList[i] = [REMOVE];
+					console.log("removing loop event for " + thisTrack.getTrackName() + "(Not playing)");
+				}
 			}
 		}
 
 	}
 
 	function cleanupList() {
+		//console.log("Sorting List");
 		eventList.sort(function(a, b){return b-a});
 		while (eventList[eventList.length - 1] == REMOVE) {
 			eventList.pop();
+			//console.log("removing passed event");
 		}
 	}
 
 	function checkListFor(eventType, track){
+		console.log("Checking for " + thisTrack.getTrackName() + " events");
+		var foundItem = false;
 		for (var i = 0; i < eventList.length; i++) {
 			if (eventList[i][0] == eventType) {
 				if (eventList[i][1] == track) {
+					foundItem = true;
+					console.log("Found " + thisTrack.getTrackName() + " event");
 					return i;
 				}
 			}
 		}
-		return "none";
+		if (!foundItem) {
+			console.log("Found no " + thisTrack.getTrackName() + " event");
+			return "none";
+		}
 	}
 }
