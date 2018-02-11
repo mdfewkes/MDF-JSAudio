@@ -33,7 +33,7 @@ function musicEventManager() {
 
 	this.addTimerEvent = function(track, callSign = "none") {
 		var thisTrack = track;
-		var check = checkListFor(TIMER, thisTrack);
+		var check = checkListFor(TIMER, thisTrack, callSign);
 		var endTime = (thisTrack.getDuration() - thisTrack.getTime()) * 1000 + now;
 
 		if (check == "none") {
@@ -101,20 +101,24 @@ function musicEventManager() {
 	}
 
 	function cleanupList() {
-		//console.log("Sorting List");
 		eventList.sort(function(a, b){return b-a});
 		while (eventList[eventList.length - 1] == REMOVE) {
 			eventList.pop();
 		}
 	}
 
-	function checkListFor(eventType, track){
+	function checkListFor(eventType, track, callSign = ""){
 		var foundItem = false;
 		for (var i = 0; i < eventList.length; i++) {
 			if (eventList[i][0] == eventType) {
 				if (eventList[i][1] == track) {
-					foundItem = true;
-					return i;
+					if(eventType == TIMER && eventList[i][3] == callSign) {
+						foundItem = true;
+						return i;
+					} else if (eventType != TIMER) {
+						foundItem = true;
+						return i;
+					}
 				}
 			}
 		}
