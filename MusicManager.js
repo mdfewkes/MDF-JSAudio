@@ -1,6 +1,6 @@
 const REMOVE = 0; // Arrayformat [REMOVE]
 const FADE = 1; // Arrayformat [FADE, track, startTime, endTime, startVolume, endVolume]
-const TIMER = 3; // Arrayformat [TIMER, track, endTime]
+const TIMER = 3; // Arrayformat [TIMER, track, endTime, callSign]
 const STOP = 2; // Arrayformat [STOP, track, endTime]
 
 var musicManager = new musicEventManager();
@@ -31,15 +31,15 @@ function musicEventManager() {
 		}
 	}
 
-	this.addTimerEvent = function(track) {
+	this.addTimerEvent = function(track, callSign = "none") {
 		var thisTrack = track;
 		var check = checkListFor(TIMER, thisTrack);
 		var endTime = (thisTrack.getDuration() - thisTrack.getTime()) * 1000 + now;
 
 		if (check == "none") {
-			eventList.push([TIMER, track, endTime]);
+			eventList.push([TIMER, track, endTime, callSign]);
 		} else {
-			eventList[check] = [TIMER, track, endTime];
+			eventList[check] = [TIMER, track, endTime, callSign];
 		}
 	}
 	this.addStopEvent = function(track) {
@@ -81,7 +81,7 @@ function musicEventManager() {
 				if (thisTrack.getPaused() == false) {
 					if (eventList[i][2] <= now) {
 						eventList[i] = [REMOVE];
-						thisTrack.triggerTimerEnded();
+						thisTrack.triggerTimerEnded(eventList[i][3]);
 					}
 				} else {
 					eventList[i] = [REMOVE];

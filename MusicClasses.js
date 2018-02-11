@@ -122,7 +122,7 @@ function musicTrackLoopingWTail(filenameWithPath, playLength) {
 		musicFile[currentTrack].currentTime = 0;
 		this.updateVolume();
 		musicFile[currentTrack].play();
-		musicManager.addTimerEvent(this);
+		musicManager.addTimerEvent(this, "loop");
 	}
 
 	this.stop = function() {
@@ -134,7 +134,7 @@ function musicTrackLoopingWTail(filenameWithPath, playLength) {
 
 	this.resume = function() {
 		musicFile[currentTrack].play();
-		musicManager.addTimerEvent(this);
+		musicManager.addTimerEvent(this, "loop");
 	}
 
 	this.pause = function() {
@@ -145,7 +145,7 @@ function musicTrackLoopingWTail(filenameWithPath, playLength) {
 	this.playFrom = function(time) {
 		musicFile[currentTrack].currentTime = time;
 		musicFile[currentTrack].play();
-		musicManager.addTimerEvent(this);
+		musicManager.addTimerEvent(this, "loop");
 	}
 
 	this.startOrStop = function() {
@@ -156,7 +156,7 @@ function musicTrackLoopingWTail(filenameWithPath, playLength) {
 		}
 	}
 
-	this.triggerTimerEnded = function() {
+	this.triggerTimerEnded = function(callSign) {
 		currentTrack++;
 		if (currentTrack > 1) {currentTrack = 0;}
 		this.play();
