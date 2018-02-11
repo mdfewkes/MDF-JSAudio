@@ -1,7 +1,8 @@
 const REMOVE = 0; // Arrayformat [REMOVE]
 const FADE = 1; // Arrayformat [FADE, track, startTime, endTime, startVolume, endVolume]
-const TIMER = 3; // Arrayformat [TIMER, track, endTime, callSign]
-const STOP = 2; // Arrayformat [STOP, track, endTime]
+const TIMER = 2; // Arrayformat [TIMER, track, endTime, callSign]
+const STOP = 3; // Arrayformat [STOP, track, endTime]
+const LOAD_CHECK = 4; // Arrayformat [LOAD_CHECK, track]
 
 var musicManager = new musicEventManager();
 
@@ -44,6 +45,7 @@ function musicEventManager() {
 			eventList[check] = [TIMER, track, endTime, callSign];
 		}
 	}
+
 	this.addStopEvent = function(track) {
 		var thisTrack = track;
 		var check = checkListFor(STOP, thisTrack);
@@ -54,6 +56,16 @@ function musicEventManager() {
 			eventList.push([STOP, track, endTime]);
 		} else {
 			eventList[check] = [STOP, track, endTime];
+		}
+	}
+
+	this.addLoadCheckEvent = function(track) {
+		var thisTrack = track;
+		var check = checkListFor(LOAD_CHECK, thisTrack);
+
+		if (check == "none") {
+			console.log("Adding Load Check Event for " + track.getTrackName());
+			eventList.push([STOP, track]);
 		}
 	}
 
@@ -102,6 +114,13 @@ function musicEventManager() {
 						thisTrack.stop();
 					}
 				}
+			}
+
+			if (eventList[i][0] == LOAD_CHECK) {
+				thisTrack = eventList[i][1];
+				if (thisTrack.readyState == 4) { thisTrack.setLoaded(true);}
+				console.log("Marking Loaded for " + thisTrack.getTrackName());
+				eventList[i] = [REMOVE];
 			}
 		}
 

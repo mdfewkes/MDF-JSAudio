@@ -15,7 +15,9 @@ function musicTrackLooping(filenameWithPath) {
 	var trackName = filenameWithPath;
 	var trackVolume = 1;
 	var mixVolume = 1;
+	var loaded = false;
 	
+	musicManager.addLoadCheckEvent(musicFile);
 	musicFile.pause();
 	musicFile.loop = true;
 
@@ -74,6 +76,14 @@ function musicTrackLooping(filenameWithPath) {
 		return mixVolume;
 	}
 
+	this.setLoaded = function(value) {
+		loaded = value;
+	}
+
+	this.getLoaded = function() {
+		return loaded;
+	}
+
 	this.setTime = function(time) {
 		musicFile.currentTime = time;
 	}
@@ -114,7 +124,9 @@ function musicTrackLoopingWTail(filenameWithPath, playLength) {
 	var trackName = filenameWithPath;
 	var trackVolume = 1;
 	var mixVolume = 1;
+	var loaded = false;
 	
+	musicManager.addLoadCheckEvent(musicFile);	
 	musicFile[0].pause();
 	musicFile[1].pause();
 
@@ -186,6 +198,14 @@ function musicTrackLoopingWTail(filenameWithPath, playLength) {
 		return mixVolume;
 	}
 
+	this.setLoaded = function(value) {
+		loaded = value;
+	}
+
+	this.getLoaded = function() {
+		return loaded;
+	}
+
 	this.setTime = function(time) {
 		musicFile[currentTrack].currentTime = time;
 	}
@@ -226,7 +246,9 @@ function musicTrackStinger(filenameWithPath) {
 	var trackName = filenameWithPath;
 	var trackVolume = 1;
 	var mixVolume = 1;
+	var loaded = false;
 	
+	musicManager.addLoadCheckEvent(musicFile);	
 	musicFile.pause();
 	musicFile.loop = false;
 
@@ -283,6 +305,14 @@ function musicTrackStinger(filenameWithPath) {
 
 	this.getMixVolume = function() {
 		return mixVolume;
+	}
+
+	this.setLoaded = function(value) {
+		loaded = value;
+	}
+
+	this.getLoaded = function() {
+		return loaded;
 	}
 
 	this.setTime = function(time) {
