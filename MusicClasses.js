@@ -147,7 +147,6 @@ function musicTrackLoopingWTail(filenameWithPath, playLength) {
 	}
 
 	this.triggerLoopEnded = function() {
-		//console.log("Trigger 'loop ended' for " + this.getTrackName());
 		currentTrack++;
 		if (currentTrack > 1) {currentTrack = 0;}
 		this.play();
@@ -422,6 +421,7 @@ function musicContainerCrossfade(track1, track2) {
 			musicTrack[altTrack].playFrom(timeNow);
 			musicManager.addFadeEvent(musicTrack[currentTrack], fadeTime, 0);
 			musicManager.addFadeEvent(musicTrack[altTrack], fadeTime, trackVolume);
+			musicManager.addStopEvent(musicTrack[currentTrack], fadeTime);
 			currentTrack = altTrack;
 		} else {
 			musicTrack[currentTrack] = newTrack;
