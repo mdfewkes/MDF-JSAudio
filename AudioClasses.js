@@ -216,7 +216,88 @@ function sfxClipOverlap(filenameWithPath, voices) {
 	}
 }
 
+function sfxContainerListRandom(clipList) {
+	var soundFile = [];
+	currentClip = 0;
 
+	for (var i in clipList) {
+		soundFile[i] = clipList[i];
+		soundFile[i].pause();
+	}
+
+	var clipVolume = 1;
+
+	this.play = function() {
+		currentClip = Math.floor(Math.random() * soundFile.length);
+		soundFile[currentClip].play();
+	}
+
+	this.stop = function() {
+		for (var i in trackList) {
+			soundFile[i].stop();
+		}
+	}
+
+	this.resume = function() {
+		soundFile[currentClip].resume();
+	}
+
+	this.pause = function() {
+		for (var i in trackList) {
+			soundFile[i].pause();
+		}
+	}
+
+	function setRandomRate() {
+		soundFile[currentClip].setRandomRate();
+	}
+
+	this.updateVolume = function() {
+		for (var i in trackList) {
+			soundFile[i].updateVolume();
+		}
+	}
+
+	this.setVolume = function(newVolume) {
+		soundFile[currentClip].setVolume(newVolume);
+	}
+
+	this.getVolume = function() {
+		return soundFile[currentClip].getVolume();
+	}
+
+	this.setTime = function(time) {
+		soundFile[currentClip].setTime(time);
+	}
+
+	this.getTime = function() {
+		return soundFile[currentClip].getTime();
+	}
+
+	this.setPlaybackRate = function(rate) {
+		soundFile[currentClip].setPlaybackRate(rate);
+	}
+
+	this.getPlaybackRate = function() {
+		return soundFile[currentClip].getPlaybackRate();
+	}
+	
+	this.setClipName = function(name) {
+		soundFile[currentClip].setClipName(name);
+	}
+
+	this.getClipName = function() {
+		return soundFile[currentClip].getClipName();
+	}
+	
+	this.getDuration = function() {
+		return soundFile[currentClip].getDuration();
+	}
+
+	this.getPaused = function() {
+		return soundFile[currentClip].getPaused();
+	}
+}
 
 
 //Music Classes
@@ -732,7 +813,7 @@ function musicContainerList(trackList) {
 	var currentTrack = 0;
 
 	for (var i in trackList) {
-		musicTrack[i] = new Audio(filenameWithPath+audioFormat);
+		musicTrack[i] = trackList[i];
 		musicTrack[i].pause();
 	}
 
@@ -744,7 +825,7 @@ function musicContainerList(trackList) {
 
 	this.stop = function() {
 		for (var i in trackList) {
-			musicTrack[currentTrack].stop();
+			musicTrack[i].stop();
 		}
 	}
 
@@ -754,7 +835,7 @@ function musicContainerList(trackList) {
 
 	this.pause = function() {
 		for (var i in trackList) {
-			musicTrack[currentTrack].pause();
+			musicTrack[i].pause();
 		}
 	}
 
@@ -783,7 +864,7 @@ function musicContainerList(trackList) {
 
 	this.updateVolume = function() {
 		for (var i in trackList) {
-			musicTrack[currentTrack].updateVolume();
+			musicTrack[i].updateVolume();
 		}
 	}
 
