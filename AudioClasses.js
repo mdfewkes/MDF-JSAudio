@@ -726,3 +726,105 @@ function musicContainerCrossfade(track1, track2) {
 		return musicTrack[currentTrack].getPaused();
 	}
 }
+
+function musicContainerList(trackList) {
+	var musicTrack = [];
+	var currentTrack = 0;
+
+	for (var i in trackList) {
+		musicTrack[i] = new Audio(filenameWithPath+audioFormat);
+		musicTrack[i].pause();
+	}
+
+	var trackVolume = 1;
+
+	this.play = function() {
+		musicTrack[currentTrack].play();
+	}
+
+	this.stop = function() {
+		for (var i in trackList) {
+			musicTrack[currentTrack].stop();
+		}
+	}
+
+	this.resume = function() {
+		musicTrack[currentTrack].resume();
+	}
+
+	this.pause = function() {
+		for (var i in trackList) {
+			musicTrack[currentTrack].pause();
+		}
+	}
+
+	this.playFrom = function(time) {
+		musicTrack[currentTrack].playFrom(time);
+	}
+
+	this.startOrStop = function() {
+		musicTrack[currentTrack].startOrStop();
+	}
+
+	this.loadTrack = function(newTrack, slot) { //need
+		var timeNow = musicTrack.getTime();
+		if(!musicTrack[slot].getPaused()) {
+			musicTrack[slot].pause();
+			musicTrack[slot].setTime(0);
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].playFrom(timeNow);
+		} else {
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].setTime(timeNow);
+		}
+	}
+
+	this.updateVolume = function() {
+		for (var i in trackList) {
+			musicTrack[currentTrack].updateVolume();
+		}
+	}
+
+	this.setVolume = function(newVolume) {
+		trackVolume = newVolume;
+		musicTrack[currentTrack].setVolume(newVolume);
+	}
+
+	this.getVolume = function() {
+		return musicTrack[currentTrack].getVolume();
+	}
+
+	this.setTime = function(time) {
+		musicTrack[currentTrack].setTime(time);
+	}
+
+	this.getTime = function() {
+		return musicTrack[currentTrack].getTime();
+	}
+
+	this.setPlaybackRate = function(rate) {
+		musicTrack[currentTrack].setPlaybackRate(rate);
+	}
+
+	this.getPlaybackRate = function() {
+		return musicTrack[currentTrack].getPlaybackRate();
+	}
+	
+	this.setTrackName = function(name) {
+		musicTrack[currentTrack].setTrackName(name);
+	}
+
+	this.getTrackName = function() {
+		return musicTrack[currentTrack].getTrackName();
+	}
+	
+	this.getDuration = function() {
+		return musicTrack[currentTrack].getDuration();
+	}
+
+	this.getPaused = function() {
+		return musicTrack[currentTrack].getPaused();
+	}
+}
