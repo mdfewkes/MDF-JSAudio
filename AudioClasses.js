@@ -787,6 +787,14 @@ function musicContainerList(trackList) {
 		}
 	}
 
+	this.setCurrentTrack = function(trackNumber) {
+		currentTrack = trackNumber;
+	}
+
+	this.getCurrentTrack = function() {
+		 return currentTrack;
+	}
+
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
 		musicTrack[currentTrack].setVolume(newVolume);
