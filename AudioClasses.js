@@ -216,7 +216,7 @@ function sfxClipOverlap(filenameWithPath, voices) {
 	}
 }
 
-function sfxContainerListRandom(clipList) {
+function sfxContainerRandom(clipList) {
 	var soundFile = [];
 	currentClip = 0;
 
@@ -621,94 +621,6 @@ function musicTrackStinger(filenameWithPath) {
 	}
 }
 
-function musicContainer(track) {
-	var musicTrack = track;
-	var trackVolume = 1;
-
-	this.play = function() {
-		musicTrack.play();
-	}
-
-	this.stop = function() {
-		musicTrack.stop();
-	}
-
-	this.resume = function() {
-		musicTrack.resume();
-	}
-
-	this.pause = function() {
-		musicTrack.pause();
-	}
-
-	this.playFrom = function(time) {
-		musicTrack.playFrom(time);
-	}
-
-	this.startOrStop = function() {
-		musicTrack.startOrStop();
-	}
-
-	this.loadTrack = function(newTrack) {
-		var timeNow = musicTrack.getTime();
-		if(!musicTrack.getPaused()) {
-			musicTrack.pause();
-			musicTrack.setTime(0);
-			musicTrack = newTrack;
-			musicTrack.setVolume(trackVolume);
-			musicTrack.playFrom(timeNow);
-		} else {
-			musicTrack = newTrack;
-			musicTrack.setVolume(trackVolume);
-			musicTrack.setTime(timeNow);
-		}
-	}
-
-	this.updateVolume = function() {
-		musicTrack.updateVolume();
-	}
-
-	this.setVolume = function(newVolume) {
-		trackVolume = newVolume;
-		musicTrack.setVolume(newVolume);
-	}
-
-	this.getVolume = function() {
-		return musicTrack.getVolume();
-	}
-
-	this.setTime = function(time) {
-		musicTrack.setTime(time);
-	}
-
-	this.getTime = function() {
-		return musicTrack.getTime();
-	}
-
-	this.setPlaybackRate = function(rate) {
-		musicTrack.setPlaybackRate(rate);
-	}
-
-	this.getPlaybackRate = function() {
-		return musicTrack.getPlaybackRate();
-	}
-	
-	this.setTrackName = function(name) {
-		musicTrack.setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		return musicTrack.getTrackName();
-	}
-	
-	this.getDuration = function() {
-		return musicTrack.getDuration();
-	}
-
-	this.getPaused = function() {
-		return musicTrack.getPaused();
-	}
-}
 
 function musicContainerCrossfade(track1, track2) {
 	var musicTrack = new Array(track1, track2);
@@ -808,7 +720,7 @@ function musicContainerCrossfade(track1, track2) {
 	}
 }
 
-function musicContainerList(trackList) {
+function musicContainer(trackList) {
 	var musicTrack = [];
 	var currentTrack = 0;
 
@@ -874,6 +786,10 @@ function musicContainerList(trackList) {
 
 	this.getCurrentTrack = function() {
 		 return currentTrack;
+	}
+
+	this.getListLength = function() {
+		 return musicTrack.length;
 	}
 
 	this.setVolume = function(newVolume) {
