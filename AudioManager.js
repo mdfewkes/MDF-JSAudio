@@ -4,7 +4,7 @@ isMuted = false;
 //set sound clips and music tracks here
 var track1 = new musicTrackLoopingWTail("Audio/lay1tail8", 8);
 var track2 = new musicTrackLoopingWTail("Audio/lay2tail8", 8);
-var track3 = new musicTrackLoopingWTail("Audio/lay3tail8", 8);
+var track3 = new musicTrackLoopingWTail("Audio/LayTail34", 8);
 var backgroundMusic = new musicContainerCrossfade([track1, track2, track3]);
 
 //var clip1 = new sfxClipOverlap("Audio/Death", 3);
@@ -13,7 +13,7 @@ track1.setTrackName("track1");
 track2.setTrackName("track2");
 track3.setTrackName("track3");
 track2.setMixVolume(0.85);
-track3.setMixVolume(0.5);
+track3.setMixVolume(0.75);
 
 
 

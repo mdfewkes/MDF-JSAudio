@@ -815,12 +815,14 @@ function musicContainerCrossfade(trackList) {
 
 	this.switchTo = function(slot, fadeTime = 1) {
 		var timeNow = musicTrack[currentTrack].getTime();
-		if(currentTrack != slot) {
+		if(currentTrack != slot && !musicTrack[currentTrack].getPaused()) {
 			musicTrack[slot].playFrom(timeNow);
-			AudioEventManager.removeStopEvent(musicTrack[currentTrack]);
 			AudioEventManager.addFadeEvent(musicTrack[currentTrack], fadeTime, 0);
 			AudioEventManager.addFadeEvent(musicTrack[slot], fadeTime, trackVolume);
-			//AudioEventManager.addStopEvent(musicTrack[currentTrack], fadeTime + 1);
+			currentTrack = slot;
+		} else if (currentTrack != slot) {
+			musicTrack[slot].setTime(timeNow);
+			musicTrack[currentTrack].stop();
 			currentTrack = slot;
 		}
 
