@@ -36,11 +36,11 @@
 		if (backgroundMusic.getTrackName() != "track3") {backgroundMusic.loadTrack(track3);}
 	});
 
-	volumeSlider.oninput = function(){backgroundMusic.setVolume(this.value/100);}
+	volumeSlider.oninput = function(){MusicVolumeManager.setVolume(this.value/100);}
 	
 	window.onload = function() {
 
-		backgroundMusic.setVolume(0.75);
+		MusicVolumeManager.setVolume(0.75);
 
 		setInterval(function(){musicManager.updateEvents();}, 33.3);
 	

@@ -2,15 +2,27 @@
 var isMuted = false;
 
 //SFX Classes
-
 var sfxVolume = 1;
+SFXVolumeManager = new sfxVolumeManager();
+function sfxVolumeManager() {
+	var clipList = [];
 
-function setSFXVolume(amount) {
-	sfxVolume = amount;
-}
+	this.setVolume = function(amount) {
+		if (amount > 1) {sfxVolume = 1;}
+		else if (amount < 0) {sfxVolume = 0;}
+		else {sfxVolume = amount;}
+		for (var i in clipList) {
+			clipList[i].updateVolume();
+		}
+	}
 
-function getSFXVolume() {
-	return sfxVolume;
+	this.getVolume = function() {
+		return sfxVolume;
+	}
+
+	this.addToList = function(sfxClip) {
+		clipList.push(sfxClip);
+	}
 }
 
 function getRandomVolume(){
@@ -36,6 +48,8 @@ function sfxClipSingle(filenameWithPath) {
 	var duration = soundFile.duration;
 
 	soundFile.pause();
+	SFXVolumeManager.addToList(this);
+
 
 	this.play = function() {
 		soundFile.currentTime = 0;
@@ -127,6 +141,9 @@ function sfxClipOverlap(filenameWithPath, voices) {
 	var randRate = true
 	var clipName = filenameWithPath;
 	var duration = soundFile[0].duration;
+
+
+	SFXVolumeManager.addToList(this);
 
 	this.play = function() {
 		currentClip++;
@@ -303,6 +320,27 @@ function sfxContainerRandom(clipList) {
 //Music Classes
 
 var musicVolume = 1;
+MusicVolumeManager = new musicVolumeManager();
+function musicVolumeManager() {
+	var trackList = [];
+
+	this.setVolume = function(amount) {
+		if (amount > 1) {musicVolume = 1;}
+		else if (amount < 0) {musicVolume = 0;}
+		else {musicVolume = amount;}
+		for (var i in trackList) {
+			trackList[i].updateVolume();
+		}
+	}
+
+	this.getVolume = function() {
+		return musicVolume;
+	}
+
+	this.addToList = function(musicTrack) {
+		trackList.push(musicTrack);
+	}
+}
 
 function setMusicVolume(amount) {
 	musicVolume = amount;
@@ -321,6 +359,7 @@ function musicTrackLooping(filenameWithPath) {
 
 	musicFile.pause();
 	musicFile.loop = true;
+	MusicVolumeManager.addToList(this);
 
 	this.play = function() {
 		musicFile.currentTime = 0;
@@ -420,6 +459,7 @@ function musicTrackLoopingWTail(filenameWithPath, playLength) {
 
 	musicFile[0].pause();
 	musicFile[1].pause();
+	MusicVolumeManager.addToList(this);
 
 	this.play = function() {
 		musicFile[currentTrack].currentTime = 0;
@@ -532,6 +572,7 @@ function musicTrackStinger(filenameWithPath) {
 
 	musicFile.pause();
 	musicFile.loop = false;
+	MusicVolumeManager.addToList(this);
 
 	this.play = function() {
 		musicFile.currentTime = 0;
@@ -620,7 +661,6 @@ function musicTrackStinger(filenameWithPath) {
 		return musicFile.paused;
 	}
 }
-
 
 function musicContainerCrossfade(track1, track2) {
 	var musicTrack = new Array(track1, track2);
