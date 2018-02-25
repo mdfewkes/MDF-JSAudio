@@ -5,7 +5,7 @@ isMuted = false;
 var track1 = new musicTrackLoopingWTail("Audio/lay1tail8", 8);
 var track2 = new musicTrackLoopingWTail("Audio/lay2tail8", 8);
 var track3 = new musicTrackLoopingWTail("Audio/lay3tail8", 8);
-var backgroundMusic = new musicContainerCrossfade(track1);
+var backgroundMusic = new musicContainerCrossfade([track1, track2, track3]);
 
 //var clip1 = new sfxClipOverlap("Audio/Death", 3);
 

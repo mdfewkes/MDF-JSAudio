@@ -27,13 +27,13 @@
 	pauseButton.addEventListener('click', function(){backgroundMusic.pause();});
 
 	track1Button.addEventListener('click', function(){
-		if (backgroundMusic.getTrackName() != "track1") {backgroundMusic.loadTrack(track1, 0.5);}
+		if (backgroundMusic.getTrackName() != "track1") {backgroundMusic.switchTo(0, 0.5);}
 	});
 	track2Button.addEventListener('click', function(){
-		if (backgroundMusic.getTrackName() != "track2") {backgroundMusic.loadTrack(track2, 0.25);}
+		if (backgroundMusic.getTrackName() != "track2") {backgroundMusic.switchTo(1, 0.25);}
 	});
 	track3Button.addEventListener('click', function(){
-		if (backgroundMusic.getTrackName() != "track3") {backgroundMusic.loadTrack(track3);}
+		if (backgroundMusic.getTrackName() != "track3") {backgroundMusic.switchTo(2);}
 	});
 
 	volumeSlider.oninput = function(){MusicVolumeManager.setVolume(this.value/100);}
