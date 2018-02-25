@@ -49,9 +49,9 @@ const FADE = 1; // Arrayformat [FADE, track, startTime, endTime, startVolume, en
 const TIMER = 2; // Arrayformat [TIMER, track, endTime, callSign]
 const STOP = 3; // Arrayformat [STOP, track, endTime]
 
-var musicManager = new musicEventManager();
+var AudioEventManager = new audioEventManager();
 
-function musicEventManager() {
+function audioEventManager() {
 	var eventList = [];
 	var now = Date.now();
 
@@ -69,7 +69,7 @@ function musicEventManager() {
 		var check = checkListFor(FADE, track);
 		var endTime = duration * 1000 + now;
 		var startVolume = track.getVolume();
-		console.log("Adding Fade Event for " + track.getTrackName());
+		//console.log("Adding Fade Event for " + track.getTrackName());
 
 		if (check == "none") {
 			eventList.push([FADE, track, now, endTime, startVolume, endVol]);
@@ -84,7 +84,7 @@ function musicEventManager() {
 		var endTime = (thisTrack.getDuration() - thisTrack.getTime()) * 1000 + now;
 
 		if (check == "none") {
-			console.log("Adding Timer Event for " + track.getTrackName());
+			//console.log("Adding Timer Event for " + track.getTrackName());
 			eventList.push([TIMER, track, endTime, callSign]);
 		} else {
 			eventList[check] = [TIMER, track, endTime, callSign];
@@ -97,7 +97,7 @@ function musicEventManager() {
 		var endTime = (thisTrack.getDuration() - thisTrack.getTime()) * 1000 + now;
 
 		if (check == "none") {
-			console.log("Adding Stop Event for " + track.getTrackName());
+			//console.log("Adding Stop Event for " + track.getTrackName());
 			eventList.push([STOP, track, endTime]);
 		} else {
 			eventList[check] = [STOP, track, endTime];
@@ -111,7 +111,7 @@ function musicEventManager() {
 		if (check == "none") {
 			return;
 		} else {
-			console.log("Removing Stop Event for " + track.getTrackName());
+			//console.log("Removing Stop Event for " + track.getTrackName());
 			eventList[check] = [REMOVE];
 		}
 	}
@@ -123,7 +123,7 @@ function musicEventManager() {
 				if (thisTrack.getPaused() == false) {
 						thisTrack.setVolume(interpolateFade(eventList[i][2], eventList[i][3], eventList[i][4], eventList[i][5], now));
 					if (eventList[i][3] < now) {
-						console.log("Ending Fade Event for " + thisTrack.getTrackName());
+						//console.log("Ending Fade Event for " + thisTrack.getTrackName());
 						eventList[i] = [REMOVE];
 					}
 				}
@@ -132,7 +132,7 @@ function musicEventManager() {
 				thisTrack = eventList[i][1];
 				if (thisTrack.getPaused() == false) {
 					if (eventList[i][2] <= now) {
-						console.log("Ending Timer Event for " + thisTrack.getTrackName());
+						//console.log("Ending Timer Event for " + thisTrack.getTrackName());
 						eventList[i] = [REMOVE];
 						thisTrack.triggerTimerEnded(eventList[i][3]);
 					}
@@ -144,7 +144,7 @@ function musicEventManager() {
 				thisTrack = eventList[i][1];
 				if (thisTrack.getPaused() == false) {
 					if (eventList[i][2] <= now) {
-						console.log("Executing Stop Event for " + thisTrack.getTrackName());
+						//console.log("Executing Stop Event for " + thisTrack.getTrackName());
 						eventList[i] = [REMOVE];
 						thisTrack.stop();
 					}

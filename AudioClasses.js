@@ -465,7 +465,7 @@ function musicTrackLoopingWTail(filenameWithPath, playLength) {
 		musicFile[currentTrack].currentTime = 0;
 		this.updateVolume();
 		musicFile[currentTrack].play();
-		musicManager.addTimerEvent(this, "loop");
+		AudioEventManager.addTimerEvent(this, "loop");
 	}
 
 	this.stop = function() {
@@ -477,7 +477,7 @@ function musicTrackLoopingWTail(filenameWithPath, playLength) {
 
 	this.resume = function() {
 		musicFile[currentTrack].play();
-		musicManager.addTimerEvent(this, "loop");
+		AudioEventManager.addTimerEvent(this, "loop");
 	}
 
 	this.pause = function() {
@@ -488,7 +488,7 @@ function musicTrackLoopingWTail(filenameWithPath, playLength) {
 	this.playFrom = function(time) {
 		musicFile[currentTrack].currentTime = time;
 		musicFile[currentTrack].play();
-		musicManager.addTimerEvent(this, "loop");
+		AudioEventManager.addTimerEvent(this, "loop");
 	}
 
 	this.startOrStop = function() {
@@ -701,10 +701,10 @@ function musicContainerCrossfade(track1, track2) {
 			musicTrack[altTrack] = newTrack;
 			musicTrack[altTrack].setVolume(0);
 			musicTrack[altTrack].playFrom(timeNow);
-			musicManager.removeStopEvent(musicTrack[currentTrack]);
-			musicManager.addFadeEvent(musicTrack[currentTrack], fadeTime, 0);
-			musicManager.addFadeEvent(musicTrack[altTrack], fadeTime, trackVolume);
-			musicManager.addStopEvent(musicTrack[currentTrack], fadeTime);
+			AudioEventManager.removeStopEvent(musicTrack[currentTrack]);
+			AudioEventManager.addFadeEvent(musicTrack[currentTrack], fadeTime, 0);
+			AudioEventManager.addFadeEvent(musicTrack[altTrack], fadeTime, trackVolume);
+			AudioEventManager.addStopEvent(musicTrack[currentTrack], fadeTime);
 			currentTrack = altTrack;
 		} else {
 			musicTrack[currentTrack] = newTrack;
