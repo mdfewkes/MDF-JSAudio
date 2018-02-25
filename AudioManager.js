@@ -2,7 +2,7 @@ setFormat();
 isMuted = false;
 
 //set sound clips and music tracks here
-var track1 = new musicTrackLoopingWTail("Audio/lay1tail8", 8);
+var track1 = new musicTrackLoopingWTail("Audio/lay4tail16", 16);
 var track2 = new musicTrackLoopingWTail("Audio/lay2tail8", 8);
 var track3 = new musicTrackLoopingWTail("Audio/LayTail34", 8);
 var backgroundMusic = new musicContainerCrossfade([track1, track2, track3]);
