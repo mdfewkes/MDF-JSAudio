@@ -6,6 +6,10 @@ var track1 = new musicTrackLoopingWTail("Audio/lay4tail16", 16);
 var track2 = new musicTrackLoopingWTail("Audio/lay2tail8", 8);
 var track3 = new musicTrackLoopingWTail("Audio/LayTail34", 8);
 var backgroundMusic = new musicContainerCrossfade([track1, track2, track3]);
+var layer1 = new musicTrackLoopingWTail("Audio/clavtail2", 2);
+var layer2 = new musicTrackLoopingWTail("Audio/cabasatail2", 2);
+var layer3 = new musicTrackLoopingWTail("Audio/kicktail2", 2);
+var backgroundPerc = new musicContainerLayers([layer1, layer2, layer3]);
 
 //var clip1 = new sfxClipOverlap("Audio/Death", 3);
 
@@ -15,7 +19,9 @@ track3.setTrackName("track3");
 track2.setMixVolume(0.85);
 track3.setMixVolume(0.75);
 
-
+layer1.setTrackName("layer1");
+layer2.setTrackName("layer2");
+layer3.setTrackName("layer3");
 
 
 
