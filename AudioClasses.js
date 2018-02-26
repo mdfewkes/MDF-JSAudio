@@ -711,6 +711,15 @@ function musicContainer(trackList) {
 		}
 	}
 
+	this.setVolume = function(newVolume) {
+		trackVolume = newVolume;
+		musicTrack[currentTrack].setVolume(newVolume);
+	}
+
+	this.getVolume = function() {
+		return musicTrack[currentTrack].getVolume();
+	}
+
 	this.setCurrentTrack = function(trackNumber) {
 		currentTrack = trackNumber;
 	}
@@ -721,15 +730,6 @@ function musicContainer(trackList) {
 
 	this.getListLength = function() {
 		 return musicTrack.length;
-	}
-
-	this.setVolume = function(newVolume) {
-		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
-	}
-
-	this.getVolume = function() {
-		return musicTrack[currentTrack].getVolume();
 	}
 
 	this.setTime = function(time) {
@@ -840,6 +840,15 @@ function musicContainerCrossfade(trackList) {
 		}
 	}
 
+	this.setVolume = function(newVolume) {
+		trackVolume = newVolume;
+		musicTrack[currentTrack].setVolume(newVolume);
+	}
+
+	this.getVolume = function() {
+		return musicTrack[currentTrack].getVolume();
+	}
+
 	this.setCurrentTrack = function(trackNumber) {
 		currentTrack = trackNumber;
 	}
@@ -850,15 +859,6 @@ function musicContainerCrossfade(trackList) {
 
 	this.getListLength = function() {
 		 return musicTrack.length;
-	}
-
-	this.setVolume = function(newVolume) {
-		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
-	}
-
-	this.getVolume = function() {
-		return musicTrack[currentTrack].getVolume();
 	}
 
 	this.setTime = function(time) {

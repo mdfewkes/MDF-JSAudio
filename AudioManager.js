@@ -192,8 +192,9 @@ function interpolateFade(startTime, endTime, startVolume, endVolume, currentTime
 
 	x = now
 	y = y1 + (x - x1)((y2 - y1)/(x2 - x1))
-    startVolume + (now - startTime)((endVolume - startVolume)/(endTime - startTime))
+    output = startVolume + (now - startTime) * ((endVolume - startVolume) / (endTime - startTime))
 	*/
+	if (currentTime > endTime) {currentTime = endTime;}
 	var output = startVolume + (currentTime - startTime) * ((endVolume - startVolume) / (endTime - startTime));
 
 	return output;
