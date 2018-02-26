@@ -20,6 +20,12 @@ function sfxVolumeManager() {
 		return sfxVolume;
 	}
 
+	this.updateVolume = function() {
+		for(var i in clipList) {
+			clipList[i].updateVolume();
+		}
+	}
+
 	this.addToList = function(sfxClip) {
 		clipList.push(sfxClip);
 	}
@@ -432,6 +438,12 @@ function musicVolumeManager() {
 
 	this.getVolume = function() {
 		return musicVolume;
+	}
+
+	this.updateVolume = function() {
+		for(var i in trackList) {
+			trackList[i].updateVolume();
+		}
 	}
 
 	this.addToList = function(musicTrack) {

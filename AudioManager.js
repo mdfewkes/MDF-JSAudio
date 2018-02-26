@@ -37,14 +37,20 @@ function setFormat() {
 
 function toggleMute() {
 	isMuted = !isMuted;
+	SFXVolumeManager.updateVolume();
+	MusicVolumeManager.updateVolume();
 }
 
 function setMute(TorF) {
 	isMuted = TorF;
+	SFXVolumeManager.updateVolume();
+	MusicVolumeManager.updateVolume();
 }
 
 function getMute(TorF) {
 	return isMuted;
+	SFXVolumeManager.updateVolume();
+	MusicVolumeManager.updateVolume();
 }
 
 
