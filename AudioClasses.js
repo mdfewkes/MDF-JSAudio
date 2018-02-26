@@ -256,7 +256,7 @@ function sfxContainer(clipList) {
 		}
 	}
 
-	this.loadClip = function(newClip, slot) { //need
+	this.loadClip = function(newClip, slot) {
 		soundFile[slot] = newClip;
 	}
 
@@ -351,7 +351,7 @@ function sfxContainerRandom(clipList) {
 		}
 	}
 
-	this.loadClip = function(newClip, slot) { //need
+	this.loadClip = function(newClip, slot) {
 		soundFile[slot] = newClip;
 	}
 
@@ -416,7 +416,6 @@ function sfxContainerRandom(clipList) {
 
 
 //Music Classes
-
 var musicVolume = 1;
 MusicVolumeManager = new musicVolumeManager();
 function musicVolumeManager() {
@@ -788,7 +787,7 @@ function musicContainer(trackList) {
 		musicTrack[currentTrack].startOrStop();
 	}
 
-	this.loadTrack = function(newTrack, slot) { //need
+	this.loadTrack = function(newTrack, slot) {
 		var timeNow = musicTrack.getTime();
 		if(!musicTrack[slot].getPaused()) {
 			musicTrack[slot].pause();
@@ -902,7 +901,7 @@ function musicContainerCrossfade(trackList) {
 		musicTrack[currentTrack].startOrStop();
 	}
 
-	this.loadTrack = function(newTrack, slot) { //need
+	this.loadTrack = function(newTrack, slot) {
 		var timeNow = musicTrack.getTime();
 		if(!musicTrack[slot].getPaused()) {
 			musicTrack[slot].pause();
@@ -969,6 +968,149 @@ function musicContainerCrossfade(trackList) {
 
 	this.setPlaybackRate = function(rate) {
 		musicTrack[currentTrack].setPlaybackRate(rate);
+	}
+
+	this.getPlaybackRate = function() {
+		return musicTrack[currentTrack].getPlaybackRate();
+	}
+	
+	this.setTrackName = function(name) {
+		musicTrack[currentTrack].setTrackName(name);
+	}
+
+	this.getTrackName = function() {
+		return musicTrack[currentTrack].getTrackName();
+	}
+	
+	this.getDuration = function() {
+		return musicTrack[currentTrack].getDuration();
+	}
+
+	this.getPaused = function() {
+		return musicTrack[currentTrack].getPaused();
+	}
+}
+
+function musicContainerLayers(trackList) {
+	var musicTrack = [];
+	var musicTrackVolume = [];
+	var currentTrack = 0;
+
+	for (var i in trackList) {
+		musicTrack[i] = trackList[i];
+		musicTrack[i].pause();
+		musicTrackVolume[i] = 0;
+		musicTrack[i].setVolume(0);
+	}
+
+	var trackVolume = 1;
+
+	this.play = function() {
+		for (var i in trackList) {
+			musicTrack[i].play();
+		}
+	}
+
+	this.stop = function() {
+		for (var i in trackList) {
+			musicTrack[i].stop();
+		}
+	}
+
+	this.resume = function() {
+		for (var i in trackList) {
+			musicTrack[i].resume();
+		}
+	}
+
+	this.pause = function() {
+		for (var i in trackList) {
+			musicTrack[i].pause();
+		}
+	}
+
+	this.playFrom = function(time) {
+		for (var i in trackList) {
+			musicTrack[i].playFrom(time);
+		}
+	}
+
+	this.startOrStop = function() {
+		for (var i in trackList) {
+			musicTrack[i].startOrStop();
+		}
+	}
+
+	this.loadTrack = function(newTrack, slot) {
+		var timeNow = musicTrack.getTime();
+		if(!musicTrack[slot].getPaused()) {
+			musicTrack[slot].pause();
+			musicTrack[slot].setTime(0);
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].playFrom(timeNow);
+		} else {
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].setTime(timeNow);
+		}
+	}
+
+	this.setLayerLevel = function(slot, level, fadeTime = 1) {
+		if (trackList[slot].getPaused()) {
+			var timeNow = 0;
+			for(var i in trackList) {
+				if (!trackList[i].getPaused()) {
+					timeNow = trackList[i].getTime();
+				}
+			}
+			trackList[slot].playFrom(timeNow);
+		}
+		AudioEventManager.addFadeEvent(trackList[slot], fadeTime, level);
+
+	}
+
+	this.updateVolume = function() {
+		for (var i in trackList) {
+			musicTrack[i].updateVolume();
+		}
+	}
+
+	this.setVolume = function(newVolume) {
+		trackVolume = newVolume;
+		musicTrack[currentTrack].setVolume(newVolume);
+	}
+
+	this.getVolume = function() {
+		return musicTrack[currentTrack].getVolume();
+	}
+
+	this.setCurrentTrack = function(trackNumber) {
+		currentTrack = trackNumber;
+	}
+
+	this.getCurrentTrack = function() {
+		 return currentTrack;
+	}
+
+	this.getListLength = function() {
+		 return musicTrack.length;
+	}
+
+	this.setTime = function(time) {
+		for (var i in trackList) {
+			musicTrack[i].setTime(time);
+		}
+	}
+
+	this.getTime = function() {
+		return musicTrack[currentTrack].getTime();
+	}
+
+	this.setPlaybackRate = function(rate) {
+		for (var i in trackList) {
+			musicTrack[i].setPlaybackRate(rate);
+		}
 	}
 
 	this.getPlaybackRate = function() {
