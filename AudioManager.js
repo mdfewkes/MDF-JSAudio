@@ -5,11 +5,12 @@ isMuted = false;
 var track1 = new musicTrackLoopingWTail("Audio/lay4tail16", 16);
 var track2 = new musicTrackLoopingWTail("Audio/lay2tail8", 8);
 var track3 = new musicTrackLoopingWTail("Audio/LayTail34", 8);
-var backgroundMusic = new musicContainerCrossfade([track1, track2, track3]);
+var backgroundTracks = new musicContainerCrossfade([track1, track2, track3]);
 var layer1 = new musicTrackLoopingWTail("Audio/clavtail2", 2);
 var layer2 = new musicTrackLoopingWTail("Audio/cabasatail2", 2);
 var layer3 = new musicTrackLoopingWTail("Audio/kicktail2", 2);
-var backgroundPerc = new musicContainerLayers([layer1, layer2, layer3]);
+var backgroundLayers = new musicContainerLayers([layer1, layer2, layer3]);
+var backgroundMusic = new musicContainer([backgroundTracks]);
 
 //var clip1 = new sfxClipOverlap("Audio/Death", 3);
 

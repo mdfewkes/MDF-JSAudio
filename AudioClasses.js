@@ -800,7 +800,7 @@ function musicContainer(trackList) {
 	}
 
 	this.loadTrack = function(newTrack, slot) {
-		var timeNow = musicTrack.getTime();
+		var timeNow = musicTrack[currentTrack].getTime();
 		if(!musicTrack[slot].getPaused()) {
 			musicTrack[slot].pause();
 			musicTrack[slot].setTime(0);
@@ -914,7 +914,7 @@ function musicContainerCrossfade(trackList) {
 	}
 
 	this.loadTrack = function(newTrack, slot) {
-		var timeNow = musicTrack.getTime();
+		var timeNow = musicTrack[currentTrack].getTime();
 		if(!musicTrack[slot].getPaused()) {
 			musicTrack[slot].pause();
 			musicTrack[slot].setTime(0);
