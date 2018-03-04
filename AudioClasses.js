@@ -728,6 +728,7 @@ function musicTrackLoopingWTail(filenameWithPath, playLength) {
 		if(newTime < 0) {newTime = 0;}
 		while (newTime >= duration) {newTime -= duration;}
 		musicFile[currentTrack].currentTime = newTime;
+		AudioEventManager.addTimerEvent(this, "loop");
 	}
 
 	this.getTime = function() {
@@ -932,8 +933,8 @@ function musicContainerCrossfade(trackList) {
 		var timeNow = musicTrack[currentTrack].getTime();
 		if(currentTrack != slot && !musicTrack[currentTrack].getPaused()) {
 			musicTrack[slot].playFrom(timeNow);
-			AudioEventManager.addFadeEvent(musicTrack[currentTrack], fadeTime, 0);
-			AudioEventManager.addFadeEvent(musicTrack[slot], fadeTime, trackVolume);
+			AudioEventManager.addCrossfadeEvent(musicTrack[currentTrack], fadeTime, 0);
+			AudioEventManager.addCrossfadeEvent(musicTrack[slot], fadeTime, trackVolume);
 			currentTrack = slot;
 		} else if (currentTrack != slot) {
 			musicTrack[slot].setTime(timeNow);
