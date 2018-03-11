@@ -32,6 +32,9 @@ layer2.setTrackName("layer2");
 layer3.setTrackName("layer3");
 
 
+controles.setMixVolume(0.5);
+
+
 
 
 function setFormat() {

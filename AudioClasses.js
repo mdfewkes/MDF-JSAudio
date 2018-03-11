@@ -44,6 +44,7 @@ function sfxClipSingle(filenameWithPath) {
 	var randVolume = true;
 	var clipName = filenameWithPath;
 	var duration = soundFile.duration;
+	var mixVolume = 1;
 
 	soundFile.pause();
 	SFXVolumeManager.addToList(this);
@@ -70,21 +71,25 @@ function sfxClipSingle(filenameWithPath) {
 
 	this.updateVolume = function() {
 		if (randVolume) {
-			soundFile.volume = Math.pow(sfxVolume * clipVolume * getRandomVolume() * !isMuted, 2);
+			soundFile.volume = Math.pow(mixVolume * sfxVolume * clipVolume * getRandomVolume() * !isMuted, 2);
 		} else {
-			soundFile.volume = Math.pow(sfxVolume * clipVolume * !isMuted, 2);
+			soundFile.volume = Math.pow(mixVolume * sfxVolume * clipVolume * !isMuted, 2);
 		}
 	}
 
 	this.setVolume = function(newVolume) {
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		soundFile.volume = Math.pow(newVolume * sfxVolume * !isMuted, 2);
+		soundFile.volume = Math.pow(mixVolume * newVolume * sfxVolume * !isMuted, 2);
 		clipVolume = newVolume;
 	}
 
 	this.getVolume = function() {
 		return sfxVolume * clipVolume * !isMuted;
+	}
+
+	this.setMixVolume = function(volume) {
+		mixVolume = volume;
 	}
 
 	this.setTime = function(time) {
@@ -126,6 +131,7 @@ function sfxClipOverlap(filenameWithPath, voices) {
 	var randVolume = true;
 	var clipName = filenameWithPath;
 	var duration = soundFile[0].duration;
+	var mixVolume = 1;
 
 
 	SFXVolumeManager.addToList(this);
@@ -159,11 +165,11 @@ function sfxClipOverlap(filenameWithPath, voices) {
 	this.updateVolume = function() {
 		if (randVolume) {
 			for (var i in soundFile) {
-				soundFile[i].volume = Math.pow(sfxVolume * clipVolume * getRandomVolume() * !isMuted, 2);
+				soundFile[i].volume = Math.pow(mixVolume * sfxVolume * clipVolume * getRandomVolume() * !isMuted, 2);
 			}
 		} else {
 			for (var i in soundFile) {
-				soundFile[i].volume = Math.pow(sfxVolume * clipVolume * !isMuted, 2);
+				soundFile[i].volume = Math.pow(mixVolume * sfxVolume * clipVolume * !isMuted, 2);
 			}
 		}
 	}
@@ -172,13 +178,17 @@ function sfxClipOverlap(filenameWithPath, voices) {
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
 		for (var i in soundFile) {
-			soundFile[i].volume = Math.pow(newVolume * sfxVolume * !isMuted, 2);
+			soundFile[i].volume = Math.pow(mixVolume * newVolume * sfxVolume * !isMuted, 2);
 		}
 		clipVolume = newVolume;
 	}
 
 	this.getVolume = function() {
 		return sfxVolume * clipVolume * !isMuted;
+	}
+
+	this.setMixVolume = function(volume) {
+		mixVolume = volume;
 	}
 
 	this.setTime = function(time) {
@@ -215,6 +225,7 @@ function sfxClipSpriteSheet(filenameWithPath, listOfTimePairs) {
 	var duration = soundFile.duration;
 	var currentClip = 0;
 	var totalClips = times.length;
+	var mixVolume = 1;
 
 	soundFile.pause();
 	SFXVolumeManager.addToList(this);
@@ -245,21 +256,25 @@ function sfxClipSpriteSheet(filenameWithPath, listOfTimePairs) {
 
 	this.updateVolume = function() {
 		if (randVolume) {
-			soundFile.volume = Math.pow(sfxVolume * clipVolume * getRandomVolume() * !isMuted, 2);
+			soundFile.volume = Math.pow(mixVolume * sfxVolume * clipVolume * getRandomVolume() * !isMuted, 2);
 		} else {
-			soundFile.volume = Math.pow(sfxVolume * clipVolume * !isMuted, 2);
+			soundFile.volume = Math.pow(mixVolume * sfxVolume * clipVolume * !isMuted, 2);
 		}
 	}
 
 	this.setVolume = function(newVolume) {
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		soundFile.volume = Math.pow(newVolume * sfxVolume * !isMuted, 2);
+		soundFile.volume = Math.pow(mixVolume * newVolume * sfxVolume * !isMuted, 2);
 		clipVolume = newVolume;
 	}
 
 	this.getVolume = function() {
 		return sfxVolume * clipVolume * !isMuted;
+	}
+
+	this.setMixVolume = function(volume) {
+		mixVolume = volume;
 	}
 
 	this.setCurrentClip = function(clipNumber) {
