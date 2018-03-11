@@ -19,6 +19,8 @@ track2.setTrackName("track2");
 track3.setTrackName("track3");
 track2.setMixVolume(0.85);
 track3.setMixVolume(0.75);
+track2.setVolume(0.75);
+track3.setVolume(0);
 
 layer1.setTrackName("layer1");
 layer2.setTrackName("layer2");
@@ -104,10 +106,11 @@ function audioEventManager() {
 		}
 	}
 
-	this.addTimerEvent = function(track, callSign = "none") {
+	this.addTimerEvent = function(track, duration, callSign = "none") {
 		var thisTrack = track;
 		var check = checkListFor(TIMER, thisTrack, callSign);
-		var endTime = (thisTrack.getDuration() - thisTrack.getTime()) * 1000 + now;
+		var endTime = (duration * 1000) + now;
+		//var endTime = (thisTrack.getDuration() - thisTrack.getTime()) * 1000 + now;
 
 		if (check == "none") {
 			//console.log("Adding Timer Event for " + track.getTrackName());
