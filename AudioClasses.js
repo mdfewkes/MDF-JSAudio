@@ -558,10 +558,11 @@ function musicVolumeManager() {
 	}
 }
 
-function musicTrackStinger(filenameWithPath) {
+function musicTrackStinger(filenameWithPath, playLength) {
 	var musicFile = new Audio(filenameWithPath+audioFormat);
 	var duration = musicFile.duration;
 	var trackName = filenameWithPath;
+	var duration = playLength;
 	var trackVolume = 1;
 	var mixVolume = 1;
 
