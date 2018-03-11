@@ -38,18 +38,10 @@ function getRandomVolume(){
 	return randomVolume.toFixed(2);
 }
 
-function getRandomRate(){
-	var min = 0.85;
-	var max = 1.15;
-	var randomVolume = Math.random() * (max - min) + min;
-	return randomVolume.toFixed(2);
-}
-
 function sfxClipSingle(filenameWithPath) {
 	var soundFile = new Audio(filenameWithPath+audioFormat);
 	var clipVolume = 1;
 	var randVolume = true;
-	var randRate = true
 	var clipName = filenameWithPath;
 	var duration = soundFile.duration;
 
@@ -102,14 +94,6 @@ function sfxClipSingle(filenameWithPath) {
 	this.getTime = function() {
 		return soundFile.currentTime;
 	}
-
-	this.setPlaybackRate = function(rate) {
-		soundFile.playbackRate = rate;
-	}
-
-	this.getPlaybackRate = function() {
-		return soundFile.playbackRate;
-	}
 	
 	this.setClipName = function(name) {
 		clipName = name;
@@ -140,7 +124,6 @@ function sfxClipOverlap(filenameWithPath, voices) {
 	var currentClip = 0;
 	var clipVolume = 1;
 	var randVolume = true;
-	var randRate = true
 	var clipName = filenameWithPath;
 	var duration = soundFile[0].duration;
 
@@ -204,14 +187,6 @@ function sfxClipOverlap(filenameWithPath, voices) {
 
 	this.getTime = function() {
 		return soundFile[currentClip].currentTime;
-	}
-
-	this.setPlaybackRate = function(rate) {
-		soundFile.playbackRate[currentClip] = rate;
-	}
-
-	this.getPlaybackRate = function() {
-		return soundFile[currentClip].playbackRate;
 	}
 	
 	this.setClipName = function(name) {
@@ -303,14 +278,6 @@ function sfxClipSpriteSheet(filenameWithPath, listOfTimePairs) {
 
 	this.getTime = function() {
 		return soundFile.currentTime;
-	}
-
-	this.setPlaybackRate = function(rate) {
-		soundFile.playbackRate = rate;
-	}
-
-	this.getPlaybackRate = function() {
-		return soundFile.playbackRate;
 	}
 	
 	this.setClipName = function(name) {
@@ -455,14 +422,6 @@ function sfxContainer(clipList) {
 	this.getTime = function() {
 		return soundFile[currentClip].getTime();
 	}
-
-	this.setPlaybackRate = function(rate) {
-		soundFile[currentClip].setPlaybackRate(rate);
-	}
-
-	this.getPlaybackRate = function() {
-		return soundFile[currentClip].getPlaybackRate();
-	}
 	
 	this.setClipName = function(name) {
 		soundFile[currentClip].setClipName(name);
@@ -549,14 +508,6 @@ function sfxContainerRandom(clipList) {
 
 	this.getTime = function() {
 		return soundFile[currentClip].getTime();
-	}
-
-	this.setPlaybackRate = function(rate) {
-		soundFile[currentClip].setPlaybackRate(rate);
-	}
-
-	this.getPlaybackRate = function() {
-		return soundFile[currentClip].getPlaybackRate();
 	}
 	
 	this.setClipName = function(name) {
@@ -677,14 +628,6 @@ function musicTrackStinger(filenameWithPath) {
 	this.getTime = function() {
 		return musicFile.currentTime;
 	}
-
-	this.setPlaybackRate = function(rate) {
-		musicFile.playbackRate = rate;
-	}
-
-	this.getPlaybackRate = function() {
-		return musicFile.playbackRate;
-	}
 	
 	this.setTrackName = function(name) {
 		trackName = name;
@@ -775,14 +718,6 @@ function musicTrackLooping(filenameWithPath) {
 
 	this.getTime = function() {
 		return musicFile.currentTime;
-	}
-
-	this.setPlaybackRate = function(rate) {
-		musicFile.playbackRate = rate;
-	}
-
-	this.getPlaybackRate = function() {
-		return musicFile.playbackRate;
 	}
 	
 	this.setTrackName = function(name) {
@@ -890,15 +825,6 @@ function musicTrackLoopingWTail(filenameWithPath, playLength) {
 	this.getTime = function() {
 		return musicFile[currentTrack].currentTime;
 	}
-
-	this.setPlaybackRate = function(rate) {
-		musicFile[0].playbackRate = rate;
-		musicFile[1].playbackRate = rate;
-	}
-
-	this.getPlaybackRate = function() {
-		return musicFile[currentTrack].playbackRate;
-	}
 	
 	this.setTrackName = function(name) {
 		trackName = name;
@@ -1004,14 +930,6 @@ function musicContainer(trackList) {
 
 	this.getTime = function() {
 		return musicTrack[currentTrack].getTime();
-	}
-
-	this.setPlaybackRate = function(rate) {
-		musicTrack[currentTrack].setPlaybackRate(rate);
-	}
-
-	this.getPlaybackRate = function() {
-		return musicTrack[currentTrack].getPlaybackRate();
 	}
 	
 	this.setTrackName = function(name) {
@@ -1133,14 +1051,6 @@ function musicContainerCrossfade(trackList) {
 
 	this.getTime = function() {
 		return musicTrack[currentTrack].getTime();
-	}
-
-	this.setPlaybackRate = function(rate) {
-		musicTrack[currentTrack].setPlaybackRate(rate);
-	}
-
-	this.getPlaybackRate = function() {
-		return musicTrack[currentTrack].getPlaybackRate();
 	}
 	
 	this.setTrackName = function(name) {
@@ -1274,16 +1184,6 @@ function musicContainerLayers(trackList) {
 
 	this.getTime = function() {
 		return musicTrack[currentTrack].getTime();
-	}
-
-	this.setPlaybackRate = function(rate) {
-		for (var i in trackList) {
-			musicTrack[i].setPlaybackRate(rate);
-		}
-	}
-
-	this.getPlaybackRate = function() {
-		return musicTrack[currentTrack].getPlaybackRate();
 	}
 	
 	this.setTrackName = function(name) {
