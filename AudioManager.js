@@ -120,10 +120,11 @@ function audioEventManager() {
 		}
 	}
 
-	this.addStopEvent = function(track) {
+	this.addStopEvent = function(track, duration) {
 		var thisTrack = track;
-		var check = checkListFor(STOP, thisTrack);
-		var endTime = (thisTrack.getDuration() - thisTrack.getTime()) * 1000 + now;
+		var check = checkListFor(STOP, thisTrack, callSign);
+		var endTime = (duration * 1000) + now;
+		//var endTime = (thisTrack.getDuration() - thisTrack.getTime()) * 1000 + now;
 
 		if (check == "none") {
 			//console.log("Adding Stop Event for " + track.getTrackName());
