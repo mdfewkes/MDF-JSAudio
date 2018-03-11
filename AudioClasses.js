@@ -299,7 +299,7 @@ function sfxClipSpriteSheet(filenameWithPath, listOfTimePairs) {
 
 function sfxClipSprite(spriteSheet, clipNumber) {
 	var spriteFile = spriteSheet;
-	clip = clipNumber;
+	var clip = clipNumber;
 	var clipName = spriteFile.getClipName();
 
 	this.play = function() {

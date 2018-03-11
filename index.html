@@ -47,9 +47,12 @@
 	var layer2ButtonOut = document.getElementById("B_Layer2Out");
 	var layer3ButtonOut = document.getElementById("B_Layer3Out");
 	
-	playButton.addEventListener('click', function(){backgroundMusic.resume();});
-	pauseButton.addEventListener('click', function(){backgroundMusic.pause();});
-	stopButton.addEventListener('click', function(){backgroundMusic.stop();});
+	playButton.addEventListener('click', function(){backgroundMusic.resume();
+													conPlay.play();});
+	pauseButton.addEventListener('click', function(){backgroundMusic.pause();
+													conPause.play();});
+	stopButton.addEventListener('click', function(){backgroundMusic.stop();
+													conStop.play();});
 
 	sys1Button.addEventListener('click', function(){
 		backgroundMusic.loadTrack(backgroundTracks, 0);
