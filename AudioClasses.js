@@ -1097,6 +1097,7 @@ function musicContainerLayers(trackList) {
 		musicTrackVolume[i] = 0;
 		musicTrack[i].setVolume(0);
 	}
+	musicTrackVolume[0] = 1;
 
 	var trackVolume = 1;
 
@@ -1159,8 +1160,10 @@ function musicContainerLayers(trackList) {
 					timeNow = trackList[i].getTime();
 				}
 			}
+			trackList[slot].setVolume(level);
 			trackList[slot].playFrom(timeNow);
 		}
+		musicTrackVolume[slot] = level;
 		AudioEventManager.addFadeEvent(trackList[slot], fadeTime, level);
 
 	}
@@ -1173,11 +1176,13 @@ function musicContainerLayers(trackList) {
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
+		for (var i in trackList) {
+			musicTrack[i].setVolume(newVolume * musicTrackVolume[i]);
+		}
 	}
 
 	this.getVolume = function() {
-		return musicTrack[currentTrack].getVolume();
+		return musicTrack[currentTrack].getVolume() * musicTrackVolume[currentTrack];
 	}
 
 	this.setCurrentTrack = function(trackNumber) {

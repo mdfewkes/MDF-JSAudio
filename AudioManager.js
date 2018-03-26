@@ -12,7 +12,7 @@ var layer3 = new musicTrackLoopingWTail("Audio/kicktail2", 2);
 var backgroundLayers = new musicContainerLayers([layer1, layer2, layer3]);
 var backgroundMusic = new musicContainer([backgroundTracks]);
 
-var controles = new sfxClipSpriteSheet("Audio/controls", [[0,0.7],[1.1,2],[2.45,3.2]]);
+var controles = new sfxClipSpriteSheet("Audio/controls", [[0.085,0.7],[1.1,2],[2.45,3.2]]);
 var conPlay = new sfxClipSprite(controles, 0);
 var conPause = new sfxClipSprite(controles, 1);
 var conStop = new sfxClipSprite(controles, 2);
