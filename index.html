@@ -55,10 +55,10 @@
 													conStop.play();});
 
 	sys1Button.addEventListener('click', function(){
-		backgroundMusic.loadTrack(backgroundTracks, 0);
+		backgroundMusic.switchTo(0);
 	});
 	sys2Button.addEventListener('click', function(){
-		backgroundMusic.loadTrack(backgroundLayers, 0);
+		backgroundMusic.switchTo(1);
 	});
 
 	volumeSlider.oninput = function(){MusicVolumeManager.setVolume(this.value/100);}

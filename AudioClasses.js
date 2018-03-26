@@ -1089,6 +1089,7 @@ function musicContainerCrossfade(trackList) {
 function musicContainerLayers(trackList) {
 	var musicTrack = [];
 	var musicTrackVolume = [];
+	var trackVolume = 1;
 	var currentTrack = 0;
 
 	for (var i in trackList) {
@@ -1099,7 +1100,6 @@ function musicContainerLayers(trackList) {
 	}
 	musicTrackVolume[0] = 1;
 
-	var trackVolume = 1;
 
 	this.play = function() {
 		for (var i in trackList) {
@@ -1164,7 +1164,7 @@ function musicContainerLayers(trackList) {
 			trackList[slot].playFrom(timeNow);
 		}
 		musicTrackVolume[slot] = level;
-		AudioEventManager.addFadeEvent(trackList[slot], fadeTime, level);
+		AudioEventManager.addFadeEvent(trackList[slot], fadeTime, level * trackVolume);
 
 	}
 
