@@ -38,12 +38,12 @@ function getRandomVolume(){
 	return randomVolume.toFixed(2);
 }
 
-function sfxClipSingle(filenameWithPath) {
-	var soundFile = new Audio(filenameWithPath+audioFormat());
-	soundFile.onerror = function(){soundFile = new Audio(filenameWithPath+audioFormat(true))};
+function sfxClipSingle(filename) {
+	var soundFile = new Audio(audioPath+filename+audioFormat());
+	soundFile.onerror = function(){soundFile = new Audio(audioPath+filename+audioFormat(true))};
 	var clipVolume = 1;
 	var randVolume = true;
-	var clipName = filenameWithPath;
+	var clipName = filename;
 	var duration = soundFile.duration;
 	var mixVolume = 1;
 
@@ -118,20 +118,20 @@ function sfxClipSingle(filenameWithPath) {
 	}
 }
 
-function sfxClipOverlap(filenameWithPath, voices = 2) {
+function sfxClipOverlap(filename, voices = 2) {
 	var soundFile = new array(voices);
 	var maxVoices = soundfile.length;
 
 	for (var i in soundFile) {
-		soundFile[i] = new Audio(filenameWithPath+audioFormat());
-		soundFile[i].onerror = function(){soundFile[i] = new Audio(filenameWithPath+audioFormat(true))};
+		soundFile[i] = new Audio(audioPath+filename+audioFormat());
+		soundFile[i].onerror = function(){soundFile[i] = new Audio(audioPath+filename+audioFormat(true))};
 		soundFile[i].pause();
 	}
 
 	var currentClip = 0;
 	var clipVolume = 1;
 	var randVolume = true;
-	var clipName = filenameWithPath;
+	var clipName = filename;
 	var duration = soundFile[0].duration;
 	var mixVolume = 1;
 
@@ -218,13 +218,13 @@ function sfxClipOverlap(filenameWithPath, voices = 2) {
 	}
 }
 
-function sfxClipSpriteSheet(filenameWithPath, listOfTimePairs) {
-	var soundFile = new Audio(filenameWithPath+audioFormat());
-	soundFile.onerror = function(){soundFile = new Audio(filenameWithPath+audioFormat(true))};
+function sfxClipSpriteSheet(filename, listOfTimePairs) {
+	var soundFile = new Audio(audioPath+filename+audioFormat());
+	soundFile.onerror = function(){soundFile = new Audio(audioPath+filename+audioFormat(true))};
 	var times = listOfTimePairs;
 	var clipVolume = 1;
 	var randVolume = true;
-	var clipName = filenameWithPath;
+	var clipName = filename;
 	var duration = soundFile.duration;
 	var currentClip = 0;
 	var totalClips = times.length;
@@ -576,11 +576,11 @@ function musicVolumeManager() {
 	}
 }
 
-function musicTrackNonLooping(filenameWithPath, playLength) {
-	var musicFile = new Audio(filenameWithPath+audioFormat());
-	musicFile.onerror = function(){musicFile = new Audio(filenameWithPath+audioFormat(true))};
+function musicTrackNonLooping(filename, playLength) {
+	var musicFile = new Audio(audioPath+filename+audioFormat());
+	musicFile.onerror = function(){musicFile = new Audio(audioPath+filename+audioFormat(true))};
 	var duration = musicFile.duration;
-	var trackName = filenameWithPath;
+	var trackName = filename;
 	var duration = playLength;
 	var trackVolume = 1;
 	var mixVolume = 1;
@@ -666,11 +666,11 @@ function musicTrackNonLooping(filenameWithPath, playLength) {
 	}
 }
 
-function musicTrackLooping(filenameWithPath) {
-	var musicFile = new Audio(filenameWithPath+audioFormat());
-	musicFile.onerror = function(){musicFile = new Audio(filenameWithPath+audioFormat(true))};
+function musicTrackLooping(filename) {
+	var musicFile = new Audio(audioPath+filename+audioFormat());
+	musicFile.onerror = function(){musicFile = new Audio(audioPath+filename+audioFormat(true))};
 	var duration = musicFile.duration;
-	var trackName = filenameWithPath;
+	var trackName = filename;
 	var trackVolume = 1;
 	var mixVolume = 1;
 
@@ -758,13 +758,13 @@ function musicTrackLooping(filenameWithPath) {
 	}
 }
 
-function musicTrackLoopingWTail(filenameWithPath, playLength) {
-	var musicFile = new Array(new Audio(filenameWithPath+audioFormat()), new Audio(filenameWithPath+audioFormat()));
-	musicFile[0].onerror = function(){musicFile[0] = new Audio(filenameWithPath+audioFormat(true))}
-	musicFile[1].onerror = function(){musicFile[1] = new Audio(filenameWithPath+audioFormat(true))}
+function musicTrackLoopingWTail(filename, playLength) {
+	var musicFile = new Array(new Audio(audioPath+filename+audioFormat()), new Audio(audioPath+filename+audioFormat()));
+	musicFile[0].onerror = function(){musicFile[0] = new Audio(audioPath+filename+audioFormat(true))}
+	musicFile[1].onerror = function(){musicFile[1] = new Audio(audioPath+filename+audioFormat(true))}
 	var currentTrack = 0;
 	var duration = playLength;
-	var trackName = filenameWithPath;
+	var trackName = filename;
 	var trackVolume = 1;
 	var mixVolume = 1;
 
