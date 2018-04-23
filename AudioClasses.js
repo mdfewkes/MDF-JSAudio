@@ -573,7 +573,7 @@ function musicVolumeManager() {
 	}
 }
 
-function musicTrackStinger(filenameWithPath, playLength) {
+function musicTrackNonLooping(filenameWithPath, playLength) {
 	var musicFile = new Audio(filenameWithPath+audioFormat);
 	var duration = musicFile.duration;
 	var trackName = filenameWithPath;
