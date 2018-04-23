@@ -24,7 +24,7 @@ track2.setTrackName("track2");
 track3.setTrackName("track3");
 track2.setMixVolume(0.85);
 track3.setMixVolume(0.75);
-track2.setVolume(0.75);
+track2.setVolume(0);
 track3.setVolume(0);
 
 layer1.setTrackName("layer1");
