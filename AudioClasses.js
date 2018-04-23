@@ -1361,10 +1361,13 @@ function musicContainerPlaylist(trackList) {
 	}
 }
 
-function musicContainerPlaylistRandom(trackList) {
+function musicContainerPlaylistRandom(trackList, maxRepetitions = 3, minRepetitions = 1) {
 	var musicTrack = [];
 	var currentTrack = 0;
 	var lastTrack = 0;
+	var playCountdown = 0;
+	var playMax = maxRepetitions;
+	var playMin = minRepetitions;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -1374,13 +1377,17 @@ function musicContainerPlaylistRandom(trackList) {
 	var trackVolume = 1;
 
 	this.play = function() {
-		while(currentTrack == lastTrack) {
-			currentTrack = Math.floor(Math.random() * musicTrack.length);
+		if (playCountdown <= 0 && musicTrack.length > 1){
+			while(currentTrack == lastTrack) {
+				currentTrack = Math.floor(Math.random() * musicTrack.length);
+			}
+			playCountdown = Math.floor(Math.random() * (playMax - playMin + 1) + playMin);
 		}
 		musicTrack[currentTrack].play();
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "loop");
 		lastTrack = currentTrack;
+		playCountdown--;
 	}
 
 	this.stop = function() {
