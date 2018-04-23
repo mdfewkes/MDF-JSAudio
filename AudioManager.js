@@ -1,5 +1,4 @@
 setFormat();
-isMuted = false;
 
 //set sound clips and music tracks here
 var track1 = new musicTrackLoopingWTail("Audio/lay4tail16", 16);
@@ -16,8 +15,6 @@ var controles = new sfxClipSpriteSheet("Audio/controls", [[0.085,0.7],[1.1,2],[2
 var conPlay = new sfxClipSprite(controles, 0);
 var conPause = new sfxClipSprite(controles, 1);
 var conStop = new sfxClipSprite(controles, 2);
-
-//var clip1 = new sfxClipOverlap("Audio/Death", 3);
 
 track1.setTrackName("track1");
 track2.setTrackName("track2");
@@ -40,10 +37,18 @@ controles.setMixVolume(0.5);
 function setFormat() {
 	var audio = new Audio();
 	if (audio.canPlayType("audio/ogg")) {
-		audioFormat = ".ogg";
+		audioFormatType = ".ogg";
 	} else {
-		audioFormat = ".mp3";
+		audioFormatType = ".mp3";
 	}
+}
+
+function audioFormat(alt = false) {
+	var format = audioFormatType;
+	if (alt != false) {
+		format = ".mp3";
+	}
+	return format;
 }
 
 function toggleMute() {
