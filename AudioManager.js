@@ -142,6 +142,18 @@ function audioEventManager() {
 		}
 	}
 
+	this.removeTimerEvent = function(track, callSign = "none") {
+		var thisTrack = track;
+		var check = checkListFor(TIMER, thisTrack, callSign);
+
+		if (check == "none") {
+			return;
+		} else {
+			//console.log("Removing Timer Event for " + track.getTrackName());
+			eventList[check] = [REMOVE];
+		}
+	}
+
 	this.removeStopEvent = function(track) {
 		var thisTrack = track;
 		var check = checkListFor(STOP, thisTrack);
@@ -210,7 +222,7 @@ function audioEventManager() {
 		}
 	}
 
-	function checkListFor(eventType, track, callSign = ""){
+	function checkListFor(eventType, track, callSign = "none"){
 		var foundItem = false;
 		for (var i = 0; i < eventList.length; i++) {
 			if (eventList[i][0] == eventType) {
