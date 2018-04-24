@@ -1003,18 +1003,20 @@ function musicContainerRandom(trackList) {
 	var trackVolume = 1;
 
 	this.play = function() {
-		currentTrack = Math.floor(Math.random() * musicTrack.length);
 		musicTrack[currentTrack].play();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.stop = function() {
 		for (var i in trackList) {
 			musicTrack[i].stop();
 		}
+		currentTrack = Math.floor(Math.random() * musicTrack.length);
 	}
 
 	this.resume = function() {
 		musicTrack[currentTrack].resume();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.pause = function() {
@@ -1029,6 +1031,10 @@ function musicContainerRandom(trackList) {
 
 	this.setCurrentTrack = function(trackNumber) {
 		currentTrack = trackNumber;
+	}
+
+	this.triggerTimerEnded = function(callSign) {
+		currentTrack = Math.floor(Math.random() * musicTrack.length);
 	}
 
 	this.loadTrack = function(newTrack, slot) {
@@ -2158,12 +2164,6 @@ function musicContainerSequenceLoopRandom(trackList, maxRepetitions = 3, minRepe
 	var trackVolume = 1;
 
 	this.play = function() {
-		if (playCountdown <= 0 && musicTrack.length > 1){
-			while(currentTrack == lastTrack) {
-				currentTrack = Math.floor(Math.random() * musicTrack.length);
-			}
-			playCountdown = Math.floor(Math.random() * (playMax - playMin + 1) + playMin);
-		}
 		musicTrack[currentTrack].play();
 		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
 		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
@@ -2196,6 +2196,12 @@ function musicContainerSequenceLoopRandom(trackList, maxRepetitions = 3, minRepe
 	}
 
 	this.triggerTimerEnded = function(callSign) {
+		if (playCountdown <= 0 && musicTrack.length > 1){
+			while(currentTrack == lastTrack) {
+				currentTrack = Math.floor(Math.random() * musicTrack.length);
+			}
+			playCountdown = Math.floor(Math.random() * (playMax - playMin + 1) + playMin);
+		}
 		this.play();
 	}
 
