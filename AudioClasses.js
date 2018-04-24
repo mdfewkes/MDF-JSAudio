@@ -1130,8 +1130,10 @@ function musicContainerCrossfade(trackList) {
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
+		musicTrack[i].setVolume(0)
 		musicTrack[i].pause();
 	}
+	musicTrack[0].setVolume(1);
 
 	var trackVolume = 1;
 
@@ -1211,6 +1213,7 @@ function musicContainerCrossfade(trackList) {
 			musicTrack[slot].setTime(timeNow);
 			musicTrack[currentTrack].stop();
 			currentTrack = slot;
+			musicTrack[currentTrack].setVolume(trackVolume);
 		}
 
 	}
