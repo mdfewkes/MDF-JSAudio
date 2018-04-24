@@ -937,6 +937,7 @@ function musicContainer(trackList) {
 
 	this.removeTrack = function(slot) {
 		musicTrack.splice(slot,1);
+		if (currentTrack >= slot) {currentTrack--;}
 	}
 
 	this.updateVolume = function() {
@@ -1089,6 +1090,7 @@ function musicContainerConcatenated(trackList) {
 
 	this.removeTrack = function(slot) {
 		musicTrack.splice(slot,1);
+		if (currentTrack >= slot) {currentTrack--;}
 	}
 
 	this.updateVolume = function() {
@@ -1280,6 +1282,7 @@ function musicContainerConcatenatedLoopLast(trackList) {
 
 	this.removeTrack = function(slot) {
 		musicTrack.splice(slot,1);
+		if (currentTrack >= slot) {currentTrack--;}
 
 		duration = 0;
 		for (var i in trackList) {
@@ -1449,6 +1452,7 @@ function musicContainerRandom(trackList) {
 
 	this.removeTrack = function(slot) {
 		musicTrack.splice(slot,1);
+		if (currentTrack >= slot) {currentTrack--;}
 	}
 
 	this.updateVolume = function() {
@@ -1591,6 +1595,7 @@ function musicContainerCrossfade(trackList) {
 
 	this.removeTrack = function(slot) {
 		musicTrack.splice(slot,1);
+		if (currentTrack >= slot) {currentTrack--;}
 	}
 
 	this.updateVolume = function() {
@@ -1760,6 +1765,7 @@ function musicContainerLayers(trackList) {
 	this.removeTrack = function(slot) {
 		musicTrack.splice(slot,1);
 		musicTrackVolume.splice(slot,1);
+		if (currentTrack >= slot) {currentTrack--;}
 	}
 
 	this.updateVolume = function() {
@@ -1911,6 +1917,7 @@ function musicContainerSequence(trackList) {
 
 	this.removeTrack = function(slot) {
 		musicTrack.splice(slot,1);
+		if (currentTrack >= slot) {currentTrack--;}
 	}
 
 	this.updateVolume = function() {
@@ -2056,6 +2063,7 @@ function musicContainerSequenceLatch(trackList) {
 
 	this.removeTrack = function(slot) {
 		musicTrack.splice(slot,1);
+		if (currentTrack >= slot) {currentTrack--;}
 	}
 
 	this.updateVolume = function() {
@@ -2200,6 +2208,7 @@ function musicContainerSequenceLatchLoop(trackList) {
 
 	this.removeTrack = function(slot) {
 		musicTrack.splice(slot,1);
+		if (currentTrack >= slot) {currentTrack--;}
 	}
 
 	this.updateVolume = function() {
@@ -2336,6 +2345,7 @@ function musicContainerSequenceLoop(trackList) {
 
 	this.removeTrack = function(slot) {
 		musicTrack.splice(slot,1);
+		if (currentTrack >= slot) {currentTrack--;}
 	}
 
 	this.updateVolume = function() {
@@ -2473,6 +2483,7 @@ function musicContainerSequenceLoopLast(trackList) {
 
 	this.removeTrack = function(slot) {
 		musicTrack.splice(slot,1);
+		if (currentTrack >= slot) {currentTrack--;}
 	}
 
 	this.updateVolume = function() {
@@ -2619,6 +2630,7 @@ function musicContainerSequenceLoopRandom(trackList, maxRepetitions = 3, minRepe
 
 	this.removeTrack = function(slot) {
 		musicTrack.splice(slot,1);
+		if (currentTrack >= slot) {currentTrack--;}
 	}
 
 	this.updateVolume = function() {
