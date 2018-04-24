@@ -2,13 +2,13 @@ setFormat();
 setAudioPath("Audio/");
 
 //set sound clips and music tracks here
-var track1 = new musicTrackLoopingWTail("lay4tail16", 16);
-var track2 = new musicTrackLoopingWTail("lay2tail8", 8);
-var track3 = new musicTrackLoopingWTail("LayTail34", 8);
+var track1 = new musicTrackSelfLooping("lay4tail16", 16);
+var track2 = new musicTrackSelfLooping("lay2tail8", 8);
+var track3 = new musicTrackSelfLooping("LayTail34", 8);
 var backgroundTracks = new musicContainerCrossfade([track1, track2, track3]);
-var layer1 = new musicTrackLoopingWTail("clavtail2", 2);
-var layer2 = new musicTrackLoopingWTail("cabasatail2", 2);
-var layer3 = new musicTrackLoopingWTail("kicktail2", 2);
+var layer1 = new musicTrackSelfLooping("clavtail2", 2);
+var layer2 = new musicTrackSelfLooping("cabasatail2", 2);
+var layer3 = new musicTrackSelfLooping("kicktail2", 2);
 var backgroundLayers = new musicContainerLayers([layer1, layer2, layer3]);
 var backgroundMusic = new musicContainerCrossfade([backgroundTracks, backgroundLayers]);
 
