@@ -1223,7 +1223,8 @@ function musicContainerConcatenatedLoopLast(trackList) {
 	this.triggerTimerEnded = function(callSign) {
 		if (currentTrack < musicTrack.length - 1) {
 			currentTrack++;
-		} else {
+		} 
+		if (currentTrack = musicTrack.length - 1) {
 			atEnd = true;
 		}
 		this.play();
