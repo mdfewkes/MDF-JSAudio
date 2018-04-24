@@ -941,6 +941,20 @@ function musicContainer(trackList) {
 		}
 	}
 
+	this.loadTrackWithCrossfade = function(newTrack, slot, fadeTime = 1) {
+		var timeNow = musicTrack[currentTrack].getTime();
+		if(currentTrack == slot && !musicTrack[currentTrack].getPaused()) {
+			newTrack.playFrom(timeNow);
+			AudioEventManager.addCrossfadeEvent(musicTrack[currentTrack], fadeTime, 0);
+			AudioEventManager.addCrossfadeEvent(newTrack, fadeTime, trackVolume);
+			musicTrack[slot] = newTrack;
+		} else {
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].setTime(timeNow);
+		}
+	}
+
 	this.addTrack = function(newTrack) {
 		musicTrack.push(newTrack);
 	}
@@ -1053,6 +1067,20 @@ function musicContainerRandom(trackList) {
 			musicTrack[slot] = newTrack;
 			musicTrack[slot].setVolume(trackVolume);
 			musicTrack[slot].playFrom(timeNow);
+		} else {
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].setTime(timeNow);
+		}
+	}
+
+	this.loadTrackWithCrossfade = function(newTrack, slot, fadeTime = 1) {
+		var timeNow = musicTrack[currentTrack].getTime();
+		if(currentTrack == slot && !musicTrack[currentTrack].getPaused()) {
+			newTrack.playFrom(timeNow);
+			AudioEventManager.addCrossfadeEvent(musicTrack[currentTrack], fadeTime, 0);
+			AudioEventManager.addCrossfadeEvent(newTrack, fadeTime, trackVolume);
+			musicTrack[slot] = newTrack;
 		} else {
 			musicTrack[slot] = newTrack;
 			musicTrack[slot].setVolume(trackVolume);
@@ -1514,6 +1542,20 @@ function musicContainerLoop(trackList) {
 		}
 	}
 
+	this.loadTrackWithCrossfade = function(newTrack, slot, fadeTime = 1) {
+		var timeNow = musicTrack[currentTrack].getTime();
+		if(currentTrack == slot && !musicTrack[currentTrack].getPaused()) {
+			newTrack.playFrom(timeNow);
+			AudioEventManager.addCrossfadeEvent(musicTrack[currentTrack], fadeTime, 0);
+			AudioEventManager.addCrossfadeEvent(newTrack, fadeTime, trackVolume);
+			musicTrack[slot] = newTrack;
+		} else {
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].setTime(timeNow);
+		}
+	}
+
 	this.addTrack = function(newTrack) {
 		musicTrack.push(newTrack);
 	}
@@ -1654,6 +1696,20 @@ function musicContainerLoopRandom(trackList, maxRepetitions = 3, minRepetitions 
 		}
 	}
 
+	this.loadTrackWithCrossfade = function(newTrack, slot, fadeTime = 1) {
+		var timeNow = musicTrack[currentTrack].getTime();
+		if(currentTrack == slot && !musicTrack[currentTrack].getPaused()) {
+			newTrack.playFrom(timeNow);
+			AudioEventManager.addCrossfadeEvent(musicTrack[currentTrack], fadeTime, 0);
+			AudioEventManager.addCrossfadeEvent(newTrack, fadeTime, trackVolume);
+			musicTrack[slot] = newTrack;
+		} else {
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].setTime(timeNow);
+		}
+	}
+
 	this.addTrack = function(newTrack) {
 		musicTrack.push(newTrack);
 	}
@@ -1785,6 +1841,20 @@ function musicContainerSequence(trackList) {
 		}
 	}
 
+	this.loadTrackWithCrossfade = function(newTrack, slot, fadeTime = 1) {
+		var timeNow = musicTrack[currentTrack].getTime();
+		if(currentTrack == slot && !musicTrack[currentTrack].getPaused()) {
+			newTrack.playFrom(timeNow);
+			AudioEventManager.addCrossfadeEvent(musicTrack[currentTrack], fadeTime, 0);
+			AudioEventManager.addCrossfadeEvent(newTrack, fadeTime, trackVolume);
+			musicTrack[slot] = newTrack;
+		} else {
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].setTime(timeNow);
+		}
+	}
+
 	this.addTrack = function(newTrack) {
 		musicTrack.push(newTrack);
 	}
@@ -1909,6 +1979,20 @@ function musicContainerSequenceLoopLast(trackList) {
 			musicTrack[slot] = newTrack;
 			musicTrack[slot].setVolume(trackVolume);
 			musicTrack[slot].playFrom(timeNow);
+		} else {
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].setTime(timeNow);
+		}
+	}
+
+	this.loadTrackWithCrossfade = function(newTrack, slot, fadeTime = 1) {
+		var timeNow = musicTrack[currentTrack].getTime();
+		if(currentTrack == slot && !musicTrack[currentTrack].getPaused()) {
+			newTrack.playFrom(timeNow);
+			AudioEventManager.addCrossfadeEvent(musicTrack[currentTrack], fadeTime, 0);
+			AudioEventManager.addCrossfadeEvent(newTrack, fadeTime, trackVolume);
+			musicTrack[slot] = newTrack;
 		} else {
 			musicTrack[slot] = newTrack;
 			musicTrack[slot].setVolume(trackVolume);
