@@ -898,6 +898,10 @@ function musicContainer(trackList) {
 		musicTrack[currentTrack].playFrom(time);
 	}
 
+	this.setCurrentTrack = function(trackNumber) {
+		currentTrack = trackNumber;
+	}
+
 	this.loadTrack = function(newTrack, slot) {
 		var timeNow = musicTrack[currentTrack].getTime();
 		if(!musicTrack[slot].getPaused()) {
@@ -950,16 +954,12 @@ function musicContainer(trackList) {
 		return musicTrack[currentTrack].getVolume();
 	}
 
-	this.setCurrentTrack = function(trackNumber) {
-		currentTrack = trackNumber;
+	this.getListLength = function() {
+		 return musicTrack.length;
 	}
 
 	this.getCurrentTrack = function() {
 		 return currentTrack;
-	}
-
-	this.getListLength = function() {
-		 return musicTrack.length;
 	}
 
 	this.getSourceTrack = function() {
@@ -1027,6 +1027,10 @@ function musicContainerRandom(trackList) {
 		musicTrack[currentTrack].playFrom(time);
 	}
 
+	this.setCurrentTrack = function(trackNumber) {
+		currentTrack = trackNumber;
+	}
+
 	this.loadTrack = function(newTrack, slot) {
 		var timeNow = musicTrack[currentTrack].getTime();
 		if(!musicTrack[slot].getPaused()) {
@@ -1079,16 +1083,12 @@ function musicContainerRandom(trackList) {
 		return musicTrack[currentTrack].getVolume();
 	}
 
-	this.setCurrentTrack = function(trackNumber) {
-		currentTrack = trackNumber;
+	this.getListLength = function() {
+		 return musicTrack.length;
 	}
 
 	this.getCurrentTrack = function() {
 		 return currentTrack;
-	}
-
-	this.getListLength = function() {
-		 return musicTrack.length;
 	}
 
 	this.getSourceTrack = function() {
@@ -1225,16 +1225,12 @@ function musicContainerCrossfade(trackList) {
 		return musicTrack[currentTrack].getVolume();
 	}
 
-	this.setCurrentTrack = function(trackNumber) {
-		currentTrack = trackNumber;
+	this.getListLength = function() {
+		 return musicTrack.length;
 	}
 
 	this.getCurrentTrack = function() {
 		 return currentTrack;
-	}
-
-	this.getListLength = function() {
-		 return musicTrack.length;
 	}
 
 	this.getSourceTrack = function() {
@@ -1390,16 +1386,12 @@ function musicContainerLayers(trackList) {
 		return musicTrack[currentTrack].getVolume();
 	}
 
-	this.setCurrentTrack = function(trackNumber) {
-		currentTrack = trackNumber;
+	this.getListLength = function() {
+		 return musicTrack.length;
 	}
 
 	this.getCurrentTrack = function() {
 		 return currentTrack;
-	}
-
-	this.getListLength = function() {
-		 return musicTrack.length;
 	}
 
 	this.getSourceTrack = function() {
@@ -1533,16 +1525,12 @@ function musicContainerSequence(trackList) {
 		return musicTrack[currentTrack].getVolume();
 	}
 
-	this.setCurrentTrack = function(trackNumber) {
-		currentTrack = trackNumber;
+	this.getListLength = function() {
+		 return musicTrack.length;
 	}
 
 	this.getCurrentTrack = function() {
 		 return currentTrack;
-	}
-
-	this.getListLength = function() {
-		 return musicTrack.length;
 	}
 
 	this.getSourceTrack = function() {
@@ -1692,16 +1680,12 @@ function musicContainerSequenceLatch(trackList) {
 		return musicTrack[currentTrack].getVolume();
 	}
 
-	this.setCurrentTrack = function(trackNumber) {
-		currentTrack = trackNumber;
+	this.getListLength = function() {
+		 return musicTrack.length;
 	}
 
 	this.getCurrentTrack = function() {
 		 return currentTrack;
-	}
-
-	this.getListLength = function() {
-		 return musicTrack.length;
 	}
 
 	this.getSourceTrack = function() {
@@ -1850,16 +1834,12 @@ function musicContainerSequenceLatchLoop(trackList) {
 		return musicTrack[currentTrack].getVolume();
 	}
 
-	this.setCurrentTrack = function(trackNumber) {
-		currentTrack = trackNumber;
+	this.getListLength = function() {
+		 return musicTrack.length;
 	}
 
 	this.getCurrentTrack = function() {
 		 return currentTrack;
-	}
-
-	this.getListLength = function() {
-		 return musicTrack.length;
 	}
 
 	this.getSourceTrack = function() {
@@ -1990,16 +1970,12 @@ function musicContainerSequenceLoop(trackList) {
 		return musicTrack[currentTrack].getVolume();
 	}
 
-	this.setCurrentTrack = function(trackNumber) {
-		currentTrack = trackNumber;
+	this.getListLength = function() {
+		 return musicTrack.length;
 	}
 
 	this.getCurrentTrack = function() {
 		 return currentTrack;
-	}
-
-	this.getListLength = function() {
-		 return musicTrack.length;
 	}
 
 	this.getSourceTrack = function() {
@@ -2129,10 +2105,6 @@ function musicContainerSequenceLoopLast(trackList) {
 
 	this.getVolume = function() {
 		return musicTrack[currentTrack].getVolume();
-	}
-
-	this.setCurrentTrack = function(trackNumber) {
-		currentTrack = trackNumber;
 	}
 
 	this.getCurrentTrack = function() {
@@ -2281,16 +2253,12 @@ function musicContainerSequenceLoopRandom(trackList, maxRepetitions = 3, minRepe
 		return musicTrack[currentTrack].getVolume();
 	}
 
-	this.setCurrentTrack = function(trackNumber) {
-		currentTrack = trackNumber;
+	this.getListLength = function() {
+		 return musicTrack.length;
 	}
 
 	this.getCurrentTrack = function() {
 		 return currentTrack;
-	}
-
-	this.getListLength = function() {
-		 return musicTrack.length;
 	}
 
 	this.getSourceTrack = function() {
