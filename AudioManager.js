@@ -56,6 +56,7 @@ function audioFormat(alt = false) {
 	return format;
 }
 
+
 function toggleMute() {
 	isMuted = !isMuted;
 	SFXVolumeManager.updateVolume();
@@ -251,27 +252,27 @@ function audioEventManager() {
 			return "none";
 		}
 	}
-}
 
-function interpolateFade(startTime, endTime, startVolume, endVolume, currentTime) {
-	/*
-	x1 = startTime
-	y1 = startVolume
+	function interpolateFade(startTime, endTime, startVolume, endVolume, currentTime) {
+		/*
+		x1 = startTime
+		y1 = startVolume		
+	
+		x2 = endTime
+		y2 = endVolume		
 
-	x2 = endTime
-	y2 = endVolume
+		x = currentTime
+		y = y1 + (x - x1)((y2 - y1)/(x2 - x1))
+   	 currentVolume = startVolume + (now - startTime) * ((endVolume - startVolume) / (endTime - startTime))
+		*/
+		if (currentTime > endTime) {currentTime = endTime;}
+		var currentVolume = startVolume + (currentTime - startTime) * ((endVolume - startVolume) / (endTime - startTime));
 
-	x = currentTime
-	y = y1 + (x - x1)((y2 - y1)/(x2 - x1))
-    currentVolume = startVolume + (now - startTime) * ((endVolume - startVolume) / (endTime - startTime))
-	*/
-	if (currentTime > endTime) {currentTime = endTime;}
-	var currentVolume = startVolume + (currentTime - startTime) * ((endVolume - startVolume) / (endTime - startTime));
+		return currentVolume;
+	}
 
-	return currentVolume;
-}
-
-function scaleRange(inputStart, inputEnd, outputStart, outputEnd, value) {
-	var scale = (outputEnd - outputStart) / (inputEnd - inputStart);
-	return outputStart + ((value - inputStart) * scale);
+	function scaleRange(inputStart, inputEnd, outputStart, outputEnd, value) {
+		var scale = (outputEnd - outputStart) / (inputEnd - inputStart);
+		return outputStart + ((value - inputStart) * scale);
+	}
 }

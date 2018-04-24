@@ -945,6 +945,10 @@ function musicContainer(trackList) {
 		musicTrack.push(newTrack);
 	}
 
+	this.removeTrack = function(slot) {
+		musicTrack.splice(slot,1);
+	}
+
 	this.updateVolume = function() {
 		for (var i in trackList) {
 			musicTrack[i].updateVolume();
@@ -1058,6 +1062,10 @@ function musicContainerRandom(trackList) {
 
 	this.addTrack = function(newTrack) {
 		musicTrack.push(newTrack);
+	}
+
+	this.removeTrack = function(slot) {
+		musicTrack.splice(slot,1);
 	}
 
 	this.updateVolume = function() {
@@ -1186,6 +1194,10 @@ function musicContainerCrossfade(trackList) {
 
 	this.addTrack = function(newTrack) {
 		musicTrack.push(newTrack);
+	}
+
+	this.removeTrack = function(slot) {
+		musicTrack.splice(slot,1);
 	}
 
 	this.switchTo = function(slot, fadeTime = 1) {
@@ -1346,6 +1358,11 @@ function musicContainerLayers(trackList) {
 		newTrack.setVolume(0);
 	}
 
+	this.removeTrack = function(slot) {
+		musicTrack.splice(slot,1);
+		musicTrackVolume.splice(slot,1);
+	}
+
 	this.setLayerLevel = function(slot, level, fadeTime = 1) {
 		musicTrackVolume[slot] = level;
 		if (trackList[slot].getPaused()) {
@@ -1498,6 +1515,10 @@ function musicContainerLoop(trackList) {
 		musicTrack.push(newTrack);
 	}
 
+	this.removeTrack = function(slot) {
+		musicTrack.splice(slot,1);
+	}
+
 	this.updateVolume = function() {
 		for (var i in trackList) {
 			musicTrack[i].updateVolume();
@@ -1634,6 +1655,10 @@ function musicContainerLoopRandom(trackList, maxRepetitions = 3, minRepetitions 
 		musicTrack.push(newTrack);
 	}
 
+	this.removeTrack = function(slot) {
+		musicTrack.splice(slot,1);
+	}
+
 	this.updateVolume = function() {
 		for (var i in trackList) {
 			musicTrack[i].updateVolume();
@@ -1761,6 +1786,10 @@ function musicContainerSequence(trackList) {
 		musicTrack.push(newTrack);
 	}
 
+	this.removeTrack = function(slot) {
+		musicTrack.splice(slot,1);
+	}
+
 	this.updateVolume = function() {
 		for (var i in trackList) {
 			musicTrack[i].updateVolume();
@@ -1886,6 +1915,10 @@ function musicContainerSequenceLoopLast(trackList) {
 
 	this.addTrack = function(newTrack) {
 		musicTrack.push(newTrack);
+	}
+
+	this.removeTrack = function(slot) {
+		musicTrack.splice(slot,1);
 	}
 
 	this.updateVolume = function() {
