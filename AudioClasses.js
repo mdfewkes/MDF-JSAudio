@@ -613,14 +613,6 @@ function musicTrack(filename, playLength) {
 		musicFile.play();
 	}
 
-	this.startOrStop = function() {
-		if(musicFile.paused) {
-			this.resume();
-		} else {
-			this.pause();
-		}
-	}
-
 	this.updateVolume = function() {
 		musicFile.volume = Math.pow(mixVolume * musicVolume  * trackVolume * !isMuted, 2);
 	}
@@ -711,14 +703,6 @@ function musicTrackOverlap(filename, playLength) {
 	this.playFrom = function(time) {
 		musicFile[currentTrack].currentTime = time;
 		musicFile[currentTrack].play();
-	}
-
-	this.startOrStop = function() {
-		if(musicFile[currentTrack].paused) {
-			this.resume();
-		} else {
-			this.pause();
-		}
 	}
 
 	this.updateVolume = function() {
@@ -819,14 +803,6 @@ function musicTrackOverlapLooping(filename, playLength) {
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
-	this.startOrStop = function() {
-		if(musicFile[currentTrack].paused) {
-			this.resume();
-		} else {
-			this.pause();
-		}
-	}
-
 	this.triggerTimerEnded = function(callSign) {
 		currentTrack++;
 		if (currentTrack > 1) {currentTrack = 0;}
@@ -920,10 +896,6 @@ function musicContainer(trackList) {
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
-	}
-
-	this.startOrStop = function() {
-		musicTrack[currentTrack].startOrStop();
 	}
 
 	this.loadTrack = function(newTrack, slot) {
@@ -1055,10 +1027,6 @@ function musicContainerRandom(trackList) {
 		musicTrack[currentTrack].playFrom(time);
 	}
 
-	this.startOrStop = function() {
-		musicTrack[currentTrack].startOrStop();
-	}
-
 	this.loadTrack = function(newTrack, slot) {
 		var timeNow = musicTrack[currentTrack].getTime();
 		if(!musicTrack[slot].getPaused()) {
@@ -1187,10 +1155,6 @@ function musicContainerCrossfade(trackList) {
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
-	}
-
-	this.startOrStop = function() {
-		musicTrack[currentTrack].startOrStop();
 	}
 
 	this.loadTrack = function(newTrack, slot) {
@@ -1345,12 +1309,6 @@ function musicContainerLayers(trackList) {
 	this.playFrom = function(time) {
 		for (var i in trackList) {
 			musicTrack[i].playFrom(time);
-		}
-	}
-
-	this.startOrStop = function() {
-		for (var i in trackList) {
-			musicTrack[i].startOrStop();
 		}
 	}
 
@@ -1517,10 +1475,6 @@ function musicContainerLoop(trackList) {
 		musicTrack[currentTrack].playFrom(time);
 	}
 
-	this.startOrStop = function() {
-		musicTrack[currentTrack].startOrStop();
-	}
-
 	this.triggerTimerEnded = function(callSign) {
 		currentTrack++;
 		if (currentTrack >= musicTrack.length) {currentTrack = 0;}
@@ -1673,10 +1627,6 @@ function musicContainerLoopRandom(trackList, maxRepetitions = 3, minRepetitions 
 		musicTrack[currentTrack].playFrom(time);
 	}
 
-	this.startOrStop = function() {
-		musicTrack[currentTrack].startOrStop();
-	}
-
 	this.triggerTimerEnded = function(callSign) {
 		this.play();
 	}
@@ -1813,10 +1763,6 @@ function musicContainerSequence(trackList) {
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
-	}
-
-	this.startOrStop = function() {
-		musicTrack[currentTrack].startOrStop();
 	}
 
 	this.triggerTimerEnded = function(callSign) {
@@ -1958,10 +1904,6 @@ function musicContainerSequenceLoopLast(trackList) {
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
-	}
-
-	this.startOrStop = function() {
-		musicTrack[currentTrack].startOrStop();
 	}
 
 	this.triggerTimerEnded = function(callSign) {
