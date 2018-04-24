@@ -1037,8 +1037,10 @@ function musicContainerConcatenated(trackList) {
 
 	this.triggerTimerEnded = function(callSign) {
 		currentTrack++;
-		if (!(currentTrack >= musicTrack.length)) {
+		if (currentTrack < musicTrack.length) {
 			this.play();
+		} else {
+			currentTrack = 0;
 		}
 	}
 
@@ -1648,8 +1650,10 @@ function musicContainerSequence(trackList) {
 
 	this.triggerTimerEnded = function(callSign) {
 		currentTrack++;
-		if (!(currentTrack >= musicTrack.length)) {
+		if (currentTrack < musicTrack.length) {
 			this.play();
+		} else {
+			currentTrack = 0;
 		}
 	}
 
