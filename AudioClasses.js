@@ -670,7 +670,7 @@ function musicTrack(filename, playLength) {
 	}
 }
 
-function musicTrackSelfLooping(filename, playLength) {
+function musicTrackSelfLoopingWOverlap(filename, playLength) {
 	var musicFile = new Array(new Audio(audioPath+filename+audioFormat()), new Audio(audioPath+filename+audioFormat()));
 	musicFile[0].onerror = function(){musicFile[0] = new Audio(audioPath+filename+audioFormat(true))}
 	musicFile[1].onerror = function(){musicFile[1] = new Audio(audioPath+filename+audioFormat(true))}
@@ -688,7 +688,7 @@ function musicTrackSelfLooping(filename, playLength) {
 		musicFile[currentTrack].currentTime = 0;
 		this.updateVolume();
 		musicFile[currentTrack].play();
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "loop");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.stop = function() {
@@ -700,7 +700,7 @@ function musicTrackSelfLooping(filename, playLength) {
 
 	this.resume = function() {
 		musicFile[currentTrack].play();
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "loop");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.pause = function() {
@@ -711,7 +711,7 @@ function musicTrackSelfLooping(filename, playLength) {
 	this.playFrom = function(time) {
 		musicFile[currentTrack].currentTime = time;
 		musicFile[currentTrack].play();
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "loop");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.startOrStop = function() {
@@ -1297,8 +1297,8 @@ function musicContainerPlaylist(trackList) {
 
 	this.play = function() {
 		musicTrack[currentTrack].play();
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "loop");
 	}
 
 	this.stop = function() {
@@ -1309,8 +1309,8 @@ function musicContainerPlaylist(trackList) {
 
 	this.resume = function() {
 		musicTrack[currentTrack].resume();
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "loop");
 	}
 
 	this.pause = function() {
