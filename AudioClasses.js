@@ -1170,10 +1170,6 @@ function musicContainerCrossfade(trackList) {
 		}
 	}
 
-	this.addTrack = function(newTrack) {
-		musicTrack.push(newTrack);
-	}
-
 	this.loadTrackWithCrossfade = function(newTrack, slot, fadeTime = 1) {
 		var timeNow = musicTrack[currentTrack].getTime();
 		if(currentTrack == slot && !musicTrack[currentTrack].getPaused()) {
@@ -1186,6 +1182,10 @@ function musicContainerCrossfade(trackList) {
 			musicTrack[slot].setVolume(trackVolume);
 			musicTrack[slot].setTime(timeNow);
 		}
+	}
+
+	this.addTrack = function(newTrack) {
+		musicTrack.push(newTrack);
 	}
 
 	this.switchTo = function(slot, fadeTime = 1) {
@@ -1272,6 +1272,7 @@ function musicContainerLayers(trackList) {
 		musicTrack[i].setVolume(0);
 	}
 	musicTrackVolume[0] = 1;
+	musicTrack[0].setVolume(1);
 
 
 	this.play = function() {
@@ -1316,11 +1317,25 @@ function musicContainerLayers(trackList) {
 			musicTrack[slot].pause();
 			musicTrack[slot].setTime(0);
 			musicTrack[slot] = newTrack;
-			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].setVolume(musicTrackVolume[slot] * trackVolume);
 			musicTrack[slot].playFrom(timeNow);
 		} else {
 			musicTrack[slot] = newTrack;
-			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].setVolume(musicTrackVolume[slot] * trackVolume);
+			musicTrack[slot].setTime(timeNow);
+		}
+	}
+
+	this.loadTrackWithCrossfade = function(newTrack, slot, fadeTime = 1) {
+		var timeNow = musicTrack[currentTrack].getTime();
+		if(currentTrack == slot && !musicTrack[slot].getPaused()) {
+			newTrack.playFrom(timeNow);
+			AudioEventManager.addCrossfadeEvent(musicTrack[slot], fadeTime, 0);
+			AudioEventManager.addCrossfadeEvent(newTrack, fadeTime, musicTrackVolume[slot] *  trackVolume);
+			musicTrack[slot] = newTrack;
+		} else {
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(musicTrackVolume[slot] * trackVolume);
 			musicTrack[slot].setTime(timeNow);
 		}
 	}
@@ -1328,21 +1343,28 @@ function musicContainerLayers(trackList) {
 	this.addTrack = function(newTrack) {
 		musicTrack.push(newTrack);
 		musicTrackVolume.push(0);
+		newTrack.setVolume(0);
 	}
 
 	this.setLayerLevel = function(slot, level, fadeTime = 1) {
+		musicTrackVolume[slot] = level;
 		if (trackList[slot].getPaused()) {
-			var timeNow = 0;
+			var timeNow = trackList[0].getTime();
+			var tracksPlaying = 0;
 			for(var i in trackList) {
 				if (!trackList[i].getPaused()) {
 					timeNow = trackList[i].getTime();
+					tracksPlaying++;
 				}
 			}
-			trackList[slot].setVolume(level);
-			trackList[slot].playFrom(timeNow);
+			if (tracksPlaying > 0) {
+				trackList[slot].setVolume(musicTrackVolume[slot] * trackVolume);
+				trackList[slot].playFrom(timeNow);
+			} else {
+				trackList[slot].setVolume(musicTrackVolume[slot] * trackVolume);
+			}
 		}
-		musicTrackVolume[slot] = level;
-		AudioEventManager.addFadeEvent(trackList[slot], fadeTime, level * trackVolume);
+		AudioEventManager.addFadeEvent(trackList[slot], fadeTime, musicTrackVolume[slot] * trackVolume);
 
 	}
 
@@ -1355,12 +1377,12 @@ function musicContainerLayers(trackList) {
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
 		for (var i in trackList) {
-			musicTrack[i].setVolume(newVolume * musicTrackVolume[i]);
+			musicTrack[i].setVolume(musicTrackVolume[i] * trackVolume);
 		}
 	}
 
 	this.getVolume = function() {
-		return musicTrack[currentTrack].getVolume() * musicTrackVolume[currentTrack];
+		return musicTrack[currentTrack].getVolume();
 	}
 
 	this.setCurrentTrack = function(trackNumber) {
