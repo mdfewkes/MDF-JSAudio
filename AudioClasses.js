@@ -1277,6 +1277,15 @@ function musicContainerLayers(trackList) {
 	musicTrackVolume[0] = 1;
 	musicTrack[0].setVolume(1);
 
+	function evaluateCurrentTrack(){
+		var trackNow = 0;
+		for(var i in trackList) {
+			if (!trackList[i].getPaused()) {
+				trackNow = i;
+			}
+		}
+		currentTrack = trackNow;
+	}
 
 	this.play = function() {
 		for (var i in trackList) {
@@ -1344,7 +1353,8 @@ function musicContainerLayers(trackList) {
 		}
 	}
 
-	this.loadTrackWithCrossfade = function(newTrack, slot, fadeTime = 1) {
+	this.loadTrackWithCrossfade = function(newTrack, slot, fadeTime = 1) { //Needs a look
+		evaluateCurrentTrack();
 		var timeNow = musicTrack[currentTrack].getTime();
 		if(currentTrack == slot && !musicTrack[slot].getPaused()) {
 			newTrack.playFrom(timeNow);
@@ -1383,6 +1393,7 @@ function musicContainerLayers(trackList) {
 	}
 
 	this.getVolume = function() {
+		evaluateCurrentTrack();
 		return musicTrack[currentTrack].getVolume();
 	}
 
@@ -1391,10 +1402,12 @@ function musicContainerLayers(trackList) {
 	}
 
 	this.getCurrentTrack = function() {
+		evaluateCurrentTrack();
 		 return currentTrack;
 	}
 
 	this.getSourceTrack = function() {
+		evaluateCurrentTrack();
 		return musicTrack[currentTrack].getSourceTrack();
 	}
 
@@ -1405,22 +1418,27 @@ function musicContainerLayers(trackList) {
 	}
 
 	this.getTime = function() {
+		evaluateCurrentTrack();
 		return musicTrack[currentTrack].getTime();
 	}
 	
 	this.setTrackName = function(name) {
+		evaluateCurrentTrack();
 		musicTrack[currentTrack].setTrackName(name);
 	}
 
 	this.getTrackName = function() {
+		evaluateCurrentTrack();
 		return musicTrack[currentTrack].getTrackName();
 	}
 	
 	this.getDuration = function() {
+		evaluateCurrentTrack();
 		return musicTrack[currentTrack].getDuration();
 	}
 
 	this.getPaused = function() {
+		evaluateCurrentTrack();
 		return musicTrack[currentTrack].getPaused();
 	}
 }
@@ -1608,16 +1626,6 @@ function musicContainerSequenceLatch(trackList) {
 		latched = false;
 	}
 
-	/*
-	this.nextTrack = function() {
-		if (currentTrack < musicTrack.length - 1) {currentTrack++;}
-	}
-
-	this.previousTrack = function() {
-		if (currentTrack > 0) {currentTrack--;}
-	}
-	*/
-
 	this.triggerTimerEnded = function(callSign) {
 		if (!latched) {
 			currentTrack++;
@@ -1762,16 +1770,6 @@ function musicContainerSequenceLatchLoop(trackList) {
 	this.continue = function() {
 		latched = false;
 	}
-
-	/*
-	this.nextTrack = function() {
-		if (currentTrack < musicTrack.length - 1) {currentTrack++;}
-	}
-
-	this.previousTrack = function() {
-		if (currentTrack > 0) {currentTrack--;}
-	}
-	*/
 
 	this.triggerTimerEnded = function(callSign) {
 		if (!latched) {
