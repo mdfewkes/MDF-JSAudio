@@ -1524,7 +1524,7 @@ function musicContainerPlaylistRandom(trackList, maxRepetitions = 3, minRepetiti
 		}
 		musicTrack[currentTrack].play();
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "loop");
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "loop");
 		lastTrack = currentTrack;
 		playCountdown--;
 	}
@@ -1538,7 +1538,7 @@ function musicContainerPlaylistRandom(trackList, maxRepetitions = 3, minRepetiti
 	this.resume = function() {
 		musicTrack[currentTrack].resume();
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "loop");
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "loop");
 	}
 
 	this.pause = function() {
