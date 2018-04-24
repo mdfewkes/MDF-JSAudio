@@ -991,6 +991,162 @@ function musicContainer(trackList) {
 	}
 }
 
+function musicContainerConcatenated(trackList) {
+	var musicTrack = [];
+	var currentTrack = 0;
+	var duration = 0;
+
+	for (var i in trackList) {
+		musicTrack[i] = trackList[i];
+		musicTrack[i].pause();
+		duration += musicTrack[i].getDuration();
+	}
+
+	var trackVolume = 1;
+
+
+	this.play = function() {
+		musicTrack[currentTrack].play();
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "secret cue");
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+	}
+
+	this.stop = function() {
+		for (var i in trackList) {
+			musicTrack[i].stop();
+		}
+	}
+
+	this.resume = function() {
+		musicTrack[currentTrack].resume();
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "secret cue");
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+	}
+
+	this.pause = function() {
+		for (var i in trackList) {
+			musicTrack[i].pause();
+		}
+	}
+
+	this.playFrom = function(time) {
+		musicTrack[currentTrack].playFrom(time);
+	}
+
+	this.triggerTimerEnded = function(callSign) {
+		currentTrack++;
+		if (!(currentTrack >= musicTrack.length)) {
+			this.play();
+		}
+	}
+
+	this.loadTrack = function(newTrack, slot) {
+		var timeNow = musicTrack[currentTrack].getTime();
+		if(!musicTrack[slot].getPaused()) {
+			musicTrack[slot].pause();
+			musicTrack[slot].setTime(0);
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].playFrom(timeNow);
+		} else {
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].setTime(timeNow);
+		}
+	}
+
+	this.loadTrackWithCrossfade = function(newTrack, slot, fadeTime = 1) {
+		var timeNow = musicTrack[currentTrack].getTime();
+		if(currentTrack == slot && !musicTrack[currentTrack].getPaused()) {
+			newTrack.playFrom(timeNow);
+			AudioEventManager.addCrossfadeEvent(musicTrack[currentTrack], fadeTime, 0);
+			AudioEventManager.addCrossfadeEvent(newTrack, fadeTime, trackVolume);
+			musicTrack[slot] = newTrack;
+		} else {
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].setTime(timeNow);
+		}
+	}
+
+	this.addTrack = function(newTrack) {
+		musicTrack.push(newTrack);
+	}
+
+	this.removeTrack = function(slot) {
+		musicTrack.splice(slot,1);
+	}
+
+	this.updateVolume = function() {
+		for (var i in trackList) {
+			musicTrack[i].updateVolume();
+		}
+	}
+
+	this.setVolume = function(newVolume) {
+		trackVolume = newVolume;
+		musicTrack[currentTrack].setVolume(newVolume);
+	}
+
+	this.getVolume = function() {
+		return musicTrack[currentTrack].getVolume();
+	}
+
+	this.getListLength = function() {
+		 return musicTrack.length;
+	}
+
+	this.getCurrentTrack = function() {
+		 return currentTrack;
+	}
+
+	this.getSourceTrack = function() {
+		return musicTrack[currentTrack].getSourceTrack();
+	}
+
+	this.setTime = function(time) {
+		var totalTime = time;
+		for (var i in trackList) {
+			if (musicTrack[i].getDuration() > totalTime) {
+				totalTime -= musicTrack[i].getDuration();
+			} else if (musicTrack[i].getDuration() <= totalTime) {
+				currentTrack = i;
+				musicTrack[currentTrack].setTime(totalTime);
+				return;
+			}
+		}
+	}
+
+	this.getTime = function() {
+		var totalTime = 0;
+		for (var i in trackList) {
+			if (i < currentTrack) {
+				totalTime += musicTrack[i].getDuration();
+			} else if (i == currentTrack) {
+				totalTime += musicTrack[i].getTime();
+			}
+		}
+	}
+	
+	this.setTrackName = function(name) {
+		musicTrack[currentTrack].setTrackName(name);
+	}
+
+	this.getTrackName = function() {
+		return musicTrack[currentTrack].getTrackName();
+	}
+	
+	this.getDuration = function() {
+		return duration();
+	}
+
+	this.getPaused = function() {
+		return musicTrack[currentTrack].getPaused();
+	}
+}
+
 function musicContainerRandom(trackList) {
 	var musicTrack = [];
 	var currentTrack = 0;
