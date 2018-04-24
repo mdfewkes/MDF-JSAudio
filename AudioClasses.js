@@ -38,7 +38,7 @@ function getRandomVolume(){
 	return randomVolume.toFixed(2);
 }
 
-function sfxClipSingle(filename) {
+function sfxClip(filename) {
 	var soundFile = new Audio(audioPath+filename+audioFormat());
 	soundFile.onerror = function(){soundFile = new Audio(audioPath+filename+audioFormat(true))};
 	var clipVolume = 1;
