@@ -984,9 +984,7 @@ function musicContainerRandom(trackList) {
 	var trackVolume = 1;
 
 	this.play = function() {
-		if (musicTrack.length > 1){
-			currentTrack = Math.floor(Math.random() * musicTrack.length);
-		}
+		currentTrack = Math.floor(Math.random() * musicTrack.length);
 		musicTrack[currentTrack].play();
 	}
 
