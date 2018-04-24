@@ -12,7 +12,7 @@ var layer3 = new musicTrackOverlapLooping("kicktail2", 2);
 var backgroundLayers = new musicContainerLayers([layer1, layer2, layer3]);
 var backgroundMusic = new musicContainerCrossfade([backgroundTracks, backgroundLayers]);
 
-var controles = new sfxClipSpriteSheet("controls", [[0.085,0.7],[1.1,2],[2.45,3.2]]);
+var controles = new sfxClipSpriteSheet("controls", [[0.242,0.578],[1.326,1.82],[2.6,2.95]]);
 var conPlay = new sfxClipSprite(controles, 0);
 var conPause = new sfxClipSprite(controles, 1);
 var conStop = new sfxClipSprite(controles, 2);
@@ -30,7 +30,7 @@ layer2.setTrackName("layer2");
 layer3.setTrackName("layer3");
 
 
-controles.setMixVolume(0.5);
+controles.setMixVolume(0.75);
 
 
 
