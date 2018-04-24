@@ -1356,7 +1356,7 @@ function musicContainerLayers(trackList) {
 	this.loadTrackWithCrossfade = function(newTrack, slot, fadeTime = 1) { //Needs a look
 		evaluateCurrentTrack();
 		var timeNow = musicTrack[currentTrack].getTime();
-		if(currentTrack == slot && !musicTrack[slot].getPaused()) {
+		if(!musicTrack[slot].getPaused()) {
 			newTrack.playFrom(timeNow);
 			AudioEventManager.addCrossfadeEvent(musicTrack[slot], fadeTime, 0);
 			AudioEventManager.addCrossfadeEvent(newTrack, fadeTime, musicTrackVolume[slot] *  trackVolume);
