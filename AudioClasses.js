@@ -1389,7 +1389,7 @@ function musicContainerLayers(trackList) {
 	}
 }
 
-function musicContainerPlaylist(trackList) {
+function musicContainerLoop(trackList) {
 	var musicTrack = [];
 	var currentTrack = 0;
 
@@ -1509,7 +1509,7 @@ function musicContainerPlaylist(trackList) {
 	}
 }
 
-function musicContainerPlaylistRandom(trackList, maxRepetitions = 3, minRepetitions = 1) {
+function musicContainerLoopRandom(trackList, maxRepetitions = 3, minRepetitions = 1) {
 	var musicTrack = [];
 	var currentTrack = 0;
 	var lastTrack = 0;
