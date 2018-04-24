@@ -941,6 +941,10 @@ function musicContainer(trackList) {
 		}
 	}
 
+	this.addTrack = function(newTrack) {
+		musicTrack.push(newTrack);
+	}
+
 	this.updateVolume = function() {
 		for (var i in trackList) {
 			musicTrack[i].updateVolume();
@@ -1052,6 +1056,10 @@ function musicContainerRandom(trackList) {
 		}
 	}
 
+	this.addTrack = function(newTrack) {
+		musicTrack.push(newTrack);
+	}
+
 	this.updateVolume = function() {
 		for (var i in trackList) {
 			musicTrack[i].updateVolume();
@@ -1160,6 +1168,10 @@ function musicContainerCrossfade(trackList) {
 			musicTrack[slot].setVolume(trackVolume);
 			musicTrack[slot].setTime(timeNow);
 		}
+	}
+
+	this.addTrack = function(newTrack) {
+		musicTrack.push(newTrack);
 	}
 
 	this.loadTrackWithCrossfade = function(newTrack, slot, fadeTime = 1) {
@@ -1313,6 +1325,11 @@ function musicContainerLayers(trackList) {
 		}
 	}
 
+	this.addTrack = function(newTrack) {
+		musicTrack.push(newTrack);
+		musicTrackVolume.push(0);
+	}
+
 	this.setLayerLevel = function(slot, level, fadeTime = 1) {
 		if (trackList[slot].getPaused()) {
 			var timeNow = 0;
@@ -1455,6 +1472,10 @@ function musicContainerLoop(trackList) {
 		}
 	}
 
+	this.addTrack = function(newTrack) {
+		musicTrack.push(newTrack);
+	}
+
 	this.updateVolume = function() {
 		for (var i in trackList) {
 			musicTrack[i].updateVolume();
@@ -1587,6 +1608,10 @@ function musicContainerLoopRandom(trackList, maxRepetitions = 3, minRepetitions 
 		}
 	}
 
+	this.addTrack = function(newTrack) {
+		musicTrack.push(newTrack);
+	}
+
 	this.updateVolume = function() {
 		for (var i in trackList) {
 			musicTrack[i].updateVolume();
@@ -1710,6 +1735,10 @@ function musicContainerSequence(trackList) {
 		}
 	}
 
+	this.addTrack = function(newTrack) {
+		musicTrack.push(newTrack);
+	}
+
 	this.updateVolume = function() {
 		for (var i in trackList) {
 			musicTrack[i].updateVolume();
@@ -1831,6 +1860,10 @@ function musicContainerSequenceLoopLast(trackList) {
 			musicTrack[slot].setVolume(trackVolume);
 			musicTrack[slot].setTime(timeNow);
 		}
+	}
+
+	this.addTrack = function(newTrack) {
+		musicTrack.push(newTrack);
 	}
 
 	this.updateVolume = function() {
