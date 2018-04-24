@@ -641,6 +641,10 @@ function musicTrackNonLooping(filename, playLength) {
 		mixVolume = volume;
 	}
 
+	this.getSourceTrack = function() {
+		return this;
+	}
+
 	this.setTime = function(time) {
 		musicFile.currentTime = time;
 	}
@@ -728,6 +732,10 @@ function musicTrackLooping(filename) {
 
 	this.setMixVolume = function(volume) {
 		mixVolume = volume;
+	}
+
+	this.getSourceTrack = function() {
+		return this;
 	}
 
 	this.setTime = function(time) {
@@ -835,6 +843,10 @@ function musicTrackLoopingWTail(filename, playLength) {
 
 	this.setMixVolume = function(volume) {
 		mixVolume = volume;
+	}
+
+	this.getSourceTrack = function() {
+		return this;
 	}
 
 	this.setTime = function(time) {
@@ -947,6 +959,10 @@ function musicContainer(trackList) {
 		 return musicTrack.length;
 	}
 
+	this.getSourceTrack = function() {
+		return musicTrack[currentTrack].getSourceTrack();
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 	}
@@ -1052,6 +1068,10 @@ function musicContainerRandom(trackList) {
 
 	this.getListLength = function() {
 		 return musicTrack.length;
+	}
+
+	this.getSourceTrack = function() {
+		return musicTrack[currentTrack].getSourceTrack();
 	}
 
 	this.setTime = function(time) {
@@ -1187,6 +1207,10 @@ function musicContainerCrossfade(trackList) {
 
 	this.getListLength = function() {
 		 return musicTrack.length;
+	}
+
+	this.getSourceTrack = function() {
+		return musicTrack[currentTrack].getSourceTrack();
 	}
 
 	this.setTime = function(time) {
@@ -1325,6 +1349,10 @@ function musicContainerLayers(trackList) {
 		 return musicTrack.length;
 	}
 
+	this.getSourceTrack = function() {
+		return musicTrack[currentTrack].getSourceTrack();
+	}
+
 	this.setTime = function(time) {
 		for (var i in trackList) {
 			musicTrack[i].setTime(time);
@@ -1441,6 +1469,10 @@ function musicContainerPlaylist(trackList) {
 
 	this.getListLength = function() {
 		 return musicTrack.length;
+	}
+
+	this.getSourceTrack = function() {
+		return musicTrack[currentTrack].getSourceTrack();
 	}
 
 	this.setTime = function(time) {
@@ -1567,6 +1599,10 @@ function musicContainerPlaylistRandom(trackList, maxRepetitions = 3, minRepetiti
 
 	this.getListLength = function() {
 		 return musicTrack.length;
+	}
+
+	this.getSourceTrack = function() {
+		return musicTrack[currentTrack].getSourceTrack();
 	}
 
 	this.setTime = function(time) {
