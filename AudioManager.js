@@ -204,7 +204,7 @@ function audioEventManager() {
 					if (eventList[i][2] <= now) {
 						//console.log("Ending Timer Event for " + thisTrack.getTrackName());
 						eventList[i] = [REMOVE];
-						thisTrack.triggerTimerEnded(eventList[i][3]);
+						thisTrack.trigger(eventList[i][3]);
 					}
 				} else {
 					eventList[i] = [REMOVE];

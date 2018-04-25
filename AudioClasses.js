@@ -70,6 +70,9 @@ function sfxClip(filename) {
 		soundFile.pause();
 	}
 
+	this.trigger = function(callSign) {
+	}
+
 	this.updateVolume = function() {
 		if (randVolume) {
 			soundFile.volume = Math.pow(mixVolume * sfxVolume * clipVolume * getRandomVolume() * !isMuted, 2);
@@ -162,6 +165,9 @@ function sfxClipOverlap(filename, voices = 2) {
 		for (var i in soundFile) {
 			soundFile[i].pause();
 		}
+	}
+
+	this.trigger = function(callSign) {
 	}
 
 	this.updateVolume = function() {
@@ -257,6 +263,9 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {
 		AudioEventManager.removeStopEvent(this);
 	}
 
+	this.trigger = function(callSign) {
+	}
+
 	this.updateVolume = function() {
 		if (randVolume) {
 			soundFile.volume = Math.pow(mixVolume * sfxVolume * clipVolume * getRandomVolume() * !isMuted, 2);
@@ -343,6 +352,9 @@ function sfxClipSprite(spriteSheet, clipNumber) {
 		}
 	}
 
+	this.trigger = function(callSign) {
+	}
+
 	this.updateVolume = function() {
 		spriteFile.updateVolume();		
 	}
@@ -401,6 +413,9 @@ function sfxContainer(clipList) {
 		for (var i in trackList) {
 			soundFile[i].pause();
 		}
+	}
+
+	this.trigger = function(callSign) {
 	}
 
 	this.loadClip = function(newClip, slot) {
@@ -488,6 +503,9 @@ function sfxContainerRandom(clipList) {
 		for (var i in trackList) {
 			soundFile[i].pause();
 		}
+	}
+
+	this.trigger = function(callSign) {
 	}
 
 	this.loadClip = function(newClip, slot) {
@@ -613,6 +631,9 @@ function musicTrack(filename, playLength) {
 		musicFile.play();
 	}
 
+	this.trigger = function(callSign) {
+	}
+
 	this.updateVolume = function() {
 		musicFile.volume = Math.pow(mixVolume * musicVolume  * trackVolume * !isMuted, 2);
 	}
@@ -703,6 +724,9 @@ function musicTrackOverlap(filename, playLength) {
 	this.playFrom = function(time) {
 		musicFile[currentTrack].currentTime = time;
 		musicFile[currentTrack].play();
+	}
+
+	this.trigger = function(callSign) {
 	}
 
 	this.updateVolume = function() {
@@ -803,7 +827,7 @@ function musicTrackOverlapLooping(filename, playLength) {
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
-	this.triggerTimerEnded = function(callSign) {
+	this.trigger = function(callSign) {
 		currentTrack++;
 		if (currentTrack > 1) {currentTrack = 0;}
 		this.play();
@@ -896,6 +920,9 @@ function musicContainer(trackList) {
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
+	}
+
+	this.trigger = function(callSign) {
 	}
 
 	this.setCurrentTrack = function(trackNumber) {
@@ -1046,7 +1073,7 @@ function musicContainerConcatenated(trackList) {
 		musicTrack[currentTrack].playFrom(totalTime);
 	}
 
-	this.triggerTimerEnded = function(callSign) {
+	this.trigger = function(callSign) {
 		currentTrack++;
 		if (currentTrack < musicTrack.length) {
 			this.play();
@@ -1222,7 +1249,7 @@ function musicContainerConcatenatedLoopLast(trackList) {
 		}
 	}
 
-	this.triggerTimerEnded = function(callSign) {
+	this.trigger = function(callSign) {
 		if (currentTrack < musicTrack.length - 1) {
 			currentTrack++;
 		} 
@@ -1413,7 +1440,7 @@ function musicContainerRandom(trackList) {
 		currentTrack = trackNumber;
 	}
 
-	this.triggerTimerEnded = function(callSign) {
+	this.trigger = function(callSign) {
 		currentTrack = Math.floor(Math.random() * musicTrack.length);
 	}
 
@@ -1544,6 +1571,9 @@ function musicContainerCrossfade(trackList) {
 		musicTrack[currentTrack].playFrom(time);
 	}
 
+	this.trigger = function(callSign) {
+	}
+
 	this.switchTo = function(slot, fadeTime = 1) {
 		var timeNow = musicTrack[currentTrack].getTime();
 		if(currentTrack != slot && !musicTrack[currentTrack].getPaused()) {
@@ -1557,7 +1587,6 @@ function musicContainerCrossfade(trackList) {
 			currentTrack = slot;
 			musicTrack[currentTrack].setVolume(trackVolume);
 		}
-
 	}
 
 	this.loadTrack = function(newTrack, slot) {
@@ -1703,6 +1732,9 @@ function musicContainerLayers(trackList) {
 		for (var i in trackList) {
 			musicTrack[i].playFrom(time);
 		}
+	}
+
+	this.trigger = function(callSign) {
 	}
 
 	this.setLayerLevel = function(slot, level, fadeTime = 1) {
@@ -1873,7 +1905,7 @@ function musicContainerSequence(trackList) {
 		musicTrack[currentTrack].playFrom(time);
 	}
 
-	this.triggerTimerEnded = function(callSign) {
+	this.trigger = function(callSign) {
 		currentTrack++;
 		if (currentTrack < musicTrack.length) {
 			this.play();
@@ -2018,7 +2050,7 @@ function musicContainerSequenceLatch(trackList) {
 		latched = false;
 	}
 
-	this.triggerTimerEnded = function(callSign) {
+	this.trigger = function(callSign) {
 		if (!latched) {
 			currentTrack++;
 			latched = true;
@@ -2164,7 +2196,7 @@ function musicContainerSequenceLatchLoop(trackList) {
 		latched = false;
 	}
 
-	this.triggerTimerEnded = function(callSign) {
+	this.trigger = function(callSign) {
 		if (!latched) {
 			currentTrack++;
 			latched = true;
@@ -2304,7 +2336,7 @@ function musicContainerSequenceLoop(trackList) {
 		musicTrack[currentTrack].playFrom(time);
 	}
 
-	this.triggerTimerEnded = function(callSign) {
+	this.trigger = function(callSign) {
 		currentTrack++;
 		if (currentTrack >= musicTrack.length) {currentTrack = 0;}
 		this.play();
@@ -2441,7 +2473,7 @@ function musicContainerSequenceLoopLast(trackList) {
 		musicTrack[currentTrack].playFrom(time);
 	}
 
-	this.triggerTimerEnded = function(callSign) {
+	this.trigger = function(callSign) {
 		if (currentTrack < musicTrack.length - 1) {
 			currentTrack++;
 		}
@@ -2585,7 +2617,7 @@ function musicContainerSequenceLoopRandom(trackList, maxRepetitions = 3, minRepe
 		musicTrack[currentTrack].playFrom(time);
 	}
 
-	this.triggerTimerEnded = function(callSign) {
+	this.trigger = function(callSign) {
 		if (playCountdown <= 0 && musicTrack.length > 1){
 			while(currentTrack == lastTrack) {
 				currentTrack = Math.floor(Math.random() * musicTrack.length);
