@@ -130,7 +130,7 @@ function audioEventManager() {
 		//var endTime = (thisTrack.getDuration() - thisTrack.getTime()) * 1000 + now;
 
 		if (check == "none") {
-			//console.log("Adding Timer Event for " + track.getTrackName());
+			//console.log("Adding Timer Event for " + track.getTrackName() + ". CallSign: " + callSign);
 			eventList.push([TIMER, track, endTime, callSign]);
 		} else {
 			eventList[check] = [TIMER, track, endTime, callSign];
@@ -199,24 +199,26 @@ function audioEventManager() {
 				}
 			}
 			if (eventList[i][0] == TIMER) {
+				// Arrayformat [TIMER, track, endTime, callSign]
 				thisTrack = eventList[i][1];
 				if (thisTrack.getPaused() == false) {
 					if (eventList[i][2] <= now) {
-						//console.log("Ending Timer Event for " + thisTrack.getTrackName());
-						eventList[i] = [REMOVE];
+						//console.log("Ending Timer Event. CallSign is: " + eventList[i][3]);
 						thisTrack.trigger(eventList[i][3]);
+						eventList[i] = [REMOVE];
 					}
 				} else {
 					eventList[i] = [REMOVE];
 				}
 			}
 			if (eventList[i][0] == STOP) {
+				//Arrayformat [STOP, track, endTime]
 				thisTrack = eventList[i][1];
 				if (thisTrack.getPaused() == false) {
 					if (eventList[i][2] <= now) {
 						//console.log("Executing Stop Event for " + thisTrack.getTrackName());
-						eventList[i] = [REMOVE];
 						thisTrack.stop();
+						eventList[i] = [REMOVE];
 					}
 				}
 			}
