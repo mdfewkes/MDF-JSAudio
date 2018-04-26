@@ -783,7 +783,7 @@ function musicTrackOverlap(filename, playLength) {
 	}
 }
 
-function musicTrackOverlapLooping(filename, playLength) {
+function musicTrackOverlapLoop(filename, playLength) {
 	var musicFile = new Array(new Audio(audioPath+filename+audioFormat()), new Audio(audioPath+filename+audioFormat()));
 	musicFile[0].onerror = function(){musicFile[0] = new Audio(audioPath+filename+audioFormat(true))}
 	musicFile[1].onerror = function(){musicFile[1] = new Audio(audioPath+filename+audioFormat(true))}
@@ -892,7 +892,7 @@ function musicTrackOverlapLooping(filename, playLength) {
 	}
 }
 
-function musicContainer(trackList) {
+function musicContainer(trackList) { //Needs cue controle
 	var musicTrack = [];
 	var currentTrack = 0;
 
@@ -1024,6 +1024,293 @@ function musicContainer(trackList) {
 	}
 }
 
+function musicContainerLoop(trackList) { //Needs Looping //Needs cue controle
+	var musicTrack = [];
+	var currentTrack = 0;
+
+	for (var i in trackList) {
+		musicTrack[i] = trackList[i];
+		musicTrack[i].pause();
+	}
+
+	var trackVolume = 1;
+
+	this.play = function() {
+		musicTrack[currentTrack].play();
+	}
+
+	this.stop = function() {
+		for (var i in trackList) {
+			musicTrack[i].stop();
+		}
+	}
+
+	this.resume = function() {
+		musicTrack[currentTrack].resume();
+	}
+
+	this.pause = function() {
+		for (var i in trackList) {
+			musicTrack[i].pause();
+		}
+	}
+
+	this.playFrom = function(time) {
+		musicTrack[currentTrack].playFrom(time);
+	}
+
+	this.trigger = function(callSign) {
+	}
+
+	this.setCurrentTrack = function(trackNumber) {
+		currentTrack = trackNumber;
+	}
+
+	this.loadTrack = function(newTrack, slot) {
+		var timeNow = musicTrack[currentTrack].getTime();
+		if(!musicTrack[slot].getPaused()) {
+			musicTrack[slot].pause();
+			musicTrack[slot].setTime(0);
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].playFrom(timeNow);
+		} else {
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].setTime(timeNow);
+		}
+	}
+
+	this.loadTrackWithCrossfade = function(newTrack, slot, fadeTime = 1) {
+		var timeNow = musicTrack[currentTrack].getTime();
+		if(currentTrack == slot && !musicTrack[currentTrack].getPaused()) {
+			newTrack.playFrom(timeNow);
+			AudioEventManager.addCrossfadeEvent(musicTrack[currentTrack], fadeTime, 0);
+			AudioEventManager.addCrossfadeEvent(newTrack, fadeTime, trackVolume);
+			musicTrack[slot] = newTrack;
+		} else {
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].setTime(timeNow);
+		}
+	}
+
+	this.addTrack = function(newTrack) {
+		musicTrack.push(newTrack);
+	}
+
+	this.removeTrack = function(slot) {
+		musicTrack.splice(slot,1);
+		if (currentTrack >= slot) {currentTrack--;}
+	}
+
+	this.updateVolume = function() {
+		for (var i in trackList) {
+			musicTrack[i].updateVolume();
+		}
+	}
+
+	this.setVolume = function(newVolume) {
+		trackVolume = newVolume;
+		musicTrack[currentTrack].setVolume(newVolume);
+	}
+
+	this.getVolume = function() {
+		return musicTrack[currentTrack].getVolume();
+	}
+
+	this.getListLength = function() {
+		 return musicTrack.length;
+	}
+
+	this.getCurrentTrack = function() {
+		 return currentTrack;
+	}
+
+	this.getSourceTrack = function() {
+		return musicTrack[currentTrack].getSourceTrack();
+	}
+
+	this.setTime = function(time) {
+		musicTrack[currentTrack].setTime(time);
+	}
+
+	this.getTime = function() {
+		return musicTrack[currentTrack].getTime();
+	}
+	
+	this.setTrackName = function(name) {
+		musicTrack[currentTrack].setTrackName(name);
+	}
+
+	this.getTrackName = function() {
+		return musicTrack[currentTrack].getTrackName();
+	}
+	
+	this.getDuration = function() {
+		return musicTrack[currentTrack].getDuration();
+	}
+
+	this.getPaused = function() {
+		return musicTrack[currentTrack].getPaused();
+	}
+}
+
+function musicContainerLoopRandom(trackList, maxRepetitions = 3, minRepetitions = 1) {
+	var musicTrack = [];
+	var currentTrack = 0;
+	var lastTrack = 0;
+	var playCountdown = 0;
+	var playMax = maxRepetitions;
+	var playMin = minRepetitions;
+
+	for (var i in trackList) {
+		musicTrack[i] = trackList[i];
+		musicTrack[i].pause();
+	}
+
+	var trackVolume = 1;
+
+	this.play = function() {
+		musicTrack[currentTrack].play();
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		lastTrack = currentTrack;
+		playCountdown--;
+	}
+
+	this.stop = function() {
+		for (var i in trackList) {
+			musicTrack[i].stop();
+		}
+	}
+
+	this.resume = function() {
+		musicTrack[currentTrack].resume();
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+	}
+
+	this.pause = function() {
+		for (var i in trackList) {
+			musicTrack[i].pause();
+		}
+	}
+
+	this.playFrom = function(time) {
+		musicTrack[currentTrack].playFrom(time);
+	}
+
+	this.trigger = function(callSign) {
+		if(callSign == "cue") {
+			if (playCountdown <= 0 && musicTrack.length > 1){
+				while(currentTrack == lastTrack) {
+					currentTrack = Math.floor(Math.random() * musicTrack.length);
+				}
+				playCountdown = Math.floor(Math.random() * (playMax - playMin + 1) + playMin);
+			}
+			this.play();
+		}else if(callSign == "dry cue") {
+			if (playCountdown <= 0 && musicTrack.length > 1){
+				while(currentTrack == lastTrack) {
+					currentTrack = Math.floor(Math.random() * musicTrack.length);
+				}
+				playCountdown = Math.floor(Math.random() * (playMax - playMin + 1) + playMin);
+			}
+		}
+			
+	}
+
+	this.loadTrack = function(newTrack, slot) {
+		var timeNow = musicTrack[currentTrack].getTime();
+		if(!musicTrack[slot].getPaused()) {
+			musicTrack[slot].pause();
+			musicTrack[slot].setTime(0);
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].playFrom(timeNow);
+		} else {
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].setTime(timeNow);
+		}
+	}
+
+	this.loadTrackWithCrossfade = function(newTrack, slot, fadeTime = 1) {
+		var timeNow = musicTrack[currentTrack].getTime();
+		if(currentTrack == slot && !musicTrack[currentTrack].getPaused()) {
+			newTrack.playFrom(timeNow);
+			AudioEventManager.addCrossfadeEvent(musicTrack[currentTrack], fadeTime, 0);
+			AudioEventManager.addCrossfadeEvent(newTrack, fadeTime, trackVolume);
+			musicTrack[slot] = newTrack;
+		} else {
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].setTime(timeNow);
+		}
+	}
+
+	this.addTrack = function(newTrack) {
+		musicTrack.push(newTrack);
+	}
+
+	this.removeTrack = function(slot) {
+		musicTrack.splice(slot,1);
+		if (currentTrack >= slot) {currentTrack--;}
+	}
+
+	this.updateVolume = function() {
+		for (var i in trackList) {
+			musicTrack[i].updateVolume();
+		}
+	}
+
+	this.setVolume = function(newVolume) {
+		trackVolume = newVolume;
+		musicTrack[currentTrack].setVolume(newVolume);
+	}
+
+	this.getVolume = function() {
+		return musicTrack[currentTrack].getVolume();
+	}
+
+	this.getListLength = function() {
+		 return musicTrack.length;
+	}
+
+	this.getCurrentTrack = function() {
+		 return currentTrack;
+	}
+
+	this.getSourceTrack = function() {
+		return musicTrack[currentTrack].getSourceTrack();
+	}
+
+	this.setTime = function(time) {
+		musicTrack[currentTrack].setTime(time);
+	}
+
+	this.getTime = function() {
+		return musicTrack[currentTrack].getTime();
+	}
+	
+	this.setTrackName = function(name) {
+		musicTrack[currentTrack].setTrackName(name);
+	}
+
+	this.getTrackName = function() {
+		return musicTrack[currentTrack].getTrackName();
+	}
+	
+	this.getDuration = function() {
+		return musicTrack[currentTrack].getDuration();
+	}
+
+	this.getPaused = function() {
+		return musicTrack[currentTrack].getPaused();
+	}
+}
+
 function musicContainerConcatenated(trackList) {
 	var musicTrack = [];
 	var currentTrack = 0;
@@ -1041,7 +1328,6 @@ function musicContainerConcatenated(trackList) {
 	this.play = function() {
 		musicTrack[currentTrack].play();
 		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
 		AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
 	}
 
@@ -1054,7 +1340,180 @@ function musicContainerConcatenated(trackList) {
 	this.resume = function() {
 		musicTrack[currentTrack].resume();
 		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
+		AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
+	}
+
+	this.pause = function() {
+		for (var i in trackList) {
+			musicTrack[i].pause();
+		}
+	}
+
+	this.playFrom = function(time) {
+		var totalTime = time;
+		var notFound = true;
+		for (var i in trackList) {
+			if (musicTrack[i].getDuration() > totalTime && notFound) {
+				totalTime -= musicTrack[i].getDuration();
+			} else if (musicTrack[i].getDuration() <= totalTime && notFound) {
+				currentTrack = i;
+				notFound = false;
+			}
+		}
+		musicTrack[currentTrack].playFrom(totalTime);
+	}
+
+	this.trigger = function(callSign) {
+		if(callSign == "secret cue") {
+			currentTrack++;
+			if (currentTrack < musicTrack.length) {
+				this.play();
+			} else {
+				currentTrack = 0;
+			}
+		}else if(callSign == "dry cue") {
+			currentTrack++;
+			if (currentTrack >= musicTrack.length) {
+				currentTrack = 0;
+			}
+		}
+	}
+
+	this.loadTrack = function(newTrack, slot) {
+		var timeNow = musicTrack[currentTrack].getTime();
+		if(!musicTrack[slot].getPaused()) {
+			musicTrack[slot].pause();
+			musicTrack[slot].setTime(0);
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].playFrom(timeNow);
+		} else {
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].setTime(timeNow);
+		}
+	}
+
+	this.loadTrackWithCrossfade = function(newTrack, slot, fadeTime = 1) {
+		var timeNow = musicTrack[currentTrack].getTime();
+		if(currentTrack == slot && !musicTrack[currentTrack].getPaused()) {
+			newTrack.playFrom(timeNow);
+			AudioEventManager.addCrossfadeEvent(musicTrack[currentTrack], fadeTime, 0);
+			AudioEventManager.addCrossfadeEvent(newTrack, fadeTime, trackVolume);
+			musicTrack[slot] = newTrack;
+		} else {
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].setTime(timeNow);
+		}
+	}
+
+	this.addTrack = function(newTrack) {
+		musicTrack.push(newTrack);
+	}
+
+	this.removeTrack = function(slot) {
+		musicTrack.splice(slot,1);
+		if (currentTrack >= slot) {currentTrack--;}
+	}
+
+	this.updateVolume = function() {
+		for (var i in trackList) {
+			musicTrack[i].updateVolume();
+		}
+	}
+
+	this.setVolume = function(newVolume) {
+		trackVolume = newVolume;
+		musicTrack[currentTrack].setVolume(newVolume);
+	}
+
+	this.getVolume = function() {
+		return musicTrack[currentTrack].getVolume();
+	}
+
+	this.getListLength = function() {
+		 return musicTrack.length;
+	}
+
+	this.getCurrentTrack = function() {
+		 return currentTrack;
+	}
+
+	this.getSourceTrack = function() {
+		return musicTrack[currentTrack].getSourceTrack();
+	}
+
+	this.setTime = function(time) {
+		var totalTime = time;
+		for (var i in trackList) {
+			if (musicTrack[i].getDuration() > totalTime) {
+				totalTime -= musicTrack[i].getDuration();
+			} else if (musicTrack[i].getDuration() <= totalTime) {
+				currentTrack = i;
+				musicTrack[currentTrack].setTime(totalTime);
+				return;
+			}
+		}
+	}
+
+	this.getTime = function() {
+		var totalTime = 0;
+		for (var i in trackList) {
+			if (i < currentTrack) {
+				totalTime += musicTrack[i].getDuration();
+			} else if (i == currentTrack) {
+				totalTime += musicTrack[i].getTime();
+			}
+		}
+	}
+	
+	this.setTrackName = function(name) {
+		musicTrack[currentTrack].setTrackName(name);
+	}
+
+	this.getTrackName = function() {
+		return musicTrack[currentTrack].getTrackName();
+	}
+	
+	this.getDuration = function() {
+		return duration;
+	}
+
+	this.getPaused = function() {
+		return musicTrack[currentTrack].getPaused();
+	}
+}
+
+function musicContainerConcatenatedLoop(trackList) { //Needs Looping
+	var musicTrack = [];
+	var currentTrack = 0;
+	var duration = 0;
+
+	for (var i in trackList) {
+		musicTrack[i] = trackList[i];
+		musicTrack[i].pause();
+		duration += musicTrack[i].getDuration();
+	}
+
+	var trackVolume = 1;
+
+
+	this.play = function() {
+		musicTrack[currentTrack].play();
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
+	}
+
+	this.stop = function() {
+		for (var i in trackList) {
+			musicTrack[i].stop();
+		}
+	}
+
+	this.resume = function() {
+		musicTrack[currentTrack].resume();
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
 		AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
 	}
 
@@ -1218,7 +1677,6 @@ function musicContainerConcatenatedLoopLast(trackList) {
 	this.play = function() {
 		musicTrack[currentTrack].play();
 		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
 		AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
 	}
 
@@ -1231,7 +1689,6 @@ function musicContainerConcatenatedLoopLast(trackList) {
 	this.resume = function() {
 		musicTrack[currentTrack].resume();
 		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue"); 
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
 		AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
 	}
 
@@ -1417,7 +1874,7 @@ function musicContainerConcatenatedLoopLast(trackList) {
 	}
 }
 
-function musicContainerRandom(trackList) {
+function musicContainerRandom(trackList) { //Needs cue controle
 	var musicTrack = [];
 	var currentTrack = 0;
 
@@ -1547,7 +2004,7 @@ function musicContainerRandom(trackList) {
 	}
 }
 
-function musicContainerCrossfade(trackList) {
+function musicContainerCrossfade(trackList) { //Needs cue controle
 	var musicTrack = [];
 	var currentTrack = 0;
 
@@ -1692,7 +2149,337 @@ function musicContainerCrossfade(trackList) {
 	}
 }
 
-function musicContainerLayers(trackList) {
+function musicContainerCrossfadeLoop(trackList) { //Needs looping //Needs cue controle
+	var musicTrack = [];
+	var currentTrack = 0;
+
+	for (var i in trackList) {
+		musicTrack[i] = trackList[i];
+		musicTrack[i].setVolume(0)
+		musicTrack[i].pause();
+	}
+	musicTrack[0].setVolume(1);
+
+	var trackVolume = 1;
+
+	this.play = function() {
+		musicTrack[currentTrack].play();
+	}
+
+	this.stop = function() {
+		for (var i in trackList) {
+			musicTrack[i].stop();
+		}
+	}
+
+	this.resume = function() {
+		musicTrack[currentTrack].resume();
+	}
+
+	this.pause = function() {
+		for (var i in trackList) {
+			musicTrack[i].pause();
+		}
+	}
+
+	this.playFrom = function(time) {
+		musicTrack[currentTrack].playFrom(time);
+	}
+
+	this.trigger = function(callSign) {
+	}
+
+	this.switchTo = function(slot, fadeTime = 1) {
+		var timeNow = musicTrack[currentTrack].getTime();
+		if(currentTrack != slot && !musicTrack[currentTrack].getPaused()) {
+			musicTrack[slot].playFrom(timeNow);
+			AudioEventManager.addCrossfadeEvent(musicTrack[currentTrack], fadeTime, 0);
+			AudioEventManager.addCrossfadeEvent(musicTrack[slot], fadeTime, trackVolume);
+			currentTrack = slot;
+		} else if (currentTrack != slot) {
+			musicTrack[slot].setTime(timeNow);
+			musicTrack[currentTrack].stop();
+			currentTrack = slot;
+			musicTrack[currentTrack].setVolume(trackVolume);
+		}
+	}
+
+	this.loadTrack = function(newTrack, slot) {
+		var timeNow = musicTrack[currentTrack].getTime();
+		if(!musicTrack[slot].getPaused()) {
+			musicTrack[slot].pause();
+			musicTrack[slot].setTime(0);
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].playFrom(timeNow);
+		} else {
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].setTime(timeNow);
+		}
+	}
+
+	this.loadTrackWithCrossfade = function(newTrack, slot, fadeTime = 1) {
+		var timeNow = musicTrack[currentTrack].getTime();
+		if(currentTrack == slot && !musicTrack[currentTrack].getPaused()) {
+			newTrack.playFrom(timeNow);
+			AudioEventManager.addCrossfadeEvent(musicTrack[currentTrack], fadeTime, 0);
+			AudioEventManager.addCrossfadeEvent(newTrack, fadeTime, trackVolume);
+			musicTrack[slot] = newTrack;
+		} else {
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(trackVolume);
+			musicTrack[slot].setTime(timeNow);
+		}
+	}
+
+	this.addTrack = function(newTrack) {
+		musicTrack.push(newTrack);
+	}
+
+	this.removeTrack = function(slot) {
+		musicTrack.splice(slot,1);
+		if (currentTrack >= slot) {currentTrack--;}
+	}
+
+	this.updateVolume = function() {
+		for (var i in trackList) {
+			musicTrack[i].updateVolume();
+		}
+	}
+
+	this.setVolume = function(newVolume) {
+		trackVolume = newVolume;
+		musicTrack[currentTrack].setVolume(newVolume);
+	}
+
+	this.getVolume = function() {
+		return musicTrack[currentTrack].getVolume();
+	}
+
+	this.getListLength = function() {
+		 return musicTrack.length;
+	}
+
+	this.getCurrentTrack = function() {
+		 return currentTrack;
+	}
+
+	this.getSourceTrack = function() {
+		return musicTrack[currentTrack].getSourceTrack();
+	}
+
+	this.setTime = function(time) {
+		musicTrack[currentTrack].setTime(time);
+	}
+
+	this.getTime = function() {
+		return musicTrack[currentTrack].getTime();
+	}
+	
+	this.setTrackName = function(name) {
+		musicTrack[currentTrack].setTrackName(name);
+	}
+
+	this.getTrackName = function() {
+		return musicTrack[currentTrack].getTrackName();
+	}
+	
+	this.getDuration = function() {
+		return musicTrack[currentTrack].getDuration();
+	}
+
+	this.getPaused = function() {
+		return musicTrack[currentTrack].getPaused();
+	}
+}
+
+function musicContainerLayers(trackList) { //Needs cue controle
+	var musicTrack = [];
+	var musicTrackVolume = [];
+	var trackVolume = 1;
+	var currentTrack = 0;
+
+	for (var i in trackList) {
+		musicTrack[i] = trackList[i];
+		musicTrack[i].pause();
+		musicTrackVolume[i] = 0;
+		musicTrack[i].setVolume(0);
+	}
+	musicTrackVolume[0] = 1;
+	musicTrack[0].setVolume(1);
+
+	function evaluateCurrentTrack(){
+		var trackNow = 0;
+		for(var i in trackList) {
+			if (!trackList[i].getPaused()) {
+				trackNow = i;
+			}
+		}
+		currentTrack = trackNow;
+	}
+
+	this.play = function() {
+		for (var i in trackList) {
+			if (musicTrackVolume[i] > 0) {musicTrack[i].play();}
+		}
+	}
+
+	this.stop = function() {
+		for (var i in trackList) {
+			musicTrack[i].stop();
+		}
+	}
+
+	this.resume = function() {
+		for (var i in trackList) {
+			if (musicTrackVolume[i] > 0) {musicTrack[i].resume();}
+		}
+	}
+
+	this.pause = function() {
+		for (var i in trackList) {
+			musicTrack[i].pause();
+		}
+	}
+
+	this.playFrom = function(time) {
+		for (var i in trackList) {
+			musicTrack[i].playFrom(time);
+		}
+	}
+
+	this.trigger = function(callSign) {
+	}
+
+	this.setLayerLevel = function(slot, level, fadeTime = 1) {
+		musicTrackVolume[slot] = level;
+		if (trackList[slot].getPaused()) {
+			var timeNow = trackList[0].getTime();
+			var tracksPlaying = 0;
+			for(var i in trackList) {
+				if (!trackList[i].getPaused()) {
+					timeNow = trackList[i].getTime();
+					tracksPlaying++;
+				}
+			}
+			if (tracksPlaying > 0) {
+				trackList[slot].setVolume(musicTrackVolume[slot] * trackVolume);
+				trackList[slot].playFrom(timeNow);
+			} else {
+				trackList[slot].setVolume(musicTrackVolume[slot] * trackVolume);
+			}
+		}
+		AudioEventManager.addFadeEvent(trackList[slot], fadeTime, musicTrackVolume[slot] * trackVolume);
+	}
+
+	this.loadTrack = function(newTrack, slot) {
+		var timeNow = musicTrack.getTime();
+		if(!musicTrack[slot].getPaused()) {
+			musicTrack[slot].pause();
+			musicTrack[slot].setTime(0);
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(musicTrackVolume[slot] * trackVolume);
+			musicTrack[slot].playFrom(timeNow);
+		} else {
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(musicTrackVolume[slot] * trackVolume);
+			musicTrack[slot].setTime(timeNow);
+		}
+	}
+
+	this.loadTrackWithCrossfade = function(newTrack, slot, fadeTime = 1) { //Needs a look
+		evaluateCurrentTrack();
+		var timeNow = musicTrack[currentTrack].getTime();
+		if(!musicTrack[slot].getPaused()) {
+			newTrack.playFrom(timeNow);
+			AudioEventManager.addCrossfadeEvent(musicTrack[slot], fadeTime, 0);
+			AudioEventManager.addCrossfadeEvent(newTrack, fadeTime, musicTrackVolume[slot] *  trackVolume);
+			musicTrack[slot] = newTrack;
+		} else {
+			musicTrack[slot] = newTrack;
+			musicTrack[slot].setVolume(musicTrackVolume[slot] * trackVolume);
+			musicTrack[slot].setTime(timeNow);
+		}
+	}
+
+	this.addTrack = function(newTrack) {
+		musicTrack.push(newTrack);
+		musicTrackVolume.push(0);
+		newTrack.setVolume(0);
+	}
+
+	this.removeTrack = function(slot) {
+		musicTrack.splice(slot,1);
+		musicTrackVolume.splice(slot,1);
+		if (currentTrack >= slot) {currentTrack--;}
+	}
+
+	this.updateVolume = function() {
+		for (var i in trackList) {
+			musicTrack[i].updateVolume();
+		}
+	}
+
+	this.setVolume = function(newVolume) {
+		trackVolume = newVolume;
+		for (var i in trackList) {
+			musicTrack[i].setVolume(musicTrackVolume[i] * trackVolume);
+		}
+	}
+
+	this.getVolume = function() {
+		evaluateCurrentTrack();
+		return musicTrack[currentTrack].getVolume();
+	}
+
+	this.getListLength = function() {
+		 return musicTrack.length;
+	}
+
+	this.getCurrentTrack = function() {
+		evaluateCurrentTrack();
+		 return currentTrack;
+	}
+
+	this.getSourceTrack = function() {
+		evaluateCurrentTrack();
+		return musicTrack[currentTrack].getSourceTrack();
+	}
+
+	this.setTime = function(time) {
+		for (var i in trackList) {
+			musicTrack[i].setTime(time);
+		}
+	}
+
+	this.getTime = function() {
+		evaluateCurrentTrack();
+		return musicTrack[currentTrack].getTime();
+	}
+	
+	this.setTrackName = function(name) {
+		evaluateCurrentTrack();
+		musicTrack[currentTrack].setTrackName(name);
+	}
+
+	this.getTrackName = function() {
+		evaluateCurrentTrack();
+		return musicTrack[currentTrack].getTrackName();
+	}
+	
+	this.getDuration = function() {
+		evaluateCurrentTrack();
+		return musicTrack[currentTrack].getDuration();
+	}
+
+	this.getPaused = function() {
+		evaluateCurrentTrack();
+		return musicTrack[currentTrack].getPaused();
+	}
+}
+
+function musicContainerLayersLoop(trackList) { //Needs looping //Needs cue controle
 	var musicTrack = [];
 	var musicTrackVolume = [];
 	var trackVolume = 1;
@@ -1891,7 +2678,6 @@ function musicContainerSequence(trackList) {
 	this.play = function() {
 		musicTrack[currentTrack].play();
 		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
@@ -1904,7 +2690,6 @@ function musicContainerSequence(trackList) {
 	this.resume = function() {
 		musicTrack[currentTrack].resume();
 		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
@@ -2039,7 +2824,6 @@ function musicContainerSequenceLatch(trackList) {
 	this.play = function() {
 		musicTrack[currentTrack].play();
 		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
@@ -2052,7 +2836,6 @@ function musicContainerSequenceLatch(trackList) {
 	this.resume = function() {
 		musicTrack[currentTrack].resume();
 		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
@@ -2197,7 +2980,6 @@ function musicContainerSequenceLatchLoop(trackList) {
 	this.play = function() {
 		musicTrack[currentTrack].play();
 		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
@@ -2210,7 +2992,6 @@ function musicContainerSequenceLatchLoop(trackList) {
 	this.resume = function() {
 		musicTrack[currentTrack].resume();
 		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
@@ -2349,7 +3130,6 @@ function musicContainerSequenceLoop(trackList) {
 	this.play = function() {
 		musicTrack[currentTrack].play();
 		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
@@ -2362,7 +3142,6 @@ function musicContainerSequenceLoop(trackList) {
 	this.resume = function() {
 		musicTrack[currentTrack].resume();
 		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
@@ -2491,7 +3270,6 @@ function musicContainerSequenceLoopLast(trackList) {
 	this.play = function() {
 		musicTrack[currentTrack].play();
 		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
@@ -2504,7 +3282,6 @@ function musicContainerSequenceLoopLast(trackList) {
 	this.resume = function() {
 		musicTrack[currentTrack].resume();
 		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
@@ -2591,163 +3368,6 @@ function musicContainerSequenceLoopLast(trackList) {
 
 	this.getListLength = function() {
 		 return musicTrack.length;
-	}
-
-	this.getSourceTrack = function() {
-		return musicTrack[currentTrack].getSourceTrack();
-	}
-
-	this.setTime = function(time) {
-		musicTrack[currentTrack].setTime(time);
-	}
-
-	this.getTime = function() {
-		return musicTrack[currentTrack].getTime();
-	}
-	
-	this.setTrackName = function(name) {
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		return musicTrack[currentTrack].getTrackName();
-	}
-	
-	this.getDuration = function() {
-		return musicTrack[currentTrack].getDuration();
-	}
-
-	this.getPaused = function() {
-		return musicTrack[currentTrack].getPaused();
-	}
-}
-
-function musicContainerSequenceLoopRandom(trackList, maxRepetitions = 3, minRepetitions = 1) {
-	var musicTrack = [];
-	var currentTrack = 0;
-	var lastTrack = 0;
-	var playCountdown = 0;
-	var playMax = maxRepetitions;
-	var playMin = minRepetitions;
-
-	for (var i in trackList) {
-		musicTrack[i] = trackList[i];
-		musicTrack[i].pause();
-	}
-
-	var trackVolume = 1;
-
-	this.play = function() {
-		musicTrack[currentTrack].play();
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
-		lastTrack = currentTrack;
-		playCountdown--;
-	}
-
-	this.stop = function() {
-		for (var i in trackList) {
-			musicTrack[i].stop();
-		}
-	}
-
-	this.resume = function() {
-		musicTrack[currentTrack].resume();
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
-	}
-
-	this.pause = function() {
-		for (var i in trackList) {
-			musicTrack[i].pause();
-		}
-	}
-
-	this.playFrom = function(time) {
-		musicTrack[currentTrack].playFrom(time);
-	}
-
-	this.trigger = function(callSign) {
-		if(callSign == "cue") {
-			if (playCountdown <= 0 && musicTrack.length > 1){
-				while(currentTrack == lastTrack) {
-					currentTrack = Math.floor(Math.random() * musicTrack.length);
-				}
-				playCountdown = Math.floor(Math.random() * (playMax - playMin + 1) + playMin);
-			}
-			this.play();
-		}else if(callSign == "dry cue") {
-			if (playCountdown <= 0 && musicTrack.length > 1){
-				while(currentTrack == lastTrack) {
-					currentTrack = Math.floor(Math.random() * musicTrack.length);
-				}
-				playCountdown = Math.floor(Math.random() * (playMax - playMin + 1) + playMin);
-			}
-		}
-			
-	}
-
-	this.loadTrack = function(newTrack, slot) {
-		var timeNow = musicTrack[currentTrack].getTime();
-		if(!musicTrack[slot].getPaused()) {
-			musicTrack[slot].pause();
-			musicTrack[slot].setTime(0);
-			musicTrack[slot] = newTrack;
-			musicTrack[slot].setVolume(trackVolume);
-			musicTrack[slot].playFrom(timeNow);
-		} else {
-			musicTrack[slot] = newTrack;
-			musicTrack[slot].setVolume(trackVolume);
-			musicTrack[slot].setTime(timeNow);
-		}
-	}
-
-	this.loadTrackWithCrossfade = function(newTrack, slot, fadeTime = 1) {
-		var timeNow = musicTrack[currentTrack].getTime();
-		if(currentTrack == slot && !musicTrack[currentTrack].getPaused()) {
-			newTrack.playFrom(timeNow);
-			AudioEventManager.addCrossfadeEvent(musicTrack[currentTrack], fadeTime, 0);
-			AudioEventManager.addCrossfadeEvent(newTrack, fadeTime, trackVolume);
-			musicTrack[slot] = newTrack;
-		} else {
-			musicTrack[slot] = newTrack;
-			musicTrack[slot].setVolume(trackVolume);
-			musicTrack[slot].setTime(timeNow);
-		}
-	}
-
-	this.addTrack = function(newTrack) {
-		musicTrack.push(newTrack);
-	}
-
-	this.removeTrack = function(slot) {
-		musicTrack.splice(slot,1);
-		if (currentTrack >= slot) {currentTrack--;}
-	}
-
-	this.updateVolume = function() {
-		for (var i in trackList) {
-			musicTrack[i].updateVolume();
-		}
-	}
-
-	this.setVolume = function(newVolume) {
-		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
-	}
-
-	this.getVolume = function() {
-		return musicTrack[currentTrack].getVolume();
-	}
-
-	this.getListLength = function() {
-		 return musicTrack.length;
-	}
-
-	this.getCurrentTrack = function() {
-		 return currentTrack;
 	}
 
 	this.getSourceTrack = function() {

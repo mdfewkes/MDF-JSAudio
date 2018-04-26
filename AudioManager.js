@@ -2,13 +2,13 @@ setFormat();
 setAudioPath("Audio/");
 
 //set sound clips and music tracks here
-var track1 = new musicTrackOverlapLooping("lay4tail16", 16);
-var track2 = new musicTrackOverlapLooping("lay2tail8", 8);
-var track3 = new musicTrackOverlapLooping("LayTail34", 8);
+var track1 = new musicTrackOverlapLoop("lay4tail16", 16);
+var track2 = new musicTrackOverlapLoop("lay2tail8", 8);
+var track3 = new musicTrackOverlapLoop("LayTail34", 8);
 var backgroundTracks = new musicContainerCrossfade([track1, track2, track3]);
-var layer1 = new musicTrackOverlapLooping("clavtail2", 2);
-var layer2 = new musicTrackOverlapLooping("cabasatail2", 2);
-var layer3 = new musicTrackOverlapLooping("kicktail2", 2);
+var layer1 = new musicTrackOverlapLoop("clavtail2", 2);
+var layer2 = new musicTrackOverlapLoop("cabasatail2", 2);
+var layer3 = new musicTrackOverlapLoop("kicktail2", 2);
 var backgroundLayers = new musicContainerLayers([layer1, layer2, layer3]);
 var backgroundMusic = new musicContainerCrossfade([backgroundTracks, backgroundLayers]);
 
@@ -35,7 +35,7 @@ controles.setMixVolume(0.75);
 var test1 = new musicTrackOverlap("clavtail2", 2);
 var test2 = new musicTrackOverlap("cabasatail2", 2);
 
-var testC = new musicContainerSequenceLoopLast([test1,test2]);
+var testC = new musicContainer([test1,test2]);
 
 
 
