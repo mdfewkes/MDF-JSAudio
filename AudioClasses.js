@@ -828,9 +828,14 @@ function musicTrackOverlapLooping(filename, playLength) {
 	}
 
 	this.trigger = function(callSign) {
-		currentTrack++;
-		if (currentTrack > 1) {currentTrack = 0;}
-		this.play();
+		if(callSign == "cue") {
+			currentTrack++;
+			if (currentTrack > 1) {currentTrack = 0;}
+			this.play();
+		}else if(callSign == "dry cue") {
+			currentTrack++;
+			if (currentTrack > 1) {currentTrack = 0;}
+		}
 	}
 
 	this.updateVolume = function() {
@@ -1035,9 +1040,9 @@ function musicContainerConcatenated(trackList) {
 
 	this.play = function() {
 		musicTrack[currentTrack].play();
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "secret cue");
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
 		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
 	}
 
 	this.stop = function() {
@@ -1048,9 +1053,9 @@ function musicContainerConcatenated(trackList) {
 
 	this.resume = function() {
 		musicTrack[currentTrack].resume();
-		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "secret cue");
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
 		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
 	}
 
 	this.pause = function() {
@@ -1074,11 +1079,18 @@ function musicContainerConcatenated(trackList) {
 	}
 
 	this.trigger = function(callSign) {
-		currentTrack++;
-		if (currentTrack < musicTrack.length) {
-			this.play();
-		} else {
-			currentTrack = 0;
+		if(callSign == "secret cue") {
+			currentTrack++;
+			if (currentTrack < musicTrack.length) {
+				this.play();
+			} else {
+				currentTrack = 0;
+			}
+		}else if(callSign == "dry cue") {
+			currentTrack++;
+			if (currentTrack >= musicTrack.length) {
+				currentTrack = 0;
+			}
 		}
 	}
 
@@ -1205,10 +1217,9 @@ function musicContainerConcatenatedLoopLast(trackList) {
 
 	this.play = function() {
 		musicTrack[currentTrack].play();
-		if (atEnd) { AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue"); }
-		else { AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "secret cue"); }
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
 		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
 	}
 
 	this.stop = function() {
@@ -1219,10 +1230,9 @@ function musicContainerConcatenatedLoopLast(trackList) {
 
 	this.resume = function() {
 		musicTrack[currentTrack].resume();
-		if (atEnd) { AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue"); }
-		else { AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "secret cue"); }
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue"); 
 		AudioEventManager.removeTimerEvent(musicTrack[currentTrack].getSourceTrack(), "cue");
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
 	}
 
 	this.pause = function() {
@@ -1250,13 +1260,22 @@ function musicContainerConcatenatedLoopLast(trackList) {
 	}
 
 	this.trigger = function(callSign) {
-		if (currentTrack < musicTrack.length - 1) {
-			currentTrack++;
-		} 
-		if (currentTrack = musicTrack.length - 1) {
-			atEnd = true;
+		if(callSign == "secret cue") {
+			if (currentTrack < musicTrack.length - 1) {
+				currentTrack++;
+			} 
+			if (currentTrack >= musicTrack.length - 1) {
+				atEnd = true;
+			}
+			this.play();
+		}else if(callSign == "dry cue") {
+			if (currentTrack < musicTrack.length - 1) {
+				currentTrack++;
+			} 
+			if (currentTrack >= musicTrack.length - 1) {
+				atEnd = true;
+			}
 		}
-		this.play();
 	}
 
 	this.loadTrack = function(newTrack, slot) {
@@ -1410,8 +1429,8 @@ function musicContainerRandom(trackList) {
 	var trackVolume = 1;
 
 	this.play = function() {
+		currentTrack = Math.floor(Math.random() * musicTrack.length);
 		musicTrack[currentTrack].play();
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.stop = function() {
@@ -1423,7 +1442,6 @@ function musicContainerRandom(trackList) {
 
 	this.resume = function() {
 		musicTrack[currentTrack].resume();
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.pause = function() {
@@ -1436,12 +1454,7 @@ function musicContainerRandom(trackList) {
 		musicTrack[currentTrack].playFrom(time);
 	}
 
-	this.setCurrentTrack = function(trackNumber) {
-		currentTrack = trackNumber;
-	}
-
 	this.trigger = function(callSign) {
-		currentTrack = Math.floor(Math.random() * musicTrack.length);
 	}
 
 	this.loadTrack = function(newTrack, slot) {
@@ -1906,11 +1919,18 @@ function musicContainerSequence(trackList) {
 	}
 
 	this.trigger = function(callSign) {
-		currentTrack++;
-		if (currentTrack < musicTrack.length) {
-			this.play();
-		} else {
-			currentTrack = 0;
+		if(callSign == "cue") {
+			currentTrack++;
+			if (currentTrack < musicTrack.length) {
+				this.play();
+			} else {
+				currentTrack = 0;
+			}
+		}else if(callSign == "dry cue") {
+			currentTrack++;
+			if (currentTrack >= musicTrack.length) {
+				currentTrack = 0;
+			}
 		}
 	}
 
@@ -2051,12 +2071,24 @@ function musicContainerSequenceLatch(trackList) {
 	}
 
 	this.trigger = function(callSign) {
-		if (!latched) {
-			currentTrack++;
-			latched = true;
-		}
-		if (!(currentTrack >= musicTrack.length)) {
-			this.play();
+		if(callSign == "cue") {
+			if (!latched) {
+				currentTrack++;
+				latched = true;
+			}
+			if (currentTrack >= musicTrack.length) {
+				currentTrack = 0;
+			} else {
+				this.play();
+			}
+		}else if(callSign == "dry cue") {
+			if (!latched) {
+				currentTrack++;
+				latched = true;
+			}
+			if (currentTrack >= musicTrack.length) {
+				currentTrack = 0;
+			}
 		}
 	}
 
@@ -2197,12 +2229,20 @@ function musicContainerSequenceLatchLoop(trackList) {
 	}
 
 	this.trigger = function(callSign) {
-		if (!latched) {
-			currentTrack++;
-			latched = true;
+		if(callSign == "cue") {
+			if (!latched) {
+				currentTrack++;
+				latched = true;
+			}
+			if (currentTrack >= musicTrack.length) {currentTrack = 0;}
+			this.play();
+		}else if(callSign == "dry cue") {
+			if (!latched) {
+				currentTrack++;
+				latched = true;
+			}
+			if (currentTrack >= musicTrack.length) {currentTrack = 0;}
 		}
-		if (currentTrack >= musicTrack.length) {currentTrack = 0;}
-		this.play();
 	}
 
 	this.loadTrack = function(newTrack, slot) {
@@ -2337,9 +2377,14 @@ function musicContainerSequenceLoop(trackList) {
 	}
 
 	this.trigger = function(callSign) {
-		currentTrack++;
-		if (currentTrack >= musicTrack.length) {currentTrack = 0;}
-		this.play();
+		if(callSign == "cue") {
+			currentTrack++;
+			if (currentTrack >= musicTrack.length) {currentTrack = 0;}
+			this.play();
+		}else if(callSign == "dry cue") {
+			currentTrack++;
+			if (currentTrack >= musicTrack.length) {currentTrack = 0;}
+		}
 	}
 
 	this.loadTrack = function(newTrack, slot) {
@@ -2474,10 +2519,17 @@ function musicContainerSequenceLoopLast(trackList) {
 	}
 
 	this.trigger = function(callSign) {
-		if (currentTrack < musicTrack.length - 1) {
-			currentTrack++;
+		if(callSign == "cue") {
+			if (currentTrack < musicTrack.length - 1) {
+				currentTrack++;
+			}
+			this.play();
+		}else if(callSign == "dry cue") {
+			if (currentTrack < musicTrack.length - 1) {
+				currentTrack++;
+			}
 		}
-		this.play();
+			
 	}
 
 	this.loadTrack = function(newTrack, slot) {
@@ -2618,13 +2670,23 @@ function musicContainerSequenceLoopRandom(trackList, maxRepetitions = 3, minRepe
 	}
 
 	this.trigger = function(callSign) {
-		if (playCountdown <= 0 && musicTrack.length > 1){
-			while(currentTrack == lastTrack) {
-				currentTrack = Math.floor(Math.random() * musicTrack.length);
+		if(callSign == "cue") {
+			if (playCountdown <= 0 && musicTrack.length > 1){
+				while(currentTrack == lastTrack) {
+					currentTrack = Math.floor(Math.random() * musicTrack.length);
+				}
+				playCountdown = Math.floor(Math.random() * (playMax - playMin + 1) + playMin);
 			}
-			playCountdown = Math.floor(Math.random() * (playMax - playMin + 1) + playMin);
+			this.play();
+		}else if(callSign == "dry cue") {
+			if (playCountdown <= 0 && musicTrack.length > 1){
+				while(currentTrack == lastTrack) {
+					currentTrack = Math.floor(Math.random() * musicTrack.length);
+				}
+				playCountdown = Math.floor(Math.random() * (playMax - playMin + 1) + playMin);
+			}
 		}
-		this.play();
+			
 	}
 
 	this.loadTrack = function(newTrack, slot) {

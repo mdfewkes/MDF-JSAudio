@@ -32,6 +32,14 @@ controles.setMixVolume(0.75);
 
 
 
+var test1 = new musicTrackOverlap("clavtail2", 2);
+var test2 = new musicTrackOverlap("cabasatail2", 2);
+
+var testC = new musicContainerSequence([test1,test2]);
+
+
+
+
 
 function setFormat() {
 	var audio = new Audio();
@@ -93,11 +101,12 @@ function audioEventManager() {
 
 	this.updateEvents = function() {
 		now = Date.now();
-		runList();
 		cleanupList();
+		runList();
 	}
 
 	this.addFadeEvent = function(track, duration, endVol) {
+		// Arrayformat [FADE, track, startTime, endTime, startVolume, endVolume, crossfade = false]
 		var check = checkListFor(FADE, track);
 		var endTime = duration * 1000 + now;
 		var startVolume = track.getVolume();
@@ -111,6 +120,7 @@ function audioEventManager() {
 	}
 
 	this.addCrossfadeEvent = function(track, duration, endVol) {
+		// Arrayformat [FADE, track, startTime, endTime, startVolume, endVolume, crossfade = true]
 		var check = checkListFor(FADE, track);
 		var endTime = duration * 1000 + now;
 		var startVolume = track.getVolume();
@@ -124,20 +134,22 @@ function audioEventManager() {
 	}
 
 	this.addTimerEvent = function(track, duration, callSign = "none") {
+		// Arrayformat [TIMER, track, endTime, callSign]
 		var thisTrack = track;
 		var check = checkListFor(TIMER, thisTrack, callSign);
 		var endTime = (duration * 1000) + now;
-		//var endTime = (thisTrack.getDuration() - thisTrack.getTime()) * 1000 + now;
 
 		if (check == "none") {
-			//console.log("Adding Timer Event for " + track.getTrackName() + ". CallSign: " + callSign);
+			console.log("Adding Timer Event for " + track.getTrackName() + ". CallSign: " + callSign);
 			eventList.push([TIMER, track, endTime, callSign]);
 		} else {
+			console.log("Replacing Timer Event for " + track.getTrackName() + ". CallSign: " + callSign);
 			eventList[check] = [TIMER, track, endTime, callSign];
 		}
 	}
 
 	this.addStopEvent = function(track, duration) {
+		// Arrayformat [STOP, track, endTime]
 		var thisTrack = track;
 		var check = checkListFor(STOP, thisTrack);
 		var endTime = (duration * 1000) + now;
@@ -158,7 +170,7 @@ function audioEventManager() {
 		if (check == "none") {
 			return;
 		} else {
-			//console.log("Removing Timer Event for " + track.getTrackName());
+			console.log("Removing Timer Event for " + track.getTrackName() + ". CallSign: " + callSign);
 			eventList[check] = [REMOVE];
 		}
 	}
@@ -203,11 +215,13 @@ function audioEventManager() {
 				thisTrack = eventList[i][1];
 				if (thisTrack.getPaused() == false) {
 					if (eventList[i][2] <= now) {
-						//console.log("Ending Timer Event. CallSign is: " + eventList[i][3]);
-						thisTrack.trigger(eventList[i][3]);
+						var callSign = eventList[i][3];
+						console.log("Triggering Timer Event. CallSign is: " + eventList[i][3]);
 						eventList[i] = [REMOVE];
+						thisTrack.trigger(callSign);
 					}
 				} else {
+					console.log("Track paused, removing Timer Event. CallSign is: " + eventList[i][3]);
 					eventList[i] = [REMOVE];
 				}
 			}
@@ -227,8 +241,10 @@ function audioEventManager() {
 	}
 
 	function cleanupList() {
+		//console.log("Cleaning up");
 		eventList.sort(function(a, b){return b-a});
 		while (eventList[eventList.length - 1] == REMOVE) {
+			console.log("Removing Event");
 			eventList.pop();
 		}
 	}
