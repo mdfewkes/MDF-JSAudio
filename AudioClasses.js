@@ -1842,7 +1842,7 @@ function musicContainerConcatenatedLoop(trackList) { //Might be broken out outsi
 	}
 }
 
-function musicContainerConcatenatedLoopLast(trackList) {
+function musicContainerConcatenatedLoopLast(trackList) { //Might be broken out outside cue controle
 	var musicTrack = [];
 	var currentTrack = 0;
 	var duration = 0;
