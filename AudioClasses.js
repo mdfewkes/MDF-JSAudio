@@ -612,6 +612,7 @@ function musicTrack(filename, playLength) {
 		musicFile.currentTime = 0;
 		this.updateVolume();
 		musicFile.play();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.stop = function() {
@@ -621,6 +622,7 @@ function musicTrack(filename, playLength) {
 
 	this.resume = function() {
 		musicFile.play();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.pause = function() {
@@ -630,6 +632,7 @@ function musicTrack(filename, playLength) {
 	this.playFrom = function(time) {
 		this.setTime(time);
 		musicFile.play();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.trigger = function(callSign) {
@@ -664,6 +667,7 @@ function musicTrack(filename, playLength) {
 		while(newTime >= duration) {newTime -= duration;}
 		if(newTime < 0) {newTime = 0;}
 		musicFile.currentTime = NewTime;
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.getTime = function() {
@@ -707,6 +711,7 @@ function musicTrackOverlap(filename, playLength) {
 		musicFile[currentTrack].currentTime = 0;
 		this.updateVolume();
 		musicFile[currentTrack].play();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.stop = function() {
@@ -718,6 +723,7 @@ function musicTrackOverlap(filename, playLength) {
 
 	this.resume = function() {
 		musicFile[currentTrack].play();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.pause = function() {
@@ -728,6 +734,7 @@ function musicTrackOverlap(filename, playLength) {
 	this.playFrom = function(time) {
 		this.setTime(time);
 		musicFile[currentTrack].play();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.trigger = function(callSign) {
@@ -763,6 +770,7 @@ function musicTrackOverlap(filename, playLength) {
 		while (newTime >= duration) {newTime -= duration;}
 		if(newTime < 0) {newTime = 0;}
 		musicFile[currentTrack].currentTime = newTime;
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.getTime = function() {
@@ -871,6 +879,7 @@ function musicTrackOverlapLoop(filename, playLength) {
 		while (newTime >= duration) {newTime -= duration;}
 		if(newTime < 0) {newTime = 0;}
 		musicFile[currentTrack].currentTime = newTime;
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.getTime = function() {
@@ -894,7 +903,7 @@ function musicTrackOverlapLoop(filename, playLength) {
 	}
 }
 
-function musicContainer(trackList) { //Needs testing
+function musicContainer(trackList) {
 	var musicTrack = [];
 	var currentTrack = 0;
 
@@ -931,6 +940,8 @@ function musicContainer(trackList) { //Needs testing
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.trigger = function(callSign) {
@@ -1008,10 +1019,14 @@ function musicContainer(trackList) { //Needs testing
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.getTime = function() {
 		return musicTrack[currentTrack].getTime();
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 	
 	this.setTrackName = function(name) {
@@ -1031,7 +1046,7 @@ function musicContainer(trackList) { //Needs testing
 	}
 }
 
-function musicContainerRandom(trackList) { //Needs testing
+function musicContainerRandom(trackList) {
 	var musicTrack = [];
 	var currentTrack = 0;
 
@@ -1070,6 +1085,8 @@ function musicContainerRandom(trackList) { //Needs testing
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.trigger = function(callSign) {
@@ -1142,6 +1159,8 @@ function musicContainerRandom(trackList) { //Needs testing
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.getTime = function() {
@@ -1165,7 +1184,7 @@ function musicContainerRandom(trackList) { //Needs testing
 	}
 }
 
-function musicContainerLoop(trackList) { //Needs testing
+function musicContainerLoop(trackList) {
 	var musicTrack = [];
 	var currentTrack = 0;
 
@@ -1202,6 +1221,8 @@ function musicContainerLoop(trackList) { //Needs testing
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.trigger = function(callSign) {
@@ -1281,6 +1302,8 @@ function musicContainerLoop(trackList) { //Needs testing
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.getTime = function() {
@@ -1347,6 +1370,8 @@ function musicContainerLoopRandom(trackList, maxRepetitions = 3, minRepetitions 
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.trigger = function(callSign) {
@@ -1436,6 +1461,8 @@ function musicContainerLoopRandom(trackList, maxRepetitions = 3, minRepetitions 
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.getTime = function() {
@@ -1459,7 +1486,7 @@ function musicContainerLoopRandom(trackList, maxRepetitions = 3, minRepetitions 
 	}
 }
 
-function musicContainerConcatenated(trackList) {
+function musicContainerConcatenated(trackList) { //Need setTime and playFrom cue control
 	var musicTrack = [];
 	var currentTrack = 0;
 	var duration = 0;
@@ -1633,7 +1660,7 @@ function musicContainerConcatenated(trackList) {
 	}
 }
 
-function musicContainerConcatenatedLoop(trackList) { //Needs testing
+function musicContainerConcatenatedLoop(trackList) { //Need setTime and playFrom cue control
 	var musicTrack = [];
 	var currentTrack = 0;
 	var duration = 0;
@@ -1808,7 +1835,7 @@ function musicContainerConcatenatedLoop(trackList) { //Needs testing
 	}
 }
 
-function musicContainerConcatenatedLoopLast(trackList) {
+function musicContainerConcatenatedLoopLast(trackList) { //Need setTime and playFrom cue control
 	var musicTrack = [];
 	var currentTrack = 0;
 	var duration = 0;
@@ -2023,7 +2050,7 @@ function musicContainerConcatenatedLoopLast(trackList) {
 	}
 }
 
-function musicContainerCrossfade(trackList) { //Needs testing
+function musicContainerCrossfade(trackList) {
 	var musicTrack = [];
 	var currentTrack = 0;
 
@@ -2062,6 +2089,8 @@ function musicContainerCrossfade(trackList) { //Needs testing
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.trigger = function(callSign) {
@@ -2149,6 +2178,8 @@ function musicContainerCrossfade(trackList) { //Needs testing
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.getTime = function() {
@@ -2172,7 +2203,7 @@ function musicContainerCrossfade(trackList) { //Needs testing
 	}
 }
 
-function musicContainerCrossfadeLoop(trackList) { //Needs testing
+function musicContainerCrossfadeLoop(trackList) {
 	var musicTrack = [];
 	var currentTrack = 0;
 
@@ -2211,6 +2242,8 @@ function musicContainerCrossfadeLoop(trackList) { //Needs testing
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.trigger = function(callSign) {
@@ -2301,6 +2334,8 @@ function musicContainerCrossfadeLoop(trackList) { //Needs testing
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.getTime = function() {
@@ -2324,7 +2359,7 @@ function musicContainerCrossfadeLoop(trackList) { //Needs testing
 	}
 }
 
-function musicContainerLayers(trackList) { //Needs testing
+function musicContainerLayers(trackList) {
 	var musicTrack = [];
 	var musicTrackVolume = [];
 	var trackVolume = 1;
@@ -2488,7 +2523,9 @@ function musicContainerLayers(trackList) { //Needs testing
 	this.setTime = function(time) {
 		for (var i in trackList) {
 			musicTrack[i].setTime(time);
+			AudioEventManager.removeTimerEvent(musicTrack[i], "cue");
 		}
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.getTime = function() {
@@ -2517,7 +2554,7 @@ function musicContainerLayers(trackList) { //Needs testing
 	}
 }
 
-function musicContainerLayersLoop(trackList) { //Needs testing
+function musicContainerLayersLoop(trackList) {
 	var musicTrack = [];
 	var musicTrackVolume = [];
 	var trackVolume = 1;
@@ -2577,7 +2614,9 @@ function musicContainerLayersLoop(trackList) { //Needs testing
 	this.playFrom = function(time) {
 		for (var i in trackList) {
 			musicTrack[i].playFrom(time);
+			AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
 		}
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.trigger = function(callSign) {
@@ -2684,7 +2723,9 @@ function musicContainerLayersLoop(trackList) { //Needs testing
 	this.setTime = function(time) {
 		for (var i in trackList) {
 			musicTrack[i].setTime(time);
+			AudioEventManager.removeTimerEvent(musicTrack[i], "cue");
 		}
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.getTime = function() {
@@ -2750,6 +2791,8 @@ function musicContainerSequence(trackList) {
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.trigger = function(callSign) {
@@ -2835,6 +2878,8 @@ function musicContainerSequence(trackList) {
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.getTime = function() {
@@ -2896,6 +2941,8 @@ function musicContainerSequenceLatch(trackList) {
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.continue = function() {
@@ -2991,6 +3038,8 @@ function musicContainerSequenceLatch(trackList) {
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.getTime = function() {
@@ -3052,6 +3101,8 @@ function musicContainerSequenceLatchLoop(trackList) {
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.continue = function() {
@@ -3142,6 +3193,8 @@ function musicContainerSequenceLatchLoop(trackList) {
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.getTime = function() {
@@ -3202,6 +3255,8 @@ function musicContainerSequenceLoop(trackList) {
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.trigger = function(callSign) {
@@ -3282,6 +3337,8 @@ function musicContainerSequenceLoop(trackList) {
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.getTime = function() {
@@ -3342,6 +3399,8 @@ function musicContainerSequenceLoopLast(trackList) {
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.trigger = function(callSign) {
@@ -3425,6 +3484,8 @@ function musicContainerSequenceLoopLast(trackList) {
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.getTime = function() {
