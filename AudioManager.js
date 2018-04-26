@@ -2,15 +2,15 @@ setFormat();
 setAudioPath("Audio/");
 
 //set sound clips and music tracks here
-var track1 = new musicTrackOverlapLoop("lay4tail16", 16);
-var track2 = new musicTrackOverlapLoop("lay2tail8", 8);
-var track3 = new musicTrackOverlapLoop("LayTail34", 8);
+var track1 = new musicTrackOverlap("lay4tail16", 16);
+var track2 = new musicTrackOverlap("lay2tail8", 8);
+var track3 = new musicTrackOverlap("LayTail34", 8);
 var backgroundTracks = new musicContainerCrossfade([track1, track2, track3]);
-var layer1 = new musicTrackOverlapLoop("clavtail2", 2);
-var layer2 = new musicTrackOverlapLoop("cabasatail2", 2);
-var layer3 = new musicTrackOverlapLoop("kicktail2", 2);
+var layer1 = new musicTrackOverlap("clavtail2", 2);
+var layer2 = new musicTrackOverlap("cabasatail2", 2);
+var layer3 = new musicTrackOverlap("kicktail2", 2);
 var backgroundLayers = new musicContainerLayers([layer1, layer2, layer3]);
-var backgroundMusic = new musicContainerCrossfade([backgroundTracks, backgroundLayers]);
+var backgroundMusic = new musicContainerCrossfadeLoop([backgroundTracks, backgroundLayers]);
 
 var controles = new sfxClipSpriteSheet("controls", [[0.242,0.578],[1.326,1.82],[2.6,2.95]]);
 var conPlay = new sfxClipSprite(controles, 0);
