@@ -665,7 +665,7 @@ function musicTrack(filename, playLength) {
 		var newTime = time;
 		while(newTime >= duration) {newTime -= duration;}
 		if(newTime < 0) {newTime = 0;}
-		musicFile.currentTime = NewTime;
+		musicFile.currentTime = newTime;
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
@@ -2115,6 +2115,8 @@ function musicContainerCrossfade(trackList) {
 			musicTrack[slot].playFrom(timeNow);
 			AudioEventManager.addCrossfadeEvent(musicTrack[currentTrack], fadeTime, 0);
 			AudioEventManager.addCrossfadeEvent(musicTrack[slot], fadeTime, trackVolume);
+			AudioEventManager.removeTimerEvent(musicTrack[slot], "cue");
+			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 			currentTrack = slot;
 		} else if (currentTrack != slot) {
 			musicTrack[slot].setTime(timeNow);
@@ -2271,6 +2273,8 @@ function musicContainerCrossfadeLoop(trackList) {
 			musicTrack[slot].playFrom(timeNow);
 			AudioEventManager.addCrossfadeEvent(musicTrack[currentTrack], fadeTime, 0);
 			AudioEventManager.addCrossfadeEvent(musicTrack[slot], fadeTime, trackVolume);
+			AudioEventManager.removeTimerEvent(musicTrack[slot], "cue");
+			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 			currentTrack = slot;
 		} else if (currentTrack != slot) {
 			musicTrack[slot].setTime(timeNow);

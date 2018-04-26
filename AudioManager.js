@@ -10,7 +10,7 @@ var layer1 = new musicTrackOverlap("clavtail2", 2);
 var layer2 = new musicTrackOverlap("cabasatail2", 2);
 var layer3 = new musicTrackOverlap("kicktail2", 2);
 var backgroundLayers = new musicContainerLayers([layer1, layer2, layer3]);
-var backgroundMusic = new musicContainerCrossfadeLoop([backgroundTracks, backgroundLayers]);
+var backgroundMusic = new musicContainerCrossfade([backgroundTracks, backgroundLayers]);
 
 var controles = new sfxClipSpriteSheet("controls", [[0.242,0.578],[1.326,1.82],[2.6,2.95]]);
 var conPlay = new sfxClipSprite(controles, 0);
