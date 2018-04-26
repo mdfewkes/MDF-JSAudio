@@ -565,6 +565,7 @@ function sfxContainerRandom(clipList) {
 
 
 //Music Classes
+//Need to set cues on setTime and playFrom
 var musicVolume = 1;
 MusicVolumeManager = new musicVolumeManager();
 function musicVolumeManager() {
@@ -627,7 +628,7 @@ function musicTrack(filename, playLength) {
 	}
 
 	this.playFrom = function(time) {
-		musicFile.currentTime = time;
+		this.setTime(time);
 		musicFile.play();
 	}
 
@@ -659,7 +660,10 @@ function musicTrack(filename, playLength) {
 	}
 
 	this.setTime = function(time) {
-		musicFile.currentTime = time;
+		var newTime = time;
+		while(newTime >= duration) {newTime -= duration;}
+		if(newTime < 0) {newTime = 0;}
+		musicFile.currentTime = NewTime;
 	}
 
 	this.getTime = function() {
@@ -722,7 +726,7 @@ function musicTrackOverlap(filename, playLength) {
 	}
 
 	this.playFrom = function(time) {
-		musicFile[currentTrack].currentTime = time;
+		this.setTime(time);
 		musicFile[currentTrack].play();
 	}
 
@@ -756,10 +760,9 @@ function musicTrackOverlap(filename, playLength) {
 
 	this.setTime = function(time) {
 		var newTime = time;
-		if(newTime < 0) {newTime = 0;}
 		while (newTime >= duration) {newTime -= duration;}
+		if(newTime < 0) {newTime = 0;}
 		musicFile[currentTrack].currentTime = newTime;
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "loop");
 	}
 
 	this.getTime = function() {
@@ -822,7 +825,7 @@ function musicTrackOverlapLoop(filename, playLength) {
 	}
 
 	this.playFrom = function(time) {
-		musicFile[currentTrack].currentTime = time;
+		this.setTime(time);
 		musicFile[currentTrack].play();
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
@@ -865,10 +868,9 @@ function musicTrackOverlapLoop(filename, playLength) {
 
 	this.setTime = function(time) {
 		var newTime = time;
-		if(newTime < 0) {newTime = 0;}
 		while (newTime >= duration) {newTime -= duration;}
+		if(newTime < 0) {newTime = 0;}
 		musicFile[currentTrack].currentTime = newTime;
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "loop");
 	}
 
 	this.getTime = function() {
