@@ -1719,7 +1719,7 @@ function musicContainerLayers(trackList) {
 
 	this.play = function() {
 		for (var i in trackList) {
-			musicTrack[i].play();
+			if (musicTrackVolume[i] > 0) {musicTrack[i].play();}
 		}
 	}
 
@@ -1731,7 +1731,7 @@ function musicContainerLayers(trackList) {
 
 	this.resume = function() {
 		for (var i in trackList) {
-			musicTrack[i].resume();
+			if (musicTrackVolume[i] > 0) {musicTrack[i].resume();}
 		}
 	}
 

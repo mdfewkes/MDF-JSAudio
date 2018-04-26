@@ -35,7 +35,7 @@ controles.setMixVolume(0.75);
 var test1 = new musicTrackOverlap("clavtail2", 2);
 var test2 = new musicTrackOverlap("cabasatail2", 2);
 
-var testC = new musicContainerSequence([test1,test2]);
+var testC = new musicContainerSequenceLoopLast([test1,test2]);
 
 
 
@@ -140,10 +140,10 @@ function audioEventManager() {
 		var endTime = (duration * 1000) + now;
 
 		if (check == "none") {
-			console.log("Adding Timer Event for " + track.getTrackName() + ". CallSign: " + callSign);
+			//console.log("Adding Timer Event for " + track.getTrackName() + ". CallSign: " + callSign);
 			eventList.push([TIMER, track, endTime, callSign]);
 		} else {
-			console.log("Replacing Timer Event for " + track.getTrackName() + ". CallSign: " + callSign);
+			//console.log("Replacing Timer Event for " + track.getTrackName() + ". CallSign: " + callSign);
 			eventList[check] = [TIMER, track, endTime, callSign];
 		}
 	}
@@ -170,7 +170,7 @@ function audioEventManager() {
 		if (check == "none") {
 			return;
 		} else {
-			console.log("Removing Timer Event for " + track.getTrackName() + ". CallSign: " + callSign);
+			//console.log("Removing Timer Event for " + track.getTrackName() + ". CallSign: " + callSign);
 			eventList[check] = [REMOVE];
 		}
 	}
@@ -216,12 +216,12 @@ function audioEventManager() {
 				if (thisTrack.getPaused() == false) {
 					if (eventList[i][2] <= now) {
 						var callSign = eventList[i][3];
-						console.log("Triggering Timer Event. CallSign is: " + eventList[i][3]);
+						//console.log("Triggering Timer Event. CallSign is: " + eventList[i][3]);
 						eventList[i] = [REMOVE];
 						thisTrack.trigger(callSign);
 					}
 				} else {
-					console.log("Track paused, removing Timer Event. CallSign is: " + eventList[i][3]);
+					//console.log("Track paused, removing Timer Event. CallSign is: " + eventList[i][3]);
 					eventList[i] = [REMOVE];
 				}
 			}
@@ -244,7 +244,7 @@ function audioEventManager() {
 		//console.log("Cleaning up");
 		eventList.sort(function(a, b){return b-a});
 		while (eventList[eventList.length - 1] == REMOVE) {
-			console.log("Removing Event");
+			//console.log("Removing Event");
 			eventList.pop();
 		}
 	}
