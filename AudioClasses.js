@@ -565,7 +565,6 @@ function sfxContainerRandom(clipList) {
 
 
 //Music Classes
-//Need to set cues on setTime and playFrom
 var musicVolume = 1;
 MusicVolumeManager = new musicVolumeManager();
 function musicVolumeManager() {
@@ -1486,7 +1485,7 @@ function musicContainerLoopRandom(trackList, maxRepetitions = 3, minRepetitions 
 	}
 }
 
-function musicContainerConcatenated(trackList) { //Need setTime and playFrom cue control
+function musicContainerConcatenated(trackList) {
 	var musicTrack = [];
 	var currentTrack = 0;
 	var duration = 0;
@@ -1536,6 +1535,8 @@ function musicContainerConcatenated(trackList) { //Need setTime and playFrom cue
 			}
 		}
 		musicTrack[currentTrack].playFrom(totalTime);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
 	}
 
 	this.trigger = function(callSign) {
@@ -1630,6 +1631,8 @@ function musicContainerConcatenated(trackList) { //Need setTime and playFrom cue
 				return;
 			}
 		}
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
 	}
 
 	this.getTime = function() {
@@ -1660,7 +1663,7 @@ function musicContainerConcatenated(trackList) { //Need setTime and playFrom cue
 	}
 }
 
-function musicContainerConcatenatedLoop(trackList) { //Need setTime and playFrom cue control
+function musicContainerConcatenatedLoop(trackList) { //Might be broken out outside cue controle
 	var musicTrack = [];
 	var currentTrack = 0;
 	var duration = 0;
@@ -1710,6 +1713,8 @@ function musicContainerConcatenatedLoop(trackList) { //Need setTime and playFrom
 			}
 		}
 		musicTrack[currentTrack].playFrom(totalTime);
+		AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+		AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
 	}
 
 	this.trigger = function(callSign) {
@@ -1802,6 +1807,8 @@ function musicContainerConcatenatedLoop(trackList) { //Need setTime and playFrom
 			} else if (musicTrack[i].getDuration() <= totalTime) {
 				currentTrack = i;
 				musicTrack[currentTrack].setTime(totalTime);
+				AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+				AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
 				return;
 			}
 		}
@@ -1835,7 +1842,7 @@ function musicContainerConcatenatedLoop(trackList) { //Need setTime and playFrom
 	}
 }
 
-function musicContainerConcatenatedLoopLast(trackList) { //Need setTime and playFrom cue control
+function musicContainerConcatenatedLoopLast(trackList) {
 	var musicTrack = [];
 	var currentTrack = 0;
 	var duration = 0;
@@ -1877,6 +1884,8 @@ function musicContainerConcatenatedLoopLast(trackList) { //Need setTime and play
 	this.playFrom = function(time) {
 		if (atEnd) {
 			musicTrack[currentTrack].playFrom(time);
+			AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+			AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
 		} else {
 			var totalTime = time;
 			var notFound = true;
@@ -1889,6 +1898,8 @@ function musicContainerConcatenatedLoopLast(trackList) { //Need setTime and play
 				}
 			}
 			musicTrack[currentTrack].playFrom(totalTime);
+			AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+			AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
 		}
 	}
 
@@ -2007,6 +2018,8 @@ function musicContainerConcatenatedLoopLast(trackList) { //Need setTime and play
 				} else if (musicTrack[i].getDuration() <= totalTime) {
 					currentTrack = i;
 					musicTrack[currentTrack].setTime(totalTime);
+					AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+					AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
 					return;
 				}
 			}
@@ -2419,7 +2432,9 @@ function musicContainerLayers(trackList) {
 	this.playFrom = function(time) {
 		for (var i in trackList) {
 			musicTrack[i].playFrom(time);
+			AudioEventManager.removeTimerEvent(musicTrack[i], "cue");
 		}
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.trigger = function(callSign) {
@@ -2614,7 +2629,7 @@ function musicContainerLayersLoop(trackList) {
 	this.playFrom = function(time) {
 		for (var i in trackList) {
 			musicTrack[i].playFrom(time);
-			AudioEventManager.removeTimerEvent(musicTrack[currentTrack], "cue");
+			AudioEventManager.removeTimerEvent(musicTrack[i], "cue");
 		}
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
