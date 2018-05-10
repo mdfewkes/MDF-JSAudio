@@ -5,11 +5,11 @@ setAudioPath("Audio/");
 var track1 = new musicTrackOverlap("lay4tail16", 16);
 var track2 = new musicTrackOverlap("lay2tail8", 8);
 var track3 = new musicTrackOverlap("LayTail34", 8);
-var backgroundTracks = new musicContainerCrossfade([track1, track2, track3]);
+var backgroundTracks = new musicContainerCrossfadeLoop([track1, track2, track3]);
 var layer1 = new musicTrackOverlap("clavtail2", 2);
 var layer2 = new musicTrackOverlap("cabasatail2", 2);
 var layer3 = new musicTrackOverlap("kicktail2", 2);
-var backgroundLayers = new musicContainerLayers([layer1, layer2, layer3]);
+var backgroundLayers = new musicContainerLayersLoop([layer1, layer2, layer3]);
 var backgroundMusic = new musicContainerCrossfade([backgroundTracks, backgroundLayers]);
 
 var controles = new sfxClipSpriteSheet("controls", [[0.242,0.578],[1.326,1.82],[2.6,2.95]]);
@@ -76,9 +76,9 @@ function setMute(TorF) {
 }
 
 function getMute(TorF) {
-	return isMuted;
 	SFXVolumeManager.updateVolume();
 	MusicVolumeManager.updateVolume();
+	return isMuted;
 }
 
 
