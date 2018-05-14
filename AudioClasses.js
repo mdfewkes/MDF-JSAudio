@@ -2429,8 +2429,9 @@ function musicContainerLayers(trackList) {
 			} else {
 				trackList[slot].setVolume(musicTrackVolume[slot] * trackVolume);
 			}
+		} else {
+			AudioEventManager.addFadeEvent(trackList[slot], fadeTime, musicTrackVolume[slot] * trackVolume);
 		}
-		AudioEventManager.addFadeEvent(trackList[slot], fadeTime, musicTrackVolume[slot] * trackVolume);
 	}
 
 	this.loadTrack = function(newTrack, slot) {
@@ -2556,6 +2557,10 @@ function musicContainerLayersLoop(trackList) {
 	musicTrackVolume[0] = 1;
 	musicTrack[0].setVolume(1);
 
+	this.reportTrackLevels = function() {
+		console.log(musicTrackVolume)
+	}
+
 	function evaluateCurrentTrack(){
 		var trackNow = 0;
 		for(var i in trackList) {
@@ -2626,8 +2631,9 @@ function musicContainerLayersLoop(trackList) {
 			} else {
 				trackList[slot].setVolume(musicTrackVolume[slot] * trackVolume);
 			}
+		} else {
+			AudioEventManager.addFadeEvent(trackList[slot], fadeTime, musicTrackVolume[slot] * trackVolume);
 		}
-		AudioEventManager.addFadeEvent(trackList[slot], fadeTime, musicTrackVolume[slot] * trackVolume);
 	}
 
 	this.loadTrack = function(newTrack, slot) {
