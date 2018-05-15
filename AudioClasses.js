@@ -1461,7 +1461,7 @@ function musicContainerLoopRandom(trackList) {//Picks new random list-item to pl
 	return this;
 }
 
-function musicContainerLoopRandomWRepetitionControl(trackList, maxRepetitions = 3, minRepetitions = 1) {//Picks new random list-item to play every loop
+function musicContainerLoopRandomRepetitionControl(trackList, maxRepetitions = 3, minRepetitions = 1) {//Picks new random list-item to play every loop
 	var musicTrack = [];
 	var currentTrack = 0;
 	var lastTrack = 0;
@@ -1618,7 +1618,7 @@ function musicContainerLoopRandomWRepetitionControl(trackList, maxRepetitions = 
 	return this;
 }
 
-function musicContainerLoopRandomWDurationControl(trackList, maxDurationInSeconds = 180, minDurationInSeconds = 60) {//Picks new random list-item to play every loop
+function musicContainerLoopRandomDurationControl(trackList, maxDurationInSeconds = 180, minDurationInSeconds = 60) {//Picks new random list-item to play every loop
 	var musicTrack = [];
 	var lastTrack = 0;
 	var playTime = 0;
