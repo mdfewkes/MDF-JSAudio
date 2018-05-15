@@ -1663,7 +1663,7 @@ function musicContainerLoopRandomDurationControl(trackList, maxDurationInSeconds
 
 	this.trigger = function(callSign) {
 		if(callSign == "cue") {
-			if (playTime > playMin){
+			if (playTime > playMin && musicTrack.length > 1){
 				if(Math.random() <= (playTime - playMin)/(playMax - playMin)) {
 					while(currentTrack == lastTrack) {
 						currentTrack = Math.floor(Math.random() * musicTrack.length);
@@ -1673,7 +1673,7 @@ function musicContainerLoopRandomDurationControl(trackList, maxDurationInSeconds
 			}
 			this.play();
 		}else if(callSign == "dry cue") {
-			if (playTime > playMin){
+			if (playTime > playMin && musicTrack.length > 1){
 				if(Math.random() <= (playTime - playMin)/(playMax - playMin)) {
 					while(currentTrack == lastTrack) {
 						currentTrack = Math.floor(Math.random() * musicTrack.length);
