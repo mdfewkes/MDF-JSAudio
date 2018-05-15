@@ -606,7 +606,7 @@ function musicVolumeManager() {
 	}
 }
 
-function musicTrack(filename, playLength) {
+function musicTrack(filename, playLength) {//Single buffer music file
 	var musicFile = new Audio(audioPath+filename+audioFormat());
 	musicFile.onerror = function(){musicFile = new Audio(audioPath+filename+audioFormat(true))};
 	var duration = musicFile.duration;
@@ -700,7 +700,7 @@ function musicTrack(filename, playLength) {
 	return this;
 }
 
-function musicTrackOverlap(filename, playLength) {
+function musicTrackOverlap(filename, playLength) {//Double buffer music file
 	var musicFile = new Array(new Audio(audioPath+filename+audioFormat()), new Audio(audioPath+filename+audioFormat()));
 	musicFile[0].onerror = function(){musicFile[0] = new Audio(audioPath+filename+audioFormat(true))}
 	musicFile[1].onerror = function(){musicFile[1] = new Audio(audioPath+filename+audioFormat(true))}
@@ -801,7 +801,7 @@ function musicTrackOverlap(filename, playLength) {
 	return this;
 }
 
-function musicTrackOverlapLoop(filename, playLength) {
+function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file that loops
 	var musicFile = new Array(new Audio(audioPath+filename+audioFormat()), new Audio(audioPath+filename+audioFormat()));
 	musicFile[0].onerror = function(){musicFile[0] = new Audio(audioPath+filename+audioFormat(true))}
 	musicFile[1].onerror = function(){musicFile[1] = new Audio(audioPath+filename+audioFormat(true))}
@@ -912,7 +912,7 @@ function musicTrackOverlapLoop(filename, playLength) {
 	return this;
 }
 
-function musicContainer(trackList) {
+function musicContainer(trackList) {//Basic containers
 	var musicTrack = [];
 	var currentTrack = 0;
 
@@ -1047,7 +1047,7 @@ function musicContainer(trackList) {
 	return this;
 }
 
-function musicContainerRandom(trackList) {
+function musicContainerRandom(trackList) {//Picks random list-item to play on play
 	var musicTrack = [];
 	var currentTrack = 0;
 
@@ -1179,7 +1179,7 @@ function musicContainerRandom(trackList) {
 	return this;
 }
 
-function musicContainerLoop(trackList) {
+function musicContainerLoop(trackList) {//Loops current list-item
 	var musicTrack = [];
 	var currentTrack = 0;
 
@@ -1318,9 +1318,9 @@ function musicContainerLoop(trackList) {
 	}
 
 	return this;
-}
+}//stops looping when currentTrack is changed
 
-function musicContainerLoopRandom(trackList, maxRepetitions = 3, minRepetitions = 1) {
+function musicContainerLoopRandom(trackList, maxRepetitions = 3, minRepetitions = 1) {//Picks new random list-item to play every loop
 	var musicTrack = [];
 	var currentTrack = 0;
 	var lastTrack = 0;
@@ -1477,7 +1477,7 @@ function musicContainerLoopRandom(trackList, maxRepetitions = 3, minRepetitions 
 	return this;
 }
 
-function musicContainerConcatenated(trackList) {
+function musicContainerConcatenated(trackList) {//Reports all list-items as one item and plays through them
 	var musicTrack = [];
 	var currentTrack = 0;
 	var duration = 0;
@@ -1500,6 +1500,7 @@ function musicContainerConcatenated(trackList) {
 		for (var i in trackList) {
 			musicTrack[i].stop();
 		}
+		currentTrack = 0;
 	}
 
 	this.resume = function() {
@@ -1653,7 +1654,7 @@ function musicContainerConcatenated(trackList) {
 	return this;
 }
 
-function musicContainerConcatenatedLoop(trackList) { //Might be broken out outside cue controle
+function musicContainerConcatenatedLoop(trackList) {//Loops list-items as if one item
 	var musicTrack = [];
 	var currentTrack = 0;
 	var duration = 0;
@@ -1676,6 +1677,7 @@ function musicContainerConcatenatedLoop(trackList) { //Might be broken out outsi
 		for (var i in trackList) {
 			musicTrack[i].stop();
 		}
+		currentTrack = 0;
 	}
 
 	this.resume = function() {
@@ -1828,9 +1830,9 @@ function musicContainerConcatenatedLoop(trackList) { //Might be broken out outsi
 	}
 
 	return this;
-}
+}//Might be broken out outside cue controle
 
-function musicContainerConcatenatedLoopLast(trackList) { //Might be broken out outside cue controle
+function musicContainerConcatenatedLoopLast(trackList) {//Reports all list-items as one item, but only repeats last one
 	var musicTrack = [];
 	var currentTrack = 0;
 	var duration = 0;
@@ -1853,6 +1855,9 @@ function musicContainerConcatenatedLoopLast(trackList) { //Might be broken out o
 	this.stop = function() {
 		for (var i in trackList) {
 			musicTrack[i].stop();
+		}
+		if (!atEnd) {
+			currentTrack = 0;
 		}
 	}
 
@@ -2046,9 +2051,9 @@ function musicContainerConcatenatedLoopLast(trackList) { //Might be broken out o
 	}
 
 	return this;
-}
+}//Might be broken out outside cue controle
 
-function musicContainerCrossfade(trackList) {
+function musicContainerCrossfade(trackList) {//Can crossfade between list-items
 	var musicTrack = [];
 	var currentTrack = 0;
 
@@ -2195,7 +2200,7 @@ function musicContainerCrossfade(trackList) {
 	return this;
 }
 
-function musicContainerCrossfadeLoop(trackList) {
+function musicContainerCrossfadeLoop(trackList) {//Can crossfade between list-items, loops current item
 	var musicTrack = [];
 	var currentTrack = 0;
 
@@ -2350,7 +2355,7 @@ function musicContainerCrossfadeLoop(trackList) {
 	return this;
 }
 
-function musicContainerLayers(trackList) {
+function musicContainerLayers(trackList) {//Plays all list items together, controls volumes
 	var musicTrack = [];
 	var musicTrackVolume = [];
 	var trackVolume = 1;
@@ -2542,7 +2547,7 @@ function musicContainerLayers(trackList) {
 	return this;
 }
 
-function musicContainerLayersLoop(trackList) {
+function musicContainerLayersLoop(trackList) {//Plays all list items together, controls volumes, loops
 	var musicTrack = [];
 	var musicTrackVolume = [];
 	var trackVolume = 1;
@@ -2745,7 +2750,7 @@ function musicContainerLayersLoop(trackList) {
 	return this;
 }
 
-function musicContainerSequence(trackList) {
+function musicContainerSequence(trackList) {//Plays list items in order
 	var musicTrack = [];
 	var currentTrack = 0;
 
@@ -2892,7 +2897,7 @@ function musicContainerSequence(trackList) {
 	return this;
 }
 
-function musicContainerSequenceLatch(trackList) {
+function musicContainerSequenceLatch(trackList) {//Plays list items in order, but stays on current one until indicated
 	var musicTrack = [];
 	var currentTrack = 0;
 	var latched = true;
@@ -3050,7 +3055,7 @@ function musicContainerSequenceLatch(trackList) {
 	return this;
 }
 
-function musicContainerSequenceLatchLoop(trackList) {
+function musicContainerSequenceLatchLoop(trackList) {//Plays list items in order, but loops current one until indicated
 	var musicTrack = [];
 	var currentTrack = 0;
 	var latched = true;
@@ -3203,7 +3208,7 @@ function musicContainerSequenceLatchLoop(trackList) {
 	return this;
 }
 
-function musicContainerSequenceLoop(trackList) {
+function musicContainerSequenceLoop(trackList) {//Plays list items in order, loops to first item
 	var musicTrack = [];
 	var currentTrack = 0;
 
@@ -3345,7 +3350,7 @@ function musicContainerSequenceLoop(trackList) {
 	return this;
 }
 
-function musicContainerSequenceLoopLast(trackList) {
+function musicContainerSequenceLoopLast(trackList) {//Plays list items in order, loops last item
 	var musicTrack = [];
 	var currentTrack = 0;
 
