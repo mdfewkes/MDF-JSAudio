@@ -1865,7 +1865,7 @@ function musicContainerConcatenatedLatchLast(trackList) {//Reports all list-item
 	}
 
 	return this;
-}//Might be broken out outside cue controle
+}//Might be broken to outside cue controle
 
 function musicContainerConcatenatedLoop(trackList) {//Loops list-items as if one item
 	var musicTrack = [];
@@ -2043,7 +2043,7 @@ function musicContainerConcatenatedLoop(trackList) {//Loops list-items as if one
 	}
 
 	return this;
-}//Might be broken out outside cue controle
+}//Might be broken to outside cue controle
 
 function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as one item, but only repeats last one
 	var musicTrack = [];
@@ -2264,7 +2264,7 @@ function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as
 	}
 
 	return this;
-}//Might be broken out outside cue controle
+}//Might be broken to outside cue controle
 
 function musicContainerCrossfade(trackList) {//Can crossfade between list-items
 	var musicTrack = [];
