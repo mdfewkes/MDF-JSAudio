@@ -1198,6 +1198,7 @@ function musicContainerRandom(trackList) {//Picks random list-item to play on pl
 function musicContainerLoop(trackList) {//Loops current list-item
 	var musicTrack = [];
 	var currentTrack = 0;
+	var schedualedTrack = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -1207,6 +1208,9 @@ function musicContainerLoop(trackList) {//Loops current list-item
 	var trackVolume = 1;
 
 	this.play = function() {
+		if (currentTrack != schedualedTrack) {
+			currentTrack = schedualedTrack;
+		}
 		musicTrack[currentTrack].play();
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
@@ -1240,7 +1244,7 @@ function musicContainerLoop(trackList) {//Loops current list-item
 	}
 
 	this.setCurrentTrack = function(trackNumber) {
-		currentTrack = trackNumber;
+		schedualedTrack = trackNumber;
 	}
 
 	this.loadTrack = function(newTrack, slot) {
@@ -1334,7 +1338,7 @@ function musicContainerLoop(trackList) {//Loops current list-item
 	}
 
 	return this;
-}//stops looping when currentTrack is changed
+}
 
 function musicContainerLoopRandom(trackList) {//Picks new random list-item to play every loop
 	var musicTrack = [];
@@ -3277,7 +3281,7 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 	}
 
 	return this;
-}
+}//Sometimes freezes the browser with setLayerLevel() setting a layer to 0
 
 function musicContainerSequence(trackList) {//Plays list-items in order
 	var musicTrack = [];
