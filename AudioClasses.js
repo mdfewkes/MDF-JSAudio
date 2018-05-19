@@ -424,7 +424,7 @@ function sfxContainer(clipList) {
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in soundFile) {
 			soundFile[i].stop();
 		}
 	}
@@ -434,7 +434,7 @@ function sfxContainer(clipList) {
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in soundFile) {
 			soundFile[i].pause();
 		}
 	}
@@ -447,7 +447,7 @@ function sfxContainer(clipList) {
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in soundFile) {
 			soundFile[i].updateVolume();
 		}
 	}
@@ -516,7 +516,7 @@ function sfxContainerRandom(clipList) {
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in soundFile) {
 			soundFile[i].stop();
 		}
 	}
@@ -526,7 +526,7 @@ function sfxContainerRandom(clipList) {
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in soundFile) {
 			soundFile[i].pause();
 		}
 	}
@@ -539,7 +539,7 @@ function sfxContainerRandom(clipList) {
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in soundFile) {
 			soundFile[i].updateVolume();
 		}
 	}
@@ -941,7 +941,7 @@ function musicContainer(trackList) {//Basic containers
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
 	}
@@ -951,7 +951,7 @@ function musicContainer(trackList) {//Basic containers
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
 	}
@@ -1007,7 +1007,7 @@ function musicContainer(trackList) {//Basic containers
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].updateVolume();
 		}
 	}
@@ -1077,7 +1077,7 @@ function musicContainerRandom(trackList) {//Picks random list-item to play on pl
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
 		currentTrack = Math.floor(Math.random() * musicTrack.length);
@@ -1088,7 +1088,7 @@ function musicContainerRandom(trackList) {//Picks random list-item to play on pl
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
 	}
@@ -1139,7 +1139,7 @@ function musicContainerRandom(trackList) {//Picks random list-item to play on pl
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].updateVolume();
 		}
 	}
@@ -1213,7 +1213,7 @@ function musicContainerLoop(trackList) {//Loops current list-item
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
 	}
@@ -1224,7 +1224,7 @@ function musicContainerLoop(trackList) {//Loops current list-item
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
 	}
@@ -1283,7 +1283,7 @@ function musicContainerLoop(trackList) {//Loops current list-item
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].updateVolume();
 		}
 	}
@@ -1354,7 +1354,7 @@ function musicContainerLoopRandom(trackList) {//Picks new random list-item to pl
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
 	}
@@ -1365,7 +1365,7 @@ function musicContainerLoopRandom(trackList) {//Picks new random list-item to pl
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
 	}
@@ -1422,7 +1422,7 @@ function musicContainerLoopRandom(trackList) {//Picks new random list-item to pl
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].updateVolume();
 		}
 	}
@@ -1499,7 +1499,7 @@ function musicContainerLoopRandomRepetitionControl(trackList, maxRepetitions = 3
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
 	}
@@ -1510,7 +1510,7 @@ function musicContainerLoopRandomRepetitionControl(trackList, maxRepetitions = 3
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
 	}
@@ -1572,7 +1572,7 @@ function musicContainerLoopRandomRepetitionControl(trackList, maxRepetitions = 3
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].updateVolume();
 		}
 	}
@@ -1648,7 +1648,7 @@ function musicContainerLoopRandomDurationControl(trackList, maxDurationInSeconds
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
 	}
@@ -1659,7 +1659,7 @@ function musicContainerLoopRandomDurationControl(trackList, maxDurationInSeconds
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
 	}
@@ -1722,7 +1722,7 @@ function musicContainerLoopRandomDurationControl(trackList, maxDurationInSeconds
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].updateVolume();
 		}
 	}
@@ -1796,7 +1796,7 @@ function musicContainerConcatenated(trackList) {//Reports all list-items as one 
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
 		currentTrack = 0;
@@ -1808,7 +1808,7 @@ function musicContainerConcatenated(trackList) {//Reports all list-items as one 
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
 	}
@@ -1816,7 +1816,7 @@ function musicContainerConcatenated(trackList) {//Reports all list-items as one 
 	this.playFrom = function(time) {
 		var totalTime = time;
 		var notFound = true;
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			if (musicTrack[i].getDuration() > totalTime && notFound) {
 				totalTime -= musicTrack[i].getDuration();
 			} else if (musicTrack[i].getDuration() <= totalTime && notFound) {
@@ -1878,7 +1878,7 @@ function musicContainerConcatenated(trackList) {//Reports all list-items as one 
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].updateVolume();
 		}
 	}
@@ -1906,7 +1906,7 @@ function musicContainerConcatenated(trackList) {//Reports all list-items as one 
 
 	this.setTime = function(time) {
 		var totalTime = time;
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			if (musicTrack[i].getDuration() > totalTime) {
 				totalTime -= musicTrack[i].getDuration();
 			} else if (musicTrack[i].getDuration() <= totalTime) {
@@ -1920,7 +1920,7 @@ function musicContainerConcatenated(trackList) {//Reports all list-items as one 
 
 	this.getTime = function() {
 		var totalTime = 0;
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			if (i < currentTrack) {
 				totalTime += musicTrack[i].getDuration();
 			} else if (i == currentTrack) {
@@ -1969,7 +1969,7 @@ function musicContainerConcatenatedLatchLast(trackList) {//Reports all list-item
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
 		if (!atEnd) {
@@ -1983,7 +1983,7 @@ function musicContainerConcatenatedLatchLast(trackList) {//Reports all list-item
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
 	}
@@ -1995,7 +1995,7 @@ function musicContainerConcatenatedLatchLast(trackList) {//Reports all list-item
 		} else {
 			var totalTime = time;
 			var notFound = true;
-			for (var i in trackList) {
+			for (var i in musicTrack) {
 				if (musicTrack[i].getDuration() > totalTime && notFound) {
 					totalTime -= musicTrack[i].getDuration();
 				} else if (musicTrack[i].getDuration() <= totalTime && notFound) {
@@ -2034,7 +2034,7 @@ function musicContainerConcatenatedLatchLast(trackList) {//Reports all list-item
 		}
 
 		duration = 0;
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			duration += musicTrack[i].getDuration();
 		}
 	}
@@ -2053,7 +2053,7 @@ function musicContainerConcatenatedLatchLast(trackList) {//Reports all list-item
 		}
 
 		duration = 0;
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			duration += musicTrack[i].getDuration();
 		}
 	}
@@ -2061,7 +2061,7 @@ function musicContainerConcatenatedLatchLast(trackList) {//Reports all list-item
 	this.addTrack = function(newTrack) {
 		musicTrack.push(newTrack);
 		duration = 0;
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			duration += musicTrack[i].getDuration();
 		}
 		atEnd = false;
@@ -2072,13 +2072,13 @@ function musicContainerConcatenatedLatchLast(trackList) {//Reports all list-item
 		if (currentTrack >= slot) {currentTrack--;}
 
 		duration = 0;
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			duration += musicTrack[i].getDuration();
 		}
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].updateVolume();
 		}
 	}
@@ -2109,7 +2109,7 @@ function musicContainerConcatenatedLatchLast(trackList) {//Reports all list-item
 			musicTrack[currentTrack].setTime(time);
 		} else {
 			var totalTime = time;
-			for (var i in trackList) {
+			for (var i in musicTrack) {
 				if (musicTrack[i].getDuration() > totalTime) {
 					totalTime -= musicTrack[i].getDuration();
 				} else if (musicTrack[i].getDuration() <= totalTime) {
@@ -2127,7 +2127,7 @@ function musicContainerConcatenatedLatchLast(trackList) {//Reports all list-item
 		if (atEnd) {
 			totalTime = musicTrack[currentTrack].getTime();
 		} else {
-			for (var i in trackList) {
+			for (var i in musicTrack) {
 				if (i < currentTrack) {
 					totalTime += musicTrack[i].getDuration();
 				} else if (i == currentTrack) {
@@ -2181,7 +2181,7 @@ function musicContainerConcatenatedLoop(trackList) {//Loops list-items as if one
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
 		currentTrack = 0;
@@ -2193,7 +2193,7 @@ function musicContainerConcatenatedLoop(trackList) {//Loops list-items as if one
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
 	}
@@ -2201,7 +2201,7 @@ function musicContainerConcatenatedLoop(trackList) {//Loops list-items as if one
 	this.playFrom = function(time) {
 		var totalTime = time;
 		var notFound = true;
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			if (musicTrack[i].getDuration() > totalTime && notFound) {
 				totalTime -= musicTrack[i].getDuration();
 			} else if (musicTrack[i].getDuration() <= totalTime && notFound) {
@@ -2264,7 +2264,7 @@ function musicContainerConcatenatedLoop(trackList) {//Loops list-items as if one
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].updateVolume();
 		}
 	}
@@ -2292,7 +2292,7 @@ function musicContainerConcatenatedLoop(trackList) {//Loops list-items as if one
 
 	this.setTime = function(time) {
 		var totalTime = time;
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			if (musicTrack[i].getDuration() > totalTime) {
 				totalTime -= musicTrack[i].getDuration();
 			} else if (musicTrack[i].getDuration() <= totalTime) {
@@ -2306,7 +2306,7 @@ function musicContainerConcatenatedLoop(trackList) {//Loops list-items as if one
 
 	this.getTime = function() {
 		var totalTime = 0;
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			if (i < currentTrack) {
 				totalTime += musicTrack[i].getDuration();
 			} else if (i == currentTrack) {
@@ -2355,7 +2355,7 @@ function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
 		if (!atEnd) {
@@ -2369,7 +2369,7 @@ function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
 	}
@@ -2381,7 +2381,7 @@ function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as
 		} else {
 			var totalTime = time;
 			var notFound = true;
-			for (var i in trackList) {
+			for (var i in musicTrack) {
 				if (musicTrack[i].getDuration() > totalTime && notFound) {
 					totalTime -= musicTrack[i].getDuration();
 				} else if (musicTrack[i].getDuration() <= totalTime && notFound) {
@@ -2421,7 +2421,7 @@ function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as
 		}
 
 		duration = 0;
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			duration += musicTrack[i].getDuration();
 		}
 	}
@@ -2440,7 +2440,7 @@ function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as
 		}
 
 		duration = 0;
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			duration += musicTrack[i].getDuration();
 		}
 	}
@@ -2448,7 +2448,7 @@ function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as
 	this.addTrack = function(newTrack) {
 		musicTrack.push(newTrack);
 		duration = 0;
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			duration += musicTrack[i].getDuration();
 		}
 		atEnd = false;
@@ -2459,13 +2459,13 @@ function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as
 		if (currentTrack >= slot) {currentTrack--;}
 
 		duration = 0;
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			duration += musicTrack[i].getDuration();
 		}
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].updateVolume();
 		}
 	}
@@ -2496,7 +2496,7 @@ function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as
 			musicTrack[currentTrack].setTime(time);
 		} else {
 			var totalTime = time;
-			for (var i in trackList) {
+			for (var i in musicTrack) {
 				if (musicTrack[i].getDuration() > totalTime) {
 					totalTime -= musicTrack[i].getDuration();
 				} else if (musicTrack[i].getDuration() <= totalTime) {
@@ -2514,7 +2514,7 @@ function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as
 		if (atEnd) {
 			totalTime = musicTrack[currentTrack].getTime();
 		} else {
-			for (var i in trackList) {
+			for (var i in musicTrack) {
 				if (i < currentTrack) {
 					totalTime += musicTrack[i].getDuration();
 				} else if (i == currentTrack) {
@@ -2566,7 +2566,7 @@ function musicContainerCrossfade(trackList) {//Can crossfade between list-items
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
 	}
@@ -2576,7 +2576,7 @@ function musicContainerCrossfade(trackList) {//Can crossfade between list-items
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
 	}
@@ -2642,7 +2642,7 @@ function musicContainerCrossfade(trackList) {//Can crossfade between list-items
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].updateVolume();
 		}
 	}
@@ -2714,7 +2714,7 @@ function musicContainerCrossfadeLoop(trackList) {//Can crossfade between list-it
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
 	}
@@ -2725,7 +2725,7 @@ function musicContainerCrossfadeLoop(trackList) {//Can crossfade between list-it
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
 	}
@@ -2796,7 +2796,7 @@ function musicContainerCrossfadeLoop(trackList) {//Can crossfade between list-it
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].updateVolume();
 		}
 	}
@@ -2867,8 +2867,8 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 
 	function evaluateCurrentTrack(){
 		var trackNow = 0;
-		for(var i in trackList) {
-			if (!trackList[i].getPaused()) {
+		for(var i = musicTrack.length-1; i >= 0; i--) {
+			if (!musicTrack[i].getPaused()) {
 				trackNow = i;
 			}
 		}
@@ -2876,7 +2876,7 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 	}
 
 	this.play = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			if (musicTrackVolume[i] > 0) {
 				musicTrack[i].play();
 			}
@@ -2884,13 +2884,13 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
 	}
 
 	this.resume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			if (musicTrackVolume[i] > 0) {
 				musicTrack[i].resume();
 			}
@@ -2898,13 +2898,13 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
 	}
 
 	this.playFrom = function(time) {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].playFrom(time);
 		}
 	}
@@ -2914,23 +2914,23 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 
 	this.setLayerLevel = function(slot, level, fadeTime = 1) {
 		musicTrackVolume[slot] = level;
-		if (trackList[slot].getPaused()) {
-			var timeNow = trackList[0].getTime();
+		if (musicTrack[slot].getPaused()) {
+			var timeNow = musicTrack[0].getTime();
 			var tracksPlaying = 0;
-			for(var i in trackList) {
-				if (!trackList[i].getPaused()) {
-					timeNow = trackList[i].getTime();
+			for(var i in musicTrack) {
+				if (!musicTrack[i].getPaused()) {
+					timeNow = musicTrack[i].getTime();
 					tracksPlaying++;
 				}
 			}
 			if (tracksPlaying > 0) {
-				trackList[slot].setVolume(musicTrackVolume[slot] * trackVolume);
-				trackList[slot].playFrom(timeNow);
+				musicTrack[slot].setVolume(musicTrackVolume[slot] * trackVolume);
+				musicTrack[slot].playFrom(timeNow);
 			} else {
-				trackList[slot].setVolume(musicTrackVolume[slot] * trackVolume);
+				musicTrack[slot].setVolume(musicTrackVolume[slot] * trackVolume);
 			}
 		} else {
-			AudioEventManager.addFadeEvent(trackList[slot], fadeTime, musicTrackVolume[slot] * trackVolume);
+			AudioEventManager.addFadeEvent(musicTrack[slot], fadeTime, musicTrackVolume[slot] * trackVolume);
 		}
 	}
 
@@ -2971,20 +2971,21 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 	}
 
 	this.removeTrack = function(slot) {
+		evaluateCurrentTrack();
 		musicTrack.splice(slot,1);
 		musicTrackVolume.splice(slot,1);
 		if (currentTrack >= slot) {currentTrack--;}
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].updateVolume();
 		}
 	}
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].setVolume(musicTrackVolume[i] * trackVolume);
 		}
 	}
@@ -3009,7 +3010,7 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 	}
 
 	this.setTime = function(time) {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].setTime(time);
 		}
 	}
@@ -3057,14 +3058,10 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 	musicTrackVolume[0] = 1;
 	musicTrack[0].setVolume(1);
 
-	this.reportTrackLevels = function() {
-		console.log(musicTrackVolume)
-	}
-
 	function evaluateCurrentTrack(){
 		var trackNow = 0;
-		for(var i in trackList) {
-			if (!trackList[i].getPaused()) {
+		for(var i = musicTrack.length-1; i >= 0; i--) {
+			if (!musicTrack[i].getPaused()) {
 				trackNow = i;
 			}
 		}
@@ -3072,7 +3069,7 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 	}
 
 	this.play = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			if (musicTrackVolume[i] > 0) {
 				musicTrack[i].play();
 			}
@@ -3081,13 +3078,13 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
 	}
 
 	this.resume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			if (musicTrackVolume[i] > 0) {
 				musicTrack[i].resume();
 			}
@@ -3096,13 +3093,13 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
 	}
 
 	this.playFrom = function(time) {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].playFrom(time);
 		}
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
@@ -3116,23 +3113,23 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 
 	this.setLayerLevel = function(slot, level, fadeTime = 1) {
 		musicTrackVolume[slot] = level;
-		if (trackList[slot].getPaused()) {
-			var timeNow = trackList[0].getTime();
+		if (musicTrack[slot].getPaused()) {
+			var timeNow = musicTrack[0].getTime();
 			var tracksPlaying = 0;
-			for(var i in trackList) {
-				if (!trackList[i].getPaused()) {
-					timeNow = trackList[i].getTime();
+			for(var i in musicTrack) {
+				if (!musicTrack[i].getPaused()) {
+					timeNow = musicTrack[i].getTime();
 					tracksPlaying++;
 				}
 			}
 			if (tracksPlaying > 0) {
-				trackList[slot].setVolume(musicTrackVolume[slot] * trackVolume);
-				trackList[slot].playFrom(timeNow);
+				musicTrack[slot].setVolume(musicTrackVolume[slot] * trackVolume);
+				musicTrack[slot].playFrom(timeNow);
 			} else {
-				trackList[slot].setVolume(musicTrackVolume[slot] * trackVolume);
+				musicTrack[slot].setVolume(musicTrackVolume[slot] * trackVolume);
 			}
 		} else {
-			AudioEventManager.addFadeEvent(trackList[slot], fadeTime, musicTrackVolume[slot] * trackVolume);
+			AudioEventManager.addFadeEvent(musicTrack[slot], fadeTime, musicTrackVolume[slot] * trackVolume);
 		}
 	}
 
@@ -3173,20 +3170,21 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 	}
 
 	this.removeTrack = function(slot) {
+		evaluateCurrentTrack();
 		musicTrack.splice(slot,1);
 		musicTrackVolume.splice(slot,1);
 		if (currentTrack >= slot) {currentTrack--;}
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].updateVolume();
 		}
 	}
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].setVolume(musicTrackVolume[i] * trackVolume);
 		}
 	}
@@ -3211,7 +3209,7 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 	}
 
 	this.setTime = function(time) {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].setTime(time);
 		}
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
@@ -3243,7 +3241,7 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 	}
 
 	return this;
-}//Sometimes freezes the browser with setLayerLevel() setting a layer to 0
+}
 
 function musicContainerSequence(trackList) {//Plays list-items in order
 	var musicTrack = [];
@@ -3262,7 +3260,7 @@ function musicContainerSequence(trackList) {//Plays list-items in order
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
 	}
@@ -3273,7 +3271,7 @@ function musicContainerSequence(trackList) {//Plays list-items in order
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
 	}
@@ -3331,7 +3329,7 @@ function musicContainerSequence(trackList) {//Plays list-items in order
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].updateVolume();
 		}
 	}
@@ -3403,7 +3401,7 @@ function musicContainerSequenceLatch(trackList) {//Plays list-items in order, bu
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
 	}
@@ -3414,7 +3412,7 @@ function musicContainerSequenceLatch(trackList) {//Plays list-items in order, bu
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
 	}
@@ -3477,7 +3475,7 @@ function musicContainerSequenceLatch(trackList) {//Plays list-items in order, bu
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].updateVolume();
 		}
 	}
@@ -3548,7 +3546,7 @@ function musicContainerSequenceLatchLast(trackList) {//Plays list-items in order
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
 	}
@@ -3559,7 +3557,7 @@ function musicContainerSequenceLatchLast(trackList) {//Plays list-items in order
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
 	}
@@ -3617,7 +3615,7 @@ function musicContainerSequenceLatchLast(trackList) {//Plays list-items in order
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].updateVolume();
 		}
 	}
@@ -3688,7 +3686,7 @@ function musicContainerPlaylist(trackList) {//Plays through list-items in order
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
 	}
@@ -3699,7 +3697,7 @@ function musicContainerPlaylist(trackList) {//Plays through list-items in order
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
 	}
@@ -3759,7 +3757,7 @@ function musicContainerPlaylist(trackList) {//Plays through list-items in order
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].updateVolume();
 		}
 	}
@@ -3830,7 +3828,7 @@ function musicContainerPlaylistLoop(trackList) {//Loops through list-items in or
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
 	}
@@ -3841,7 +3839,7 @@ function musicContainerPlaylistLoop(trackList) {//Loops through list-items in or
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
 	}
@@ -3898,7 +3896,7 @@ function musicContainerPlaylistLoop(trackList) {//Loops through list-items in or
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].updateVolume();
 		}
 	}
@@ -3970,7 +3968,7 @@ function musicContainerPlaylistLoopLatch(trackList) {//Plays through list-items 
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
 	}
@@ -3981,7 +3979,7 @@ function musicContainerPlaylistLoopLatch(trackList) {//Plays through list-items 
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
 	}
@@ -4045,7 +4043,7 @@ function musicContainerPlaylistLoopLatch(trackList) {//Plays through list-items 
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].updateVolume();
 		}
 	}
@@ -4116,7 +4114,7 @@ function musicContainerPlaylistLoopLast(trackList) {//Plays through list-items i
 	}
 
 	this.stop = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
 	}
@@ -4127,7 +4125,7 @@ function musicContainerPlaylistLoopLast(trackList) {//Plays through list-items i
 	}
 
 	this.pause = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
 	}
@@ -4186,7 +4184,7 @@ function musicContainerPlaylistLoopLast(trackList) {//Plays through list-items i
 	}
 
 	this.updateVolume = function() {
-		for (var i in trackList) {
+		for (var i in musicTrack) {
 			musicTrack[i].updateVolume();
 		}
 	}
