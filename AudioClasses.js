@@ -1,3 +1,19 @@
+/*
+AudioClasses.js and AudioManager,js are an attemp my Michael Fewkes to make more complex audio behaviors simpler to implement.
+
+Functions that all sound objects share:
+.play()    plays from the beggining of the audio file
+.stop()	    stops playback and resets playback time
+.resume()    plays file from last playback time
+.pause()    stops playback without resetting playback time
+.setVolume()/.getVolume()    reports and sets object volume
+.setMixLevel()    sets a volume pre setVolume(), used for settimg a volume relative to the mix
+.setTime()/.getTime()    controls the playback time
+.getDuration()    reports the duration of the file
+.getPaused()    reports true is the file is not currently playing
+
+*/
+
 //General
 var isMuted = false;
 
