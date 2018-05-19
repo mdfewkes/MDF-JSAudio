@@ -3166,6 +3166,15 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 		currentTrack = trackNow;
 	}
 
+	function tracksToPlay() {
+		for(var i in musicTrackVolume) {
+			if(musicTrackVolume[i] > 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	this.play = function() {
 		for (var i in musicTrack) {
 			if (musicTrackVolume[i] > 0) {
@@ -3205,7 +3214,9 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 
 	this.trigger = function(callSign) {
 		if(callSign == "cue") {
-			this.play();
+			if(tracksToPlay()) {
+				this.play();
+			}
 		}
 	}
 
