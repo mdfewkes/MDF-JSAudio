@@ -866,9 +866,6 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 			currentTrack++;
 			if (currentTrack > 1) {currentTrack = 0;}
 			this.play();
-		}else if(callSign == "dry cue") {
-			currentTrack++;
-			if (currentTrack > 1) {currentTrack = 0;}
 		}
 	}
 
@@ -1382,8 +1379,6 @@ function musicContainerLoopRandom(trackList) {//Picks new random list-item to pl
 		if(callSign == "cue") {
 			currentTrack = Math.floor(Math.random() * musicTrack.length);
 			this.play();
-		}else if(callSign == "dry cue") {
-			currentTrack = Math.floor(Math.random() * musicTrack.length);
 		}
 			
 	}
@@ -1534,13 +1529,6 @@ function musicContainerLoopRandomRepetitionControl(trackList, maxRepetitions = 3
 				playCountdown = Math.floor(Math.random() * (playMax - playMin + 1) + playMin);
 			}
 			this.play();
-		}else if(callSign == "dry cue") {
-			if (playCountdown <= 0 && musicTrack.length > 1){
-				while(currentTrack == lastTrack) {
-					currentTrack = Math.floor(Math.random() * musicTrack.length);
-				}
-				playCountdown = Math.floor(Math.random() * (playMax - playMin + 1) + playMin);
-			}
 		}
 			
 	}
@@ -1692,15 +1680,6 @@ function musicContainerLoopRandomDurationControl(trackList, maxDurationInSeconds
 				}
 			}
 			this.play();
-		}else if(callSign == "dry cue") {
-			if (playTime > playMin && musicTrack.length > 1){
-				if(Math.random() <= (playTime - playMin)/(playMax - playMin)) {
-					while(currentTrack == lastTrack) {
-						currentTrack = Math.floor(Math.random() * musicTrack.length);
-					}
-					playTime = 0;
-				}
-			}
 		}
 	}
 
@@ -1855,11 +1834,6 @@ function musicContainerConcatenated(trackList) {//Reports all list-items as one 
 			if (currentTrack < musicTrack.length) {
 				this.play();
 			} else {
-				currentTrack = 0;
-			}
-		}else if(callSign == "dry cue") {
-			currentTrack++;
-			if (currentTrack >= musicTrack.length) {
 				currentTrack = 0;
 			}
 		}
@@ -2248,11 +2222,6 @@ function musicContainerConcatenatedLoop(trackList) {//Loops list-items as if one
 				currentTrack = 0;
 				this.play();
 			}
-		}else if(callSign == "dry cue") {
-			currentTrack++;
-			if (currentTrack >= musicTrack.length) {
-				currentTrack = 0;
-			}
 		}
 	}
 
@@ -2434,13 +2403,6 @@ function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as
 				atEnd = true;
 			}
 			this.play();
-		}else if(callSign == "dry cue") {
-			if (currentTrack < musicTrack.length - 1) {
-				currentTrack++;
-			} 
-			if (currentTrack >= musicTrack.length - 1) {
-				atEnd = true;
-			}
 		}
 	}
 
@@ -3322,7 +3284,7 @@ function musicContainerSequence(trackList) {//Plays list-items in order
 	}
 
 	this.trigger = function(callSign) {
-		if(callSign == "cue" || callSign == "dry cue") {
+		if(callSign == "cue") {
 			currentTrack++;
 			if (currentTrack >= musicTrack.length) {
 				currentTrack = 0;
@@ -3467,7 +3429,7 @@ function musicContainerSequenceLatch(trackList) {//Plays list-items in order, bu
 	}
 
 	this.trigger = function(callSign) {
-		if(callSign == "cue" || callSign == "dry cue") {
+		if(callSign == "cue") {
 			if (!latched) {
 				currentTrack++;
 				latched = true;
@@ -3608,7 +3570,7 @@ function musicContainerSequenceLatchLast(trackList) {//Plays list-items in order
 	}
 
 	this.trigger = function(callSign) {
-		if(callSign == "cue" || callSign == "dry cue") {
+		if(callSign == "cue") {
 			if (currentTrack < musicTrack.length - 1) {
 				currentTrack++;
 			}
@@ -3755,11 +3717,6 @@ function musicContainerPlaylist(trackList) {//Plays through list-items in order
 			} else {
 				currentTrack = 0;
 			}
-		}else if(callSign == "dry cue") {
-			currentTrack++;
-			if (currentTrack >= musicTrack.length) {
-				currentTrack = 0;
-			}
 		}
 	}
 
@@ -3899,9 +3856,6 @@ function musicContainerPlaylistLoop(trackList) {//Loops through list-items in or
 			currentTrack++;
 			if (currentTrack >= musicTrack.length) {currentTrack = 0;}
 			this.play();
-		}else if(callSign == "dry cue") {
-			currentTrack++;
-			if (currentTrack >= musicTrack.length) {currentTrack = 0;}
 		}
 	}
 
@@ -4049,12 +4003,6 @@ function musicContainerPlaylistLoopLatch(trackList) {//Plays through list-items 
 			}
 			if (currentTrack >= musicTrack.length) {currentTrack = 0;}
 			this.play();
-		}else if(callSign == "dry cue") {
-			if (!latched) {
-				currentTrack++;
-				latched = true;
-			}
-			if (currentTrack >= musicTrack.length) {currentTrack = 0;}
 		}
 	}
 
@@ -4195,10 +4143,6 @@ function musicContainerPlaylistLoopLast(trackList) {//Plays through list-items i
 				currentTrack++;
 			}
 			this.play();
-		}else if(callSign == "dry cue") {
-			if (currentTrack < musicTrack.length - 1) {
-				currentTrack++;
-			}
 		}
 			
 	}
