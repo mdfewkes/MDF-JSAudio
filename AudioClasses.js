@@ -54,7 +54,7 @@ function getRandomVolume(){
 	return randomVolume.toFixed(2);
 }
 
-function sfxClip(filename) {
+function sfxClip(filename) {//A simple, single buffer sound clip
 	var soundFile = new Audio(audioPath+filename+audioFormat());
 	soundFile.onerror = function(){soundFile = new Audio(audioPath+filename+audioFormat(true))};
 	var clipVolume = 1;
@@ -139,7 +139,7 @@ function sfxClip(filename) {
 	return this;
 }
 
-function sfxClipOverlap(filename, voices = 2) {
+function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffers as specified
 	var soundFile = new array(voices);
 	var maxVoices = soundfile.length;
 
@@ -244,7 +244,7 @@ function sfxClipOverlap(filename, voices = 2) {
 	return this;
 }
 
-function sfxClipOverlapLoop(filename, playLength) {//Double buffer music file that loops
+function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file that loops
 	var musicFile = new Array(new Audio(audioPath+filename+audioFormat()), new Audio(audioPath+filename+audioFormat()));
 	soundFile[0].onerror = function(){soundFile[0] = new Audio(audioPath+filename+audioFormat(true))}
 	soundFile[1].onerror = function(){soundFile[1] = new Audio(audioPath+filename+audioFormat(true))}
@@ -342,7 +342,7 @@ function sfxClipOverlapLoop(filename, playLength) {//Double buffer music file th
 	return this;
 }
 
-function sfxClipSpriteSheet(filename, listOfTimePairs) {
+function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding several sound clips
 	var soundFile = new Audio(audioPath+filename+audioFormat());
 	soundFile.onerror = function(){soundFile = new Audio(audioPath+filename+audioFormat(true))};
 	var times = listOfTimePairs;
@@ -444,7 +444,7 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {
 	return this;
 }
 
-function sfxClipSprite(spriteSheet, clipNumber) {
+function sfxClipSprite(spriteSheet, clipNumber) {//A referance to the clips in sfxClipSpriteSheet
 	var spriteFile = spriteSheet;
 	var clip = clipNumber;
 	var clipName = spriteFile.getClipName();
@@ -506,7 +506,7 @@ function sfxClipSprite(spriteSheet, clipNumber) {
 	return this;
 }
 
-function sfxContainer(clipList) {
+function sfxContainer(clipList) {//Basic Container
 	var soundFile = [];
 	currentClip = 0;
 
@@ -597,7 +597,7 @@ function sfxContainer(clipList) {
 	return this;
 }
 
-function sfxContainerRandom(clipList) {
+function sfxContainerRandom(clipList) {//Plays a random list-item on playback
 	var soundFile = [];
 	currentClip = 0;
 
@@ -3139,7 +3139,7 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 	}
 
 	return this;
-}
+}//Still some problems if you set all layers to 0
 
 function musicContainerLayersLoop(trackList) {//Plays all list-items together, controls volumes, loops
 	var musicTrack = [];
@@ -3176,6 +3176,10 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 	}
 
 	this.play = function() {
+		// if (!tracksToPlay()) {  //Should set the first track to play if all volumes are down, but doesnt
+		// 	musicTrackVolume[0] = 1;
+		// 	musicTrack[0].setVolume(1);
+		// }
 		for (var i in musicTrack) {
 			if (musicTrackVolume[i] > 0) {
 				musicTrack[i].play();
@@ -3350,7 +3354,7 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 	}
 
 	return this;
-}
+}//Still some problems if you set all layers to 0
 
 function musicContainerSequence(trackList) {//Plays list-items in order
 	var musicTrack = [];
