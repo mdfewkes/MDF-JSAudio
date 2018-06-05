@@ -26,6 +26,8 @@ track3.setMixVolume(0.75);
 layer1.setTrackName("layer1");
 layer2.setTrackName("layer2");
 layer3.setTrackName("layer3");
+backgroundLayers.setLayerLevel(1,0);
+backgroundLayers.setLayerLevel(2,0);
 
 
 controles.setMixVolume(0.75);

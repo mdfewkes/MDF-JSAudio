@@ -2957,8 +2957,8 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
 		musicTrack[i].pause();
-		musicTrackVolume[i] = 0;
-		musicTrack[i].setVolume(0);
+		musicTrackVolume[i] = 1;
+		musicTrack[i].setVolume(1);
 	}
 	musicTrackVolume[0] = 1;
 	musicTrack[0].setVolume(1);
@@ -3150,8 +3150,8 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
 		musicTrack[i].pause();
-		musicTrackVolume[i] = 0;
-		musicTrack[i].setVolume(0);
+		musicTrackVolume[i] = 1;
+		musicTrack[i].setVolume(1);
 	}
 	musicTrackVolume[0] = 1;
 	musicTrack[0].setVolume(1);
