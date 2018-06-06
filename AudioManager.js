@@ -209,6 +209,7 @@ function audioEventManager() {
 						}
 					if (eventList[i][3] < now) {
 						//console.log("Ending Fade Event for " + thisTrack.getTrackName());
+						thisTrack.setVolume(eventList[i][5]);
 						eventList[i] = [REMOVE];
 					}
 				}
@@ -223,9 +224,6 @@ function audioEventManager() {
 						eventList[i] = [REMOVE];
 						thisTrack.trigger(callSign);
 					}
-				} else {
-					//console.log("Track paused, removing Timer Event. CallSign is: " + eventList[i][3]);
-					eventList[i] = [REMOVE];
 				}
 			}
 			if (eventList[i][0] == STOP) {
