@@ -509,14 +509,13 @@ function sfxClipSprite(spriteSheet, clipNumber) {//A referance to the clips in s
 
 function sfxContainer(clipList) {//Basic Container
 	var soundFile = [];
-	currentClip = 0;
+    var currentClip = 0;
+    var clipVolume = 1;
 
 	for (var i in clipList) {
 		soundFile[i] = clipList[i];
 		soundFile[i].pause();
 	}
-
-	var clipVolume = 1;
 
 	this.play = function() {
 		soundFile[currentClip].play();
@@ -551,8 +550,11 @@ function sfxContainer(clipList) {//Basic Container
 		}
 	}
 
-	this.setVolume = function(newVolume) {
-		soundFile[currentClip].setVolume(newVolume);
+    this.setVolume = function (newVolume) {
+        clipVolume = newVolume;
+        for (i in soundFile) {
+            soundFile[i].setVolume(clipVolume);
+        }
 	}
 
 	this.getVolume = function() {
@@ -600,14 +602,13 @@ function sfxContainer(clipList) {//Basic Container
 
 function sfxContainerRandom(clipList) {//Plays a random list-item on playback
 	var soundFile = [];
-	currentClip = 0;
+    var currentClip = 0;
+    var clipVolume = 1;
 
 	for (var i in clipList) {
 		soundFile[i] = clipList[i];
 		soundFile[i].pause();
 	}
-
-	var clipVolume = 1;
 
 	this.play = function() {
 		currentClip = Math.floor(Math.random() * soundFile.length);
@@ -643,8 +644,11 @@ function sfxContainerRandom(clipList) {//Plays a random list-item on playback
 		}
 	}
 
-	this.setVolume = function(newVolume) {
-		soundFile[currentClip].setVolume(newVolume);
+    this.setVolume = function (newVolume) {
+        clipVolume = newVolume;
+        for (i in soundFile) {
+            soundFile[i].setVolume(clipVolume);
+        }
 	}
 
 	this.getVolume = function() {
@@ -692,14 +696,13 @@ function sfxContainerRandom(clipList) {//Plays a random list-item on playback
 
 function sfxContainerLayer(clipList) {//Plays all list-items together
 	var soundFile = [];
-	currentClip = 0;
+    var currentClip = 0;
+    var clipVolume = 1;
 
 	for (var i in clipList) {
 		soundFile[i] = clipList[i];
 		soundFile[i].pause();
 	}
-
-	var clipVolume = 1;
 
 	this.play = function() {
 		for (var i in soundFile) {
@@ -742,10 +745,11 @@ function sfxContainerLayer(clipList) {//Plays all list-items together
 		}
 	}
 
-	this.setVolume = function(newVolume) {
-		for (var i in soundFile) {
-			soundFile[currentClip].setVolume(newVolume);
-		}
+    this.setVolume = function (newVolume) {
+        clipVolume = newVolume;
+        for (i in soundFile) {
+            soundFile[i].setVolume(clipVolume);
+        }
 	}
 
 	this.getVolume = function() {
@@ -795,27 +799,24 @@ function sfxContainerLayer(clipList) {//Plays all list-items together
 
 function sfxContainerBlend(clipList, startingLevel = 0) {//Container which blends between the volumes of list-items
 	var soundFile = [];
-	currentClip = 0;
-	currentLevel = startingLevel;
+	var currentClip = 0;
+    var currentLevel = startingLevel;
+    var clipVolume = 1;
 
 	for (var i in clipList) {
 		soundFile[i] = clipList[i];
 		soundFile[i].pause();
 	}
 
-	var clipVolume = 1;
-
 	var overlap = 1/soundFile.length - 1;
 	function defineVolumes() {
 		for (var i = 0; soundFile.length; i++) {
 			var relativeLevel = Math.abs(currentLevel - i*overlap);
-			// relativeLevel = relativeLevel > overlap ? overlap : relativeLevel;
-			// relativeLevel = relativeLevel < 0 ? 0 : relativeLevel;
 			if (relativeLevel > overlap) {
 				soundFile[i].setVolume(0);
 			}
-			if (relativeLevel <= overlap){
-				soundFile[i].setVolume(Math.abs(1 - relativeLevel/overlap));
+            if (relativeLevel <= overlap) {
+                soundFile[i].setVolume(Math.abs(1 - relativeLevel / overlap) * clipVolume);
 			}
 		}
 
@@ -865,10 +866,8 @@ function sfxContainerBlend(clipList, startingLevel = 0) {//Container which blend
 		}
 	}
 
-	this.setVolume = function(newVolume) {
-		for (var i in soundFile) {
-			soundFile[currentClip].setVolume(newVolume);
-		}
+    this.setVolume = function (newVolume) {
+        clipVolume = newVolume;
 		defineVolumes();
 	}
 
