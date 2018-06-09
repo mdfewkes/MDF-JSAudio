@@ -3409,6 +3409,7 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 	var trackVolume = 1;
 	var currentTrack = 0;
 	var trackVolume = 1;
+	var playing = false;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -3442,6 +3443,7 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 			}
 		}
 		AudioEventManager.addTimerEvent(this, (this.getDuration()), "cue");
+		playing = true;
 	}
 
 	this.stop = function() {
@@ -3449,6 +3451,7 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 			musicTrack[i].stop();
 		}
 		AudioEventManager.removeTimerEvent(this);
+		playing = false;
 	}
 
 	this.resume = function() {
@@ -3458,6 +3461,7 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 			}
 		}
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		playing = true;
 	}
 
 	this.pause = function() {
@@ -3465,6 +3469,7 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 			musicTrack[i].pause();
 		}
 		AudioEventManager.removeTimerEvent(this);
+		playing = false;
 	}
 
 	this.playFrom = function(time) {
@@ -3472,11 +3477,17 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 			musicTrack[i].playFrom(time);
 		}
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		playing = true;
 	}
 
 	this.trigger = function(callSign) {
 		if(callSign == "cue") {
-			this.play();
+			if (tracksToPlay()) {
+				this.play();
+			} else {
+				musicTrackVolume[0] = 0.001;
+				this.play();
+			}
 		}
 	}
 
@@ -3581,7 +3592,9 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 		for (var i in musicTrack) {
 			musicTrack[i].setTime(time);
 		}
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		if (playing) {
+			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		}
 	}
 
 	this.getTime = function() {
@@ -3605,12 +3618,11 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 	}
 
 	this.getPaused = function() {
-		evaluateCurrentTrack();
-		return musicTrack[currentTrack].getPaused();
+		return !playing;
 	}
 
 	return this;
-}//Still some inconsistencies if you set all layers to 0
+}
 
 function musicContainerSequence(trackList) {//Plays list-items in order
 	var musicTrack = [];
