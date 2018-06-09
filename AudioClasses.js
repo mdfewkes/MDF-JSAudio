@@ -3401,7 +3401,7 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 	}
 
 	return this;
-}//Still some problems if you set all layers to 0
+}
 
 function musicContainerLayersLoop(trackList) {//Plays all list-items together, controls volumes, loops
 	var musicTrack = [];
