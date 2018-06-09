@@ -1340,7 +1340,9 @@ function musicContainer(trackList) {//Basic containers
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
+		for (i in musicTrack) {
+			musicTrack[i].setVolume(trackVolume);
+		}
 	}
 
 	this.getVolume = function() {
@@ -1471,7 +1473,9 @@ function musicContainerRandom(trackList) {//Picks random list-item to play on pl
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
+		for (i in musicTrack) {
+			musicTrack[i].setVolume(trackVolume);
+		}
 	}
 
 	this.getVolume = function() {
@@ -1616,7 +1620,9 @@ function musicContainerLoop(trackList) {//Loops current list-item
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
+		for (i in musicTrack) {
+			musicTrack[i].setVolume(trackVolume);
+		}
 	}
 
 	this.getVolume = function() {
@@ -1755,7 +1761,9 @@ function musicContainerLoopRandom(trackList) {//Picks new random list-item to pl
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
+		for (i in musicTrack) {
+			musicTrack[i].setVolume(trackVolume);
+		}
 	}
 
 	this.getVolume = function() {
@@ -1905,7 +1913,9 @@ function musicContainerLoopRandomRepetitionControl(trackList, maxRepetitions = 3
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
+		for (i in musicTrack) {
+			musicTrack[i].setVolume(trackVolume);
+		}
 	}
 
 	this.getVolume = function() {
@@ -2056,7 +2066,9 @@ function musicContainerLoopRandomDurationControl(trackList, maxDurationInSeconds
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
+		for (i in musicTrack) {
+			musicTrack[i].setVolume(trackVolume);
+		}
 	}
 
 	this.getVolume = function() {
@@ -2213,7 +2225,9 @@ function musicContainerConcatenated(trackList) {//Reports all list-items as one 
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
+		for (i in musicTrack) {
+			musicTrack[i].setVolume(trackVolume);
+		}
 	}
 
 	this.getVolume = function() {
@@ -2414,7 +2428,9 @@ function musicContainerConcatenatedLatchLast(trackList) {//Reports all list-item
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
+		for (i in musicTrack) {
+			musicTrack[i].setVolume(trackVolume);
+		}
 	}
 
 	this.getVolume = function() {
@@ -2601,7 +2617,9 @@ function musicContainerConcatenatedLoop(trackList) {//Loops list-items as if one
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
+		for (i in musicTrack) {
+			musicTrack[i].setVolume(trackVolume);
+		}
 	}
 
 	this.getVolume = function() {
@@ -2803,7 +2821,9 @@ function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
+		for (i in musicTrack) {
+			musicTrack[i].setVolume(trackVolume);
+		}
 	}
 
 	this.getVolume = function() {
@@ -2979,7 +2999,9 @@ function musicContainerCrossfade(trackList) {//Can crossfade between list-items
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
+		for (i in musicTrack) {
+			musicTrack[i].setVolume(trackVolume);
+		}
 	}
 
 	this.getVolume = function() {
@@ -3134,7 +3156,9 @@ function musicContainerCrossfadeLoop(trackList) {//Can crossfade between list-it
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
+		for (i in musicTrack) {
+			musicTrack[i].setVolume(trackVolume);
+		}
 	}
 
 	this.getVolume = function() {
@@ -3683,7 +3707,9 @@ function musicContainerSequence(trackList) {//Plays list-items in order
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
+		for (i in musicTrack) {
+			musicTrack[i].setVolume(trackVolume);
+		}
 	}
 
 	this.getVolume = function() {
@@ -3830,7 +3856,9 @@ function musicContainerSequenceLatch(trackList) {//Plays list-items in order, bu
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
+		for (i in musicTrack) {
+			musicTrack[i].setVolume(trackVolume);
+		}
 	}
 
 	this.getVolume = function() {
@@ -3970,7 +3998,9 @@ function musicContainerSequenceLatchLast(trackList) {//Plays list-items in order
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
+		for (i in musicTrack) {
+			musicTrack[i].setVolume(trackVolume);
+		}
 	}
 
 	this.getVolume = function() {
@@ -4115,7 +4145,9 @@ function musicContainerPlaylist(trackList) {//Plays through list-items in order
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
+		for (i in musicTrack) {
+			musicTrack[i].setVolume(trackVolume);
+		}
 	}
 
 	this.getVolume = function() {
@@ -4255,7 +4287,9 @@ function musicContainerPlaylistLoop(trackList) {//Loops through list-items in or
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
+		for (i in musicTrack) {
+			musicTrack[i].setVolume(trackVolume);
+		}
 	}
 
 	this.getVolume = function() {
@@ -4403,7 +4437,9 @@ function musicContainerPlaylistLoopLatch(trackList) {//Plays through list-items 
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
+		for (i in musicTrack) {
+			musicTrack[i].setVolume(trackVolume);
+		}
 	}
 
 	this.getVolume = function() {
@@ -4544,7 +4580,9 @@ function musicContainerPlaylistLoopLast(trackList) {//Plays through list-items i
 
 	this.setVolume = function(newVolume) {
 		trackVolume = newVolume;
-		musicTrack[currentTrack].setVolume(newVolume);
+		for (i in musicTrack) {
+			musicTrack[i].setVolume(trackVolume);
+		}
 	}
 
 	this.getVolume = function() {
