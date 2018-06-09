@@ -973,24 +973,29 @@ function musicTrack(filename, playLength) {//Single buffer music file
 		musicFile.currentTime = 0;
 		this.updateVolume();
 		musicFile.play();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 	}
 
 	this.stop = function() {
 		musicFile.pause();
 		musicFile.currentTime = 0;
+		AudioEventManager.removeTimerEvent(this);
 	}
 
 	this.resume = function() {
 		musicFile.play();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 	}
 
 	this.pause = function() {
 		musicFile.pause();
+		AudioEventManager.removeTimerEvent(this);
 	}
 
 	this.playFrom = function(time) {
 		this.setTime(time);
 		musicFile.play();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 	}
 
 	this.trigger = function(callSign) {
@@ -1040,6 +1045,7 @@ function musicTrack(filename, playLength) {//Single buffer music file
 		while(newTime >= duration) {newTime -= duration;}
 		if(newTime < 0) {newTime = 0;}
 		musicFile.currentTime = newTime;
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
 	}
 
 	this.getTime = function() {
@@ -1086,6 +1092,7 @@ function musicTrackOverlap(filename, playLength) {//Double buffer music file
 		musicFile[currentTrack].currentTime = 0;
 		this.updateVolume();
 		musicFile[currentTrack].play();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 	}
 
 	this.stop = function() {
@@ -1093,20 +1100,24 @@ function musicTrackOverlap(filename, playLength) {//Double buffer music file
 		musicFile[0].currentTime = 0;
 		musicFile[1].pause();
 		musicFile[1].currentTime = 0;
+		AudioEventManager.removeTimerEvent(this);
 	}
 
 	this.resume = function() {
 		musicFile[currentTrack].play();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 	}
 
 	this.pause = function() {
 		musicFile[0].pause();
 		musicFile[1].pause();
+		AudioEventManager.removeTimerEvent(this);
 	}
 
 	this.playFrom = function(time) {
 		this.setTime(time);
 		musicFile[currentTrack].play();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 	}
 
 	this.trigger = function(callSign) {
@@ -1158,6 +1169,7 @@ function musicTrackOverlap(filename, playLength) {//Double buffer music file
 		while (newTime >= duration) {newTime -= duration;}
 		if(newTime < 0) {newTime = 0;}
 		musicFile[currentTrack].currentTime = newTime;
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
 	}
 
 	this.getTime = function() {
@@ -1210,6 +1222,7 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 		musicFile[0].currentTime = 0;
 		musicFile[1].pause();
 		musicFile[1].currentTime = 0;
+		AudioEventManager.removeTimerEvent(this);
 	}
 
 	this.resume = function() {
@@ -1220,6 +1233,7 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 	this.pause = function() {
 		musicFile[0].pause();
 		musicFile[1].pause();
+		AudioEventManager.removeTimerEvent(this);
 	}
 
 	this.playFrom = function(time) {
@@ -1322,26 +1336,31 @@ function musicContainer(trackList) {//Basic containers
 
 	this.play = function() {
 		musicTrack[currentTrack].play();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 	}
 
 	this.stop = function() {
 		for (var i in musicTrack) {
 			musicTrack[i].stop();
+		AudioEventManager.removeTimerEvent(this);
 		}
 	}
 
 	this.resume = function() {
 		musicTrack[currentTrack].resume();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 	}
 
 	this.pause = function() {
 		for (var i in musicTrack) {
 			musicTrack[i].pause();
+		AudioEventManager.removeTimerEvent(this);
 		}
 	}
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 	}
 
 	this.trigger = function(callSign) {
@@ -1433,6 +1452,7 @@ function musicContainer(trackList) {//Basic containers
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
 	}
 
 	this.getTime = function() {
@@ -1471,6 +1491,7 @@ function musicContainerRandom(trackList) {//Picks random list-item to play on pl
 	this.play = function() {
 		currentTrack = Math.floor(Math.random() * musicTrack.length);
 		musicTrack[currentTrack].play();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 	}
 
 	this.stop = function() {
@@ -1478,20 +1499,24 @@ function musicContainerRandom(trackList) {//Picks random list-item to play on pl
 			musicTrack[i].stop();
 		}
 		currentTrack = Math.floor(Math.random() * musicTrack.length);
+		AudioEventManager.removeTimerEvent(this);
 	}
 
 	this.resume = function() {
 		musicTrack[currentTrack].resume();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 	}
 
 	this.pause = function() {
 		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
+		AudioEventManager.removeTimerEvent(this);
 	}
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 	}
 
 	this.trigger = function(callSign) {
@@ -1578,6 +1603,7 @@ function musicContainerRandom(trackList) {//Picks random list-item to play on pl
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
 	}
 
 	this.getTime = function() {
@@ -1737,7 +1763,7 @@ function musicContainerLoop(trackList) {//Loops current list-item
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");}
 	}
 
 	this.getTime = function() {
@@ -1890,7 +1916,7 @@ function musicContainerLoopRandom(trackList) {//Picks new random list-item to pl
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");}
 	}
 
 	this.getTime = function() {
@@ -2054,7 +2080,7 @@ function musicContainerLoopRandomRepetitionControl(trackList, maxRepetitions = 3
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");}
 	}
 
 	this.getTime = function() {
@@ -2219,7 +2245,7 @@ function musicContainerLoopRandomDurationControl(trackList, maxDurationInSeconds
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");}
 	}
 
 	this.getTime = function() {
@@ -2260,7 +2286,7 @@ function musicContainerConcatenated(trackList) {//Reports all list-items as one 
 
 	this.play = function() {
 		musicTrack[currentTrack].play();
-		AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
+		AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "cue");
 	}
 
 	this.stop = function() {
@@ -2273,7 +2299,7 @@ function musicContainerConcatenated(trackList) {//Reports all list-items as one 
 
 	this.resume = function() {
 		musicTrack[currentTrack].resume();
-		AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
+		AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "cue");
 	}
 
 	this.pause = function() {
@@ -2295,11 +2321,11 @@ function musicContainerConcatenated(trackList) {//Reports all list-items as one 
 			}
 		}
 		musicTrack[currentTrack].playFrom(totalTime);
-		AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
+		AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "cue");
 	}
 
 	this.trigger = function(callSign) {
-		if(callSign == "secret cue") {
+		if(callSign == "cue") {
 			currentTrack++;
 			if (currentTrack < musicTrack.length) {
 				this.play();
@@ -2399,7 +2425,7 @@ function musicContainerConcatenated(trackList) {//Reports all list-items as one 
 				return;
 			}
 		}
-		AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "cue");}
 	}
 
 	this.getTime = function() {
@@ -2606,6 +2632,7 @@ function musicContainerConcatenatedLatchLast(trackList) {//Reports all list-item
 	this.setTime = function(time) {
 		if (atEnd) {
 			musicTrack[currentTrack].setTime(time);
+			AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "cue");
 		} else {
 			var totalTime = time;
 			for (var i in musicTrack) {
@@ -2614,7 +2641,9 @@ function musicContainerConcatenatedLatchLast(trackList) {//Reports all list-item
 				} else if (musicTrack[i].getDuration() <= totalTime) {
 					currentTrack = i;
 					musicTrack[currentTrack].setTime(totalTime);
-					AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "cue");
+					if(!this.getPaused()) {
+						AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "cue");
+					}
 					return;
 				}
 			}
@@ -2812,7 +2841,9 @@ function musicContainerConcatenatedLoop(trackList) {//Loops list-items as if one
 			} else if (musicTrack[i].getDuration() <= totalTime) {
 				currentTrack = i;
 				musicTrack[currentTrack].setTime(totalTime);
-				AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "cue");
+				if(!this.getPaused()) {
+					AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "cue");
+				}
 				return;
 			}
 		}
@@ -3031,7 +3062,9 @@ function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as
 				} else if (musicTrack[i].getDuration() <= totalTime) {
 					currentTrack = i;
 					musicTrack[currentTrack].setTime(totalTime);
-					AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "secret cue");
+					if(!this.getPaused()) {
+						AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "cue");
+					}
 					return;
 				}
 			}
@@ -3091,26 +3124,31 @@ function musicContainerCrossfade(trackList) {//Can crossfade between list-items
 
 	this.play = function() {
 		musicTrack[currentTrack].play();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 	}
 
 	this.stop = function() {
 		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
+		AudioEventManager.removeTimerEvent(this);
 	}
 
 	this.resume = function() {
 		musicTrack[currentTrack].resume();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 	}
 
 	this.pause = function() {
 		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
+		AudioEventManager.removeTimerEvent(this);
 	}
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 	}
 
 	this.trigger = function(callSign) {
@@ -3212,6 +3250,7 @@ function musicContainerCrossfade(trackList) {//Can crossfade between list-items
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
 	}
 
 	this.getTime = function() {
@@ -3381,7 +3420,7 @@ function musicContainerCrossfadeLoop(trackList) {//Can crossfade between list-it
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");}
 	}
 
 	this.getTime = function() {
@@ -3437,12 +3476,14 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 				musicTrack[i].play();
 			}
 		}
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 	}
 
 	this.stop = function() {
 		for (var i in musicTrack) {
 			musicTrack[i].stop();
 		}
+		AudioEventManager.removeTimerEvent(this);
 	}
 
 	this.resume = function() {
@@ -3451,18 +3492,21 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 				musicTrack[i].resume();
 			}
 		}
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 	}
 
 	this.pause = function() {
 		for (var i in musicTrack) {
 			musicTrack[i].pause();
 		}
+		AudioEventManager.removeTimerEvent(this);
 	}
 
 	this.playFrom = function(time) {
 		for (var i in musicTrack) {
 			musicTrack[i].playFrom(time);
 		}
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 	}
 
 	this.trigger = function(callSign) {
@@ -3581,6 +3625,7 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 		for (var i in musicTrack) {
 			musicTrack[i].setTime(time);
 		}
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
 	}
 
 	this.getTime = function() {
@@ -3974,7 +4019,7 @@ function musicContainerSequence(trackList) {//Plays list-items in order
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");}
 	}
 
 	this.getTime = function() {
@@ -4135,7 +4180,7 @@ function musicContainerSequenceLatch(trackList) {//Plays list-items in order, bu
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");}
 	}
 
 	this.getTime = function() {
@@ -4289,7 +4334,7 @@ function musicContainerSequenceLatchLast(trackList) {//Plays list-items in order
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");}
 	}
 
 	this.getTime = function() {
@@ -4448,7 +4493,7 @@ function musicContainerPlaylist(trackList) {//Plays through list-items in order
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");}
 	}
 
 	this.getTime = function() {
@@ -4602,7 +4647,7 @@ function musicContainerPlaylistLoop(trackList) {//Loops through list-items in or
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");}
 	}
 
 	this.getTime = function() {
@@ -4764,7 +4809,7 @@ function musicContainerPlaylistLoopLatch(trackList) {//Plays through list-items 
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");}
 	}
 
 	this.getTime = function() {
@@ -4919,7 +4964,7 @@ function musicContainerPlaylistLoopLast(trackList) {//Plays through list-items i
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");}
 	}
 
 	this.getTime = function() {
