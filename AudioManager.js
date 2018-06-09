@@ -180,7 +180,7 @@ function audioEventManager() {
 		}
 	}
 
-	this.removeTimerEvent = function(track, callSign = " ") {
+	this.removeTimerEvent = function(track, callSign = "") {
 		var thisTrack = track;
 		if(callSign != " ") {
 			var check = checkListFor(TIMER, thisTrack, callSign);
@@ -191,11 +191,11 @@ function audioEventManager() {
 				eventList[check] = [REMOVE];
 			}
 		} else {
-			var check = checkListFor(TIMER, thisTrack, " ");
+			var check = checkListFor(TIMER, thisTrack, "");
 			while(check != "none") {
 			//console.log("Removing Timer Event for " + track.getTrackName());
 				eventList[check] = [REMOVE];
-				check = checkListFor(TIMER, thisTrack, " ");
+				check = checkListFor(TIMER, thisTrack, "");
 			}
 		}
 	}
@@ -297,10 +297,10 @@ function audioEventManager() {
 		for (var i = 0; i < eventList.length; i++) {
 			if (eventList[i][0] == eventType) {
 				if (eventList[i][1] == track) {
-					if(eventType == TIMER && callSign != " " && eventList[i][3] == callSign) {
+					if(eventType == TIMER && callSign != "" && eventList[i][3] == callSign) {
 						foundItem = true;
 						return i;
-					} else if (eventType == TIMER && callSign == " ") {
+					} else if (eventType == TIMER && callSign == "") {
 						foundItem = true;
 						return i;
 					} else if (eventType != TIMER) {
