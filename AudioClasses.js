@@ -689,6 +689,195 @@ function sfxContainerRandom(clipList) {//Plays a random list-item on playback
 	return this;
 }
 
+function sfxContainerLayer(clipList) {//Plays all list-items together
+	var soundFile = [];
+	currentClip = 0;
+
+	for (var i in clipList) {
+		soundFile[i] = clipList[i];
+		soundFile[i].pause();
+	}
+
+	var clipVolume = 1;
+
+	this.play = function() {
+		for (var i in soundFile) {
+			soundFile[i].play();
+		}
+	}
+
+	this.stop = function() {
+		for (var i in soundFile) {
+			soundFile[i].stop();
+		}
+	}
+
+	this.resume = function() {
+		for (var i in soundFile) {
+			soundFile[i].resume();
+		}
+	}
+
+	this.pause = function() {
+		for (var i in soundFile) {
+			soundFile[i].pause();
+		}
+	}
+
+	this.trigger = function(callSign) {
+	}
+
+	this.loadClip = function(newClip, slot) {
+		soundFile[slot] = newClip;
+	}
+
+	this.updateVolume = function() {
+		for (var i in soundFile) {
+			soundFile[i].updateVolume();
+		}
+	}
+
+	this.setVolume = function(newVolume) {
+		for (var i in soundFile) {
+			soundFile[currentClip].setVolume(newVolume);
+		}
+	}
+
+	this.getVolume = function() {
+		return soundFile[currentClip].getVolume();
+	}
+
+	this.setCurrentClip = function(clipNumber) {
+		currentClip = clipNumber;
+	}
+
+	this.getCurrentClip = function() {
+		 return currentClip;
+	}
+
+	this.getListLength = function() {
+		 return soundFile.length;
+	}
+
+	this.setTime = function(time) {
+		for (var i in soundFile) {
+			soundFile[currentClip].setTime(time);
+		}
+	}
+
+	this.getTime = function() {
+		return soundFile[currentClip].getTime();
+	}
+	
+	this.setClipName = function(name) {
+		soundFile[currentClip].setClipName(name);
+	}
+
+	this.getClipName = function() {
+		return soundFile[currentClip].getClipName();
+	}
+	
+	this.getDuration = function() {
+		return soundFile[currentClip].getDuration();
+	}
+
+	this.getPaused = function() {
+		return soundFile[currentClip].getPaused();
+	}
+
+	return this;
+}//Still needs a function to controle volume of individual levels
+
+function sfxContainerBlend(clipList) {//Container which blends between the volume on list-items
+	var soundFile = [];
+	currentClip = 0;
+
+	for (var i in clipList) {
+		soundFile[i] = clipList[i];
+		soundFile[i].pause();
+	}
+
+	var clipVolume = 1;
+
+	this.play = function() {
+		soundFile[currentClip].play();
+	}
+
+	this.stop = function() {
+		for (var i in soundFile) {
+			soundFile[i].stop();
+		}
+	}
+
+	this.resume = function() {
+		soundFile[currentClip].resume();
+	}
+
+	this.pause = function() {
+		for (var i in soundFile) {
+			soundFile[i].pause();
+		}
+	}
+
+	this.trigger = function(callSign) {
+	}
+
+	this.loadClip = function(newClip, slot) {
+		soundFile[slot] = newClip;
+	}
+
+	this.updateVolume = function() {
+		for (var i in soundFile) {
+			soundFile[i].updateVolume();
+		}
+	}
+
+	this.setVolume = function(newVolume) {
+		soundFile[currentClip].setVolume(newVolume);
+	}
+
+	this.getVolume = function() {
+		return soundFile[currentClip].getVolume();
+	}
+
+	this.setCurrentClip = function(clipNumber) {
+		currentClip = clipNumber;
+	}
+
+	this.getCurrentClip = function() {
+		 return currentClip;
+	}
+
+	this.getListLength = function() {
+		 return soundFile.length;
+	}
+
+	this.setTime = function(time) {
+		soundFile[currentClip].setTime(time);
+	}
+
+	this.getTime = function() {
+		return soundFile[currentClip].getTime();
+	}
+	
+	this.setClipName = function(name) {
+		soundFile[currentClip].setClipName(name);
+	}
+
+	this.getClipName = function() {
+		return soundFile[currentClip].getClipName();
+	}
+	
+	this.getDuration = function() {
+		return soundFile[currentClip].getDuration();
+	}
+
+	this.getPaused = function() {
+		return soundFile[currentClip].getPaused();
+	}
+
+	return this;
+}//Still needs all functionality
 
 //Music Classes
 var musicVolume = 1;
