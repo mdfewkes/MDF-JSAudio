@@ -18,6 +18,7 @@ Functions that all sound objects share:
 var isMuted = false;
 
 //SFX Classes
+//It is possible all SFX objects fail to handle container volumes correctly, see var clipVolume
 var sfxVolume = 1;
 SFXVolumeManager = new sfxVolumeManager();
 function sfxVolumeManager() {
@@ -788,9 +789,10 @@ function sfxContainerLayer(clipList) {//Plays all list-items together
 	return this;
 }//Still needs a function to controle volume of individual levels
 
-function sfxContainerBlend(clipList) {//Container which blends between the volume on list-items
+function sfxContainerBlend(clipList, startingLevel = 0) {//Container which blends between the volume on list-items
 	var soundFile = [];
 	currentClip = 0;
+	currentLevel = startingLevel;
 
 	for (var i in clipList) {
 		soundFile[i] = clipList[i];
@@ -799,8 +801,27 @@ function sfxContainerBlend(clipList) {//Container which blends between the volum
 
 	var clipVolume = 1;
 
+	var overlap = 1/soundFile.length - 1;
+	function defineVolumes() {
+		for (var i = 0; soundFile.length; i++) {
+			var relativeLevel = Math.abs(currentLevel - i*overlap);
+			// relativeLevel = relativeLevel > overlap ? overlap : relativeLevel;
+			// relativeLevel = relativeLevel < 0 ? 0 : relativeLevel;
+			if (relativeLevel > overlap) {
+				soundFile[i].setVolume(0);
+			}
+			if (relativeLevel <= overlap){
+				soundFile[i].setVolume(Math.abs(1 - relativeLevel/overlap));
+			}
+		}
+
+	}
+
 	this.play = function() {
-		soundFile[currentClip].play();
+		defineVolumes();
+		for (var i in soundFile) {
+			soundFile[i].play();
+		}
 	}
 
 	this.stop = function() {
@@ -810,7 +831,10 @@ function sfxContainerBlend(clipList) {//Container which blends between the volum
 	}
 
 	this.resume = function() {
-		soundFile[currentClip].resume();
+		defineVolumes();
+		for (var i in soundFile) {
+			soundFile[i].resume();
+		}
 	}
 
 	this.pause = function() {
@@ -820,6 +844,11 @@ function sfxContainerBlend(clipList) {//Container which blends between the volum
 	}
 
 	this.trigger = function(callSign) {
+	}
+
+	this.setLevel = function(newLevel) {
+		currentLevel = newLevel;
+		defineVolumes();		
 	}
 
 	this.loadClip = function(newClip, slot) {
@@ -833,7 +862,10 @@ function sfxContainerBlend(clipList) {//Container which blends between the volum
 	}
 
 	this.setVolume = function(newVolume) {
-		soundFile[currentClip].setVolume(newVolume);
+		for (var i in soundFile) {
+			soundFile[currentClip].setVolume(newVolume);
+		}
+		defineVolumes();
 	}
 
 	this.getVolume = function() {
@@ -853,7 +885,9 @@ function sfxContainerBlend(clipList) {//Container which blends between the volum
 	}
 
 	this.setTime = function(time) {
-		soundFile[currentClip].setTime(time);
+		for (var i in soundFile) {
+			soundFile[currentClip].setTime(time);
+		}
 	}
 
 	this.getTime = function() {
@@ -877,9 +911,10 @@ function sfxContainerBlend(clipList) {//Container which blends between the volum
 	}
 
 	return this;
-}//Still needs all functionality
+}//Still needs testing
 
 //Music Classes
+//It is possible all music objects fail to handle container volumes correctly, see var trackVolume
 var musicVolume = 1;
 MusicVolumeManager = new musicVolumeManager();
 function musicVolumeManager() {
