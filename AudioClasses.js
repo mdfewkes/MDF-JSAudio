@@ -101,8 +101,12 @@ function sfxClip(filename) {//A simple, single buffer sound clip
 	this.setVolume = function(newVolume) {
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		soundFile.volume = Math.pow(mixVolume * newVolume * sfxVolume * !isMuted, 2);
 		clipVolume = newVolume;
+		newVolume = trackVolume * mixVolume;
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
+		soundFile.volume = Math.pow(newVolume * sfxVolume * !isMuted, 2);
+		if(clipVolume <= 0) {this.stop();}
 	}
 
 	this.getVolume = function() {
@@ -204,10 +208,14 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 	this.setVolume = function(newVolume) {
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		for (var i in soundFile) {
-			soundFile[i].volume = Math.pow(mixVolume * newVolume * sfxVolume * !isMuted, 2);
-		}
 		clipVolume = newVolume;
+		newVolume = trackVolume * mixVolume;
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
+		for (var i in soundFile) {
+			soundFile[i].volume = Math.pow(newVolume * sfxVolume * !isMuted, 2);
+		}
+		if(clipVolume <= 0) {this.stop();}
 	}
 
 	this.getVolume = function() {
@@ -299,9 +307,13 @@ function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file th
 	this.setVolume = function(newVolume) {
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		soundFile[currentClip].volume = Math.pow(mixVolume * newVolume * musicVolume * !isMuted, 2);
 		clipVolume = newVolume;
-		if (clipVolume <= 0) { this.stop();}
+		newVolume = trackVolume * mixVolume;
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
+		soundFile[0].volume = Math.pow(newVolume * sfxVolume * !isMuted, 2);
+		soundFile[1].volume = Math.pow(newVolume * sfxVolume * !isMuted, 2);
+		if(clipVolume <= 0) {this.stop();}
 	}
 
 	this.getVolume = function() {
