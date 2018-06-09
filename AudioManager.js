@@ -90,7 +90,8 @@ function getMute(TorF) {
 const REMOVE = 0; // Arrayformat [REMOVE]
 const FADE = 1; // Arrayformat [FADE, track, startTime, endTime, startVolume, endVolume, crossfade]
 const TIMER = 2; // Arrayformat [TIMER, track, endTime, callSign]
-const STOP = 3; // Arrayformat [STOP, track, endTime]
+const PLAY = 3; // Arrayformat [PLAY, track, endTime]
+const STOP = 4; // Arrayformat [STOP, track, endTime]
 
 var AudioEventManager = new audioEventManager();
 
@@ -151,12 +152,25 @@ function audioEventManager() {
 		}
 	}
 
+	this.addPlayEvent = function(track, duration) {
+		// Arrayformat [PLAY, track, endTime]
+		var thisTrack = track;
+		var check = checkListFor(PLAY, thisTrack);
+		var endTime = (duration * 1000) + now;
+
+		if (check == "none") {
+			//console.log("Adding Play Event for " + track.getTrackName());
+			eventList.push([PLAY, track, endTime]);
+		} else {
+			eventList[check] = [PLAY, track, endTime];
+		}
+	}
+
 	this.addStopEvent = function(track, duration) {
 		// Arrayformat [STOP, track, endTime]
 		var thisTrack = track;
 		var check = checkListFor(STOP, thisTrack);
 		var endTime = (duration * 1000) + now;
-		//var endTime = (thisTrack.getDuration() - thisTrack.getTime()) * 1000 + now;
 
 		if (check == "none") {
 			//console.log("Adding Stop Event for " + track.getTrackName());
@@ -183,6 +197,18 @@ function audioEventManager() {
 				eventList[check] = [REMOVE];
 				check = checkListFor(TIMER, thisTrack, " ");
 			}
+		}
+	}
+
+	this.removePlayEvent = function(track) {
+		var thisTrack = track;
+		var check = checkListFor(PLAY, thisTrack);
+
+		if (check == "none") {
+			return;
+		} else {
+			//console.log("Removing Stop Event for " + track.getTrackName());
+			eventList[check] = [REMOVE];
 		}
 	}
 
@@ -232,11 +258,22 @@ function audioEventManager() {
 					thisTrack.trigger(callSign);
 				}
 			}
+			if (eventList[i][0] == PLAY) {
+				//Arrayformat [PLAY, track, endTime]
+				thisTrack = eventList[i][1];
+				if (thisTrack.getPaused() == false) {
+					if (now >= eventList[i][2]) {
+						//console.log("Executing Play Event for " + thisTrack.getTrackName());
+						thisTrack.play();
+						eventList[i] = [REMOVE];
+					}
+				}
+			}
 			if (eventList[i][0] == STOP) {
 				//Arrayformat [STOP, track, endTime]
 				thisTrack = eventList[i][1];
 				if (thisTrack.getPaused() == false) {
-					if (now >= eventList[i][2] <= now) {
+					if (now >= eventList[i][2]) {
 						//console.log("Executing Stop Event for " + thisTrack.getTrackName());
 						thisTrack.stop();
 						eventList[i] = [REMOVE];
