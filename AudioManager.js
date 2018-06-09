@@ -215,7 +215,7 @@ function audioEventManager() {
 						} else {
 							thisTrack.setVolume(interpolateFade(eventList[i][2], eventList[i][3], eventList[i][4], eventList[i][5], now));
 						}
-					if (eventList[i][3] < now) {
+					if (now > eventList[i][3]) {
 						//console.log("Ending Fade Event for " + thisTrack.getTrackName());
 						thisTrack.setVolume(eventList[i][5]);
 						eventList[i] = [REMOVE];
@@ -225,20 +225,18 @@ function audioEventManager() {
 			if (eventList[i][0] == TIMER) {
 				// Arrayformat [TIMER, track, endTime, callSign]
 				thisTrack = eventList[i][1];
-				if (thisTrack.getPaused() == false) {
-					if (eventList[i][2] <= now) {
-						var callSign = eventList[i][3];
-						//console.log("Triggering Timer Event. CallSign is: " + eventList[i][3]);
-						eventList[i] = [REMOVE];
-						thisTrack.trigger(callSign);
-					}
+				if (now >= eventList[i][2]) {
+					var callSign = eventList[i][3];
+					//console.log("Triggering Timer Event. CallSign is: " + eventList[i][3]);
+					eventList[i] = [REMOVE];
+					thisTrack.trigger(callSign);
 				}
 			}
 			if (eventList[i][0] == STOP) {
 				//Arrayformat [STOP, track, endTime]
 				thisTrack = eventList[i][1];
 				if (thisTrack.getPaused() == false) {
-					if (eventList[i][2] <= now) {
+					if (now >= eventList[i][2] <= now) {
 						//console.log("Executing Stop Event for " + thisTrack.getTrackName());
 						thisTrack.stop();
 						eventList[i] = [REMOVE];
@@ -246,7 +244,6 @@ function audioEventManager() {
 				}
 			}
 		}
-
 	}
 
 	function cleanupList() {

@@ -3436,16 +3436,12 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 	}
 
 	this.play = function() {
-		// if (!tracksToPlay()) {  //Should set the first track to play if all volumes are down, but doesnt
-		// 	musicTrackVolume[0] = 1;
-		// 	musicTrack[0].setVolume(1);
-		// }
 		for (var i in musicTrack) {
 			if (musicTrackVolume[i] > 0) {
 				musicTrack[i].play();
 			}
 		}
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		AudioEventManager.addTimerEvent(this, (this.getDuration()), "cue");
 	}
 
 	this.stop = function() {
@@ -3480,9 +3476,7 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 
 	this.trigger = function(callSign) {
 		if(callSign == "cue") {
-			if(tracksToPlay()) {
-				this.play();
-			}
+			this.play();
 		}
 	}
 
@@ -3616,7 +3610,7 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 	}
 
 	return this;
-}//Still some problems if you set all layers to 0
+}//Still some inconsistencies if you set all layers to 0
 
 function musicContainerSequence(trackList) {//Plays list-items in order
 	var musicTrack = [];
