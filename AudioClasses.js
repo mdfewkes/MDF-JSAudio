@@ -994,9 +994,12 @@ function musicTrack(filename, playLength) {//Single buffer music file
 	this.setVolume = function(newVolume) {
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		musicFile.volume = Math.pow(mixVolume * newVolume * musicVolume * !isMuted, 2);
 		trackVolume = newVolume;
-		if (trackVolume <= 0) { this.stop();}
+		newVolume = trackVolume * mixVolume;
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
+		musicFile.volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
+		if(trackVolume <= 0) {this.stop();}
 	}
 
 	this.getVolume = function() {
@@ -1095,9 +1098,13 @@ function musicTrackOverlap(filename, playLength) {//Double buffer music file
 	this.setVolume = function(newVolume) {
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		musicFile[currentTrack].volume = Math.pow(mixVolume * newVolume * musicVolume * !isMuted, 2);
 		trackVolume = newVolume;
-		if (trackVolume <= 0) { this.stop();}
+		newVolume = trackVolume * mixVolume;
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
+		musicFile[0].volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
+		musicFile[1].volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
+		if(trackVolume <= 0) {this.stop();}
 	}
 
 	this.getVolume = function() {
@@ -1204,9 +1211,13 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 	this.setVolume = function(newVolume) {
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		musicFile[currentTrack].volume = Math.pow(mixVolume * newVolume * musicVolume * !isMuted, 2);
 		trackVolume = newVolume;
-		if (trackVolume <= 0) { this.stop();}
+		newVolume = trackVolume * mixVolume;
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
+		musicFile[0].volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
+		musicFile[1].volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
+		if(trackVolume <= 0) {this.stop();}
 	}
 
 	this.getVolume = function() {
