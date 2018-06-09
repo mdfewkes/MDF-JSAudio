@@ -34,11 +34,8 @@ function setMute(TorF) {
 }
 
 function getMute(TorF) {
-	SFXVolumeManager.updateVolume();
-	MusicVolumeManager.updateVolume();
 	return isMuted;
 }
-
 
 
 //Time Manager
