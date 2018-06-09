@@ -18,7 +18,6 @@ Functions that all sound objects share:
 var isMuted = false;
 
 //SFX Classes
-//It is possible all SFX objects fail to handle container volumes correctly, see var clipVolume
 var sfxVolume = 1;
 SFXVolumeManager = new sfxVolumeManager();
 function sfxVolumeManager() {
@@ -929,7 +928,6 @@ function sfxContainerBlend(clipList, startingLevel = 0) {//Container which blend
 }
 
 //Music Classes
-//It is possible all music objects fail to handle container volumes correctly, see var trackVolume
 var musicVolume = 1;
 MusicVolumeManager = new musicVolumeManager();
 function musicVolumeManager() {
