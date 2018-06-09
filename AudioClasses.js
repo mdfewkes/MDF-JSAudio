@@ -999,6 +999,7 @@ function musicTrack(filename, playLength) {//Single buffer music file
 	}
 
 	this.trigger = function(callSign) {
+		if(callSign == "tick") {tick++;}
 	}
 
 	this.updateVolume = function() {
@@ -1121,6 +1122,7 @@ function musicTrackOverlap(filename, playLength) {//Double buffer music file
 	}
 
 	this.trigger = function(callSign) {
+		if(callSign == "tick") {tick++;}
 	}
 
 	this.updateVolume = function() {
@@ -1243,12 +1245,11 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 	}
 
 	this.trigger = function(callSign) {
-		if (!this.getPaused()) {
-			if(callSign == "cue") {
-				currentTrack++;
-				if (currentTrack > 1) {currentTrack = 0;}
-				this.play();
-			}
+		if(callSign == "cue") {
+			currentTrack++;
+			if (currentTrack > 1) {currentTrack = 0;}
+			this.play();
+			tick++;
 		}
 	}
 
@@ -1364,7 +1365,7 @@ function musicContainer(trackList) {//Basic containers
 	}
 
 	this.trigger = function(callSign) {
-
+		if(callSign == "tick") {tick++;}
 	}
 
 	this.setCurrentTrack = function(trackNumber) {
@@ -1520,6 +1521,7 @@ function musicContainerRandom(trackList) {//Picks random list-item to play on pl
 	}
 
 	this.trigger = function(callSign) {
+		if(callSign == "tick") {tick++;}
 	}
 
 	this.loadTrack = function(newTrack, slot) {
@@ -1675,6 +1677,7 @@ function musicContainerLoop(trackList) {//Loops current list-item
 	this.trigger = function(callSign) {
 		if (callSign == "cue") {
 			this.play();
+			tick++;
 		}
 	}
 
@@ -1832,6 +1835,7 @@ function musicContainerLoopRandom(trackList) {//Picks new random list-item to pl
 		if(callSign == "cue") {
 			currentTrack = Math.floor(Math.random() * musicTrack.length);
 			this.play();
+			tick++;
 		}
 	}
 
@@ -1996,6 +2000,7 @@ function musicContainerLoopRandomRepetitionControl(trackList, maxRepetitions = 3
 				playCountdown = Math.floor(Math.random() * (playMax - playMin + 1) + playMin);
 			}
 			this.play();
+			tick++;
 		}
 	}
 
@@ -2161,6 +2166,7 @@ function musicContainerLoopRandomDurationControl(trackList, maxDurationInSeconds
 				}
 			}
 			this.play();
+			tick++;
 		}
 	}
 
@@ -2331,6 +2337,7 @@ function musicContainerConcatenated(trackList) {//Reports all list-items as one 
 				this.play();
 			} else {
 				currentTrack = 0;
+				tick++;
 			}
 		}
 	}
@@ -2523,9 +2530,11 @@ function musicContainerConcatenatedLatchLast(trackList) {//Reports all list-item
 		if(callSign == "cue") {
 			if (currentTrack < musicTrack.length - 1) {
 				currentTrack++;
+				this.play()
 			} 
 			if (currentTrack >= musicTrack.length - 1) {
 				atEnd = true;
+				tick++;
 			}
 		}
 	}
@@ -2632,7 +2641,9 @@ function musicContainerConcatenatedLatchLast(trackList) {//Reports all list-item
 	this.setTime = function(time) {
 		if (atEnd) {
 			musicTrack[currentTrack].setTime(time);
-			AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "cue");
+			if(!this.getPaused()) {
+				AudioEventManager.addTimerEvent(this, (musicTrack[currentTrack].getDuration() - musicTrack[currentTrack].getTime()), "cue");
+			}
 		} else {
 			var totalTime = time;
 			for (var i in musicTrack) {
@@ -2750,6 +2761,7 @@ function musicContainerConcatenatedLoop(trackList) {//Loops list-items as if one
 			} else {
 				currentTrack = 0;
 				this.play();
+				tick++;
 			}
 		}
 	}
@@ -2947,6 +2959,7 @@ function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as
 			} 
 			if (currentTrack >= musicTrack.length - 1) {
 				atEnd = true;
+				tick++;
 			}
 			this.play();
 		}
@@ -3152,6 +3165,7 @@ function musicContainerCrossfade(trackList) {//Can crossfade between list-items
 	}
 
 	this.trigger = function(callSign) {
+		if(callSign == "tick") {tick++;}
 	}
 
 	this.switchTo = function(slot, fadeTime = 1) {
@@ -3320,6 +3334,7 @@ function musicContainerCrossfadeLoop(trackList) {//Can crossfade between list-it
 	this.trigger = function(callSign) {
 		if (callSign == "cue") {
 			this.play();
+			tick++;
 		}
 	}
 
@@ -3510,6 +3525,7 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 	}
 
 	this.trigger = function(callSign) {
+		if(callSign == "tick") {tick++;}
 	}
 
 	this.setLayerLevel = function(slot, level, fadeTime = 1) {
@@ -3742,6 +3758,7 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 				musicTrackVolume[0] = 0.001;
 				this.play();
 			}
+			tick++;
 		}
 	}
 
@@ -3935,6 +3952,7 @@ function musicContainerSequence(trackList) {//Plays list-items in order
 			if (currentTrack >= musicTrack.length) {
 				currentTrack = 0;
 			}
+			tick++;
 		}
 	}
 
@@ -4096,6 +4114,7 @@ function musicContainerSequenceLatch(trackList) {//Plays list-items in order, bu
 				latched = true;
 			}
 			if (currentTrack >= musicTrack.length) {currentTrack = 0;}
+			tick++;
 		}
 	}
 
@@ -4250,6 +4269,7 @@ function musicContainerSequenceLatchLast(trackList) {//Plays list-items in order
 			if (currentTrack < musicTrack.length - 1) {
 				currentTrack++;
 			}
+			tick++;
 		}
 	}
 
@@ -4409,6 +4429,7 @@ function musicContainerPlaylist(trackList) {//Plays through list-items in order
 			} else {
 				currentTrack = 0;
 			}
+			tick++;
 		}
 	}
 
@@ -4563,6 +4584,7 @@ function musicContainerPlaylistLoop(trackList) {//Loops through list-items in or
 			currentTrack++;
 			if (currentTrack >= musicTrack.length) {currentTrack = 0;}
 			this.play();
+			tick++;
 		}
 	}
 
@@ -4725,6 +4747,7 @@ function musicContainerPlaylistLoopLatch(trackList) {//Plays through list-items 
 			}
 			if (currentTrack >= musicTrack.length) {currentTrack = 0;}
 			this.play();
+			tick++;
 		}
 	}
 
@@ -4880,6 +4903,7 @@ function musicContainerPlaylistLoopLast(trackList) {//Plays through list-items i
 				currentTrack++;
 			}
 			this.play();
+			tick++;
 		}
 	}
 
