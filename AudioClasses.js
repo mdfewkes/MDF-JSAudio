@@ -963,6 +963,7 @@ function musicTrack(filename, playLength) {//Single buffer music file
 	var duration = playLength;
 	var trackVolume = 1;
 	var mixVolume = 1;
+	var tick = 0;
 
 	musicFile.pause();
 	musicFile.loop = false;
@@ -1026,6 +1027,14 @@ function musicTrack(filename, playLength) {//Single buffer music file
 		return false;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		var newTime = time;
 		while(newTime >= duration) {newTime -= duration;}
@@ -1065,6 +1074,7 @@ function musicTrackOverlap(filename, playLength) {//Double buffer music file
 	var trackName = filename;
 	var trackVolume = 1;
 	var mixVolume = 1;
+	var tick = 0;
 
 	musicFile[0].pause();
 	musicFile[1].pause();
@@ -1135,6 +1145,14 @@ function musicTrackOverlap(filename, playLength) {//Double buffer music file
 		return false;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		var newTime = time;
 		while (newTime >= duration) {newTime -= duration;}
@@ -1174,6 +1192,7 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 	var trackName = filename;
 	var trackVolume = 1;
 	var mixVolume = 1;
+	var tick = 0;
 
 	musicFile[0].pause();
 	musicFile[1].pause();
@@ -1252,6 +1271,14 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 		return false;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		var newTime = time;
 		while (newTime >= duration) {newTime -= duration;}
@@ -1287,6 +1314,7 @@ function musicContainer(trackList) {//Basic containers
 	var musicTrack = [];
 	var currentTrack = 0;
 	var trackVolume = 1;
+	var tick = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -1395,6 +1423,14 @@ function musicContainer(trackList) {//Basic containers
 		return musicTrack;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 	}
@@ -1426,6 +1462,7 @@ function musicContainerRandom(trackList) {//Picks random list-item to play on pl
 	var musicTrack = [];
 	var currentTrack = 0;
 	var trackVolume = 1;
+	var tick = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -1531,6 +1568,14 @@ function musicContainerRandom(trackList) {//Picks random list-item to play on pl
 		return musicTrack;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 	}
@@ -1563,6 +1608,7 @@ function musicContainerLoop(trackList) {//Loops current list-item
 	var currentTrack = 0;
 	var schedualedTrack = 0;
 	var trackVolume = 1;
+	var tick = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -1681,6 +1727,14 @@ function musicContainerLoop(trackList) {//Loops current list-item
 		return musicTrack;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
@@ -1713,6 +1767,7 @@ function musicContainerLoopRandom(trackList) {//Picks new random list-item to pl
 	var musicTrack = [];
 	var currentTrack = 0;
 	var trackVolume = 1;
+	var tick = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -1825,6 +1880,14 @@ function musicContainerLoopRandom(trackList) {//Picks new random list-item to pl
 		return musicTrack;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
@@ -1861,6 +1924,7 @@ function musicContainerLoopRandomRepetitionControl(trackList, maxRepetitions = 3
 	var playMax = maxRepetitions;
 	var playMin = minRepetitions;
 	var trackVolume = 1;
+	var tick = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -1980,6 +2044,14 @@ function musicContainerLoopRandomRepetitionControl(trackList, maxRepetitions = 3
 		return musicTrack;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
@@ -2015,6 +2087,7 @@ function musicContainerLoopRandomDurationControl(trackList, maxDurationInSeconds
 	var playMax = maxDurationInSeconds;
 	var playMin = minDurationInSeconds;
 	var trackVolume = 1;
+	var tick = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -2136,6 +2209,14 @@ function musicContainerLoopRandomDurationControl(trackList, maxDurationInSeconds
 		return musicTrack;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
@@ -2169,6 +2250,7 @@ function musicContainerConcatenated(trackList) {//Reports all list-items as one 
 	var currentTrack = 0;
 	var duration = 0;
 	var trackVolume = 1;
+	var tick = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -2298,6 +2380,14 @@ function musicContainerConcatenated(trackList) {//Reports all list-items as one 
 		return musicTrack;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		var totalTime = time;
 		for (var i in musicTrack) {
@@ -2348,6 +2438,7 @@ function musicContainerConcatenatedLatchLast(trackList) {//Reports all list-item
 	var duration = 0;
 	var atEnd = false;
 	var trackVolume = 1;
+	var tick = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -2504,6 +2595,14 @@ function musicContainerConcatenatedLatchLast(trackList) {//Reports all list-item
 		return musicTrack;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		if (atEnd) {
 			musicTrack[currentTrack].setTime(time);
@@ -2566,6 +2665,7 @@ function musicContainerConcatenatedLoop(trackList) {//Loops list-items as if one
 	var currentTrack = 0;
 	var duration = 0;
 	var trackVolume = 1;
+	var tick = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -2696,6 +2796,14 @@ function musicContainerConcatenatedLoop(trackList) {//Loops list-items as if one
 		return musicTrack;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		var totalTime = time;
 		for (var i in musicTrack) {
@@ -2746,6 +2854,7 @@ function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as
 	var duration = 0;
 	var atEnd = false;
 	var trackVolume = 1;
+	var tick = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -2903,6 +3012,14 @@ function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as
 		return musicTrack;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		if (atEnd) {
 			musicTrack[currentTrack].setTime(time);
@@ -2964,6 +3081,7 @@ function musicContainerCrossfade(trackList) {//Can crossfade between list-items
 	var musicTrack = [];
 	var currentTrack = 0;
 	var trackVolume = 1;
+	var tick = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -3084,6 +3202,14 @@ function musicContainerCrossfade(trackList) {//Can crossfade between list-items
 		return musicTrack;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 	}
@@ -3115,6 +3241,7 @@ function musicContainerCrossfadeLoop(trackList) {//Can crossfade between list-it
 	var musicTrack = [];
 	var currentTrack = 0;
 	var trackVolume = 1;
+	var tick = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -3244,6 +3371,14 @@ function musicContainerCrossfadeLoop(trackList) {//Can crossfade between list-it
 		return musicTrack;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
@@ -3278,6 +3413,7 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 	var trackVolume = 1;
 	var currentTrack = 0;
 	var trackVolume = 1;
+	var tick = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -3433,6 +3569,14 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 		return musicTrack;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		for (var i in musicTrack) {
 			musicTrack[i].setTime(time);
@@ -3474,6 +3618,7 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 	var currentTrack = 0;
 	var trackVolume = 1;
 	var playing = false;
+	var tick = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -3656,6 +3801,14 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 		return musicTrack;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		for (var i in musicTrack) {
 			musicTrack[i].setTime(time);
@@ -3696,6 +3849,7 @@ function musicContainerSequence(trackList) {//Plays list-items in order
 	var musicTrack = [];
 	var currentTrack = 0;
 	var trackVolume = 1;
+	var tick = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -3810,6 +3964,14 @@ function musicContainerSequence(trackList) {//Plays list-items in order
 		return musicTrack;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
@@ -3843,6 +4005,7 @@ function musicContainerSequenceLatch(trackList) {//Plays list-items in order, bu
 	var currentTrack = 0;
 	var latched = true;
 	var trackVolume = 1;
+	var tick = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -3962,6 +4125,14 @@ function musicContainerSequenceLatch(trackList) {//Plays list-items in order, bu
 		return musicTrack;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
@@ -3994,6 +4165,7 @@ function musicContainerSequenceLatchLast(trackList) {//Plays list-items in order
 	var musicTrack = [];
 	var currentTrack = 0;
 	var trackVolume = 1;
+	var tick = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -4107,6 +4279,14 @@ function musicContainerSequenceLatchLast(trackList) {//Plays list-items in order
 		return musicTrack;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
@@ -4139,6 +4319,7 @@ function musicContainerPlaylist(trackList) {//Plays through list-items in order
 	var musicTrack = [];
 	var currentTrack = 0;
 	var trackVolume = 1;
+	var tick = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -4257,6 +4438,14 @@ function musicContainerPlaylist(trackList) {//Plays through list-items in order
 		return musicTrack;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
@@ -4289,6 +4478,7 @@ function musicContainerPlaylistLoop(trackList) {//Loops through list-items in or
 	var musicTrack = [];
 	var currentTrack = 0;
 	var trackVolume = 1;
+	var tick = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -4402,6 +4592,14 @@ function musicContainerPlaylistLoop(trackList) {//Loops through list-items in or
 		return musicTrack;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
@@ -4435,6 +4633,7 @@ function musicContainerPlaylistLoopLatch(trackList) {//Plays through list-items 
 	var currentTrack = 0;
 	var latched = true;
 	var trackVolume = 1;
+	var tick = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -4555,6 +4754,14 @@ function musicContainerPlaylistLoopLatch(trackList) {//Plays through list-items 
 		return musicTrack;
 	}
 
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
@@ -4587,6 +4794,7 @@ function musicContainerPlaylistLoopLast(trackList) {//Plays through list-items i
 	var musicTrack = [];
 	var currentTrack = 0;
 	var trackVolume = 1;
+	var tick = 0;
 
 	for (var i in trackList) {
 		musicTrack[i] = trackList[i];
@@ -4699,6 +4907,14 @@ function musicContainerPlaylistLoopLast(trackList) {//Plays through list-items i
 
 	this.getChildTracks = function() {
 		return musicTrack;
+	}
+
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
 	}
 
 	this.setTime = function(time) {
