@@ -728,6 +728,10 @@ function sfxContainerLayer(clipList) {//Plays all list-items together
 	this.trigger = function(callSign) {
 	}
 
+	this.setLayerLevel = function(slot, level) {
+		soundFile[slot].setVolume(level);
+	}
+
 	this.loadClip = function(newClip, slot) {
 		soundFile[slot] = newClip;
 	}
@@ -787,9 +791,9 @@ function sfxContainerLayer(clipList) {//Plays all list-items together
 	}
 
 	return this;
-}//Still needs a function to controle volume of individual levels
+}
 
-function sfxContainerBlend(clipList, startingLevel = 0) {//Container which blends between the volume on list-items
+function sfxContainerBlend(clipList, startingLevel = 0) {//Container which blends between the volumes of list-items
 	var soundFile = [];
 	currentClip = 0;
 	currentLevel = startingLevel;
@@ -911,7 +915,7 @@ function sfxContainerBlend(clipList, startingLevel = 0) {//Container which blend
 	}
 
 	return this;
-}//Still needs testing
+}
 
 //Music Classes
 //It is possible all music objects fail to handle container volumes correctly, see var trackVolume
@@ -3202,8 +3206,6 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 		musicTrackVolume[i] = 1;
 		musicTrack[i].setVolume(1);
 	}
-	musicTrackVolume[0] = 1;
-	musicTrack[0].setVolume(1);
 
 	function evaluateCurrentTrack(){
 		var trackNow = 0;
@@ -3395,8 +3397,6 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 		musicTrackVolume[i] = 1;
 		musicTrack[i].setVolume(1);
 	}
-	musicTrackVolume[0] = 1;
-	musicTrack[0].setVolume(1);
 
 	function evaluateCurrentTrack(){
 		var trackNow = 0;
