@@ -265,7 +265,7 @@ function audioEventManager() {
 					if(eventType == TIMER && callSign != "" && eventList[i][3] == callSign) {
 						foundItem = true;
 						return i;
-					} else if (eventType == TIMER) {
+					} else if (eventType == TIMER && callSign == "") {
 						foundItem = true;
 						return i;
 					} else if (eventType != TIMER) {
