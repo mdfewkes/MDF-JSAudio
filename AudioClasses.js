@@ -278,6 +278,7 @@ function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file th
 		soundFile[0].currentTime = 0;
 		soundFile[1].pause();
 		soundFile[1].currentTime = 0;
+		AudioEventManager.removeTimerEvent(this, "cue");
 	}
 
 	this.resume = function() {
@@ -288,6 +289,7 @@ function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file th
 	this.pause = function() {
 		soundFile[0].pause();
 		soundFile[1].pause();
+		AudioEventManager.removeTimerEvent(this, "cue");
 	}
 
 	this.trigger = function(callSign) {
