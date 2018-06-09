@@ -1022,6 +1022,10 @@ function musicTrack(filename, playLength) {//Single buffer music file
 		return this;
 	}
 
+	this.getChildTracks = function() {
+		return false;
+	}
+
 	this.setTime = function(time) {
 		var newTime = time;
 		while(newTime >= duration) {newTime -= duration;}
@@ -1125,6 +1129,10 @@ function musicTrackOverlap(filename, playLength) {//Double buffer music file
 
 	this.getSourceTrack = function() {
 		return this;
+	}
+
+	this.getChildTracks = function() {
+		return false;
 	}
 
 	this.setTime = function(time) {
@@ -1238,6 +1246,10 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 
 	this.getSourceTrack = function() {
 		return this;
+	}
+
+	this.getChildTracks = function() {
+		return false;
 	}
 
 	this.setTime = function(time) {
@@ -1379,6 +1391,10 @@ function musicContainer(trackList) {//Basic containers
 		return musicTrack[currentTrack].getSourceTrack();
 	}
 
+	this.getChildTracks = function() {
+		return musicTrack;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 	}
@@ -1509,6 +1525,10 @@ function musicContainerRandom(trackList) {//Picks random list-item to play on pl
 
 	this.getSourceTrack = function() {
 		return musicTrack[currentTrack].getSourceTrack();
+	}
+
+	this.getChildTracks = function() {
+		return musicTrack;
 	}
 
 	this.setTime = function(time) {
@@ -1657,6 +1677,10 @@ function musicContainerLoop(trackList) {//Loops current list-item
 		return musicTrack[currentTrack].getSourceTrack();
 	}
 
+	this.getChildTracks = function() {
+		return musicTrack;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
@@ -1795,6 +1819,10 @@ function musicContainerLoopRandom(trackList) {//Picks new random list-item to pl
 
 	this.getSourceTrack = function() {
 		return musicTrack[currentTrack].getSourceTrack();
+	}
+
+	this.getChildTracks = function() {
+		return musicTrack;
 	}
 
 	this.setTime = function(time) {
@@ -1948,6 +1976,10 @@ function musicContainerLoopRandomRepetitionControl(trackList, maxRepetitions = 3
 		return musicTrack[currentTrack].getSourceTrack();
 	}
 
+	this.getChildTracks = function() {
+		return musicTrack;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
@@ -2098,6 +2130,10 @@ function musicContainerLoopRandomDurationControl(trackList, maxDurationInSeconds
 
 	this.getSourceTrack = function() {
 		return musicTrack[currentTrack].getSourceTrack();
+	}
+
+	this.getChildTracks = function() {
+		return musicTrack;
 	}
 
 	this.setTime = function(time) {
@@ -2256,6 +2292,10 @@ function musicContainerConcatenated(trackList) {//Reports all list-items as one 
 
 	this.getSourceTrack = function() {
 		return musicTrack[currentTrack].getSourceTrack();
+	}
+
+	this.getChildTracks = function() {
+		return musicTrack;
 	}
 
 	this.setTime = function(time) {
@@ -2460,6 +2500,10 @@ function musicContainerConcatenatedLatchLast(trackList) {//Reports all list-item
 		return musicTrack[currentTrack].getSourceTrack();
 	}
 
+	this.getChildTracks = function() {
+		return musicTrack;
+	}
+
 	this.setTime = function(time) {
 		if (atEnd) {
 			musicTrack[currentTrack].setTime(time);
@@ -2646,6 +2690,10 @@ function musicContainerConcatenatedLoop(trackList) {//Loops list-items as if one
 
 	this.getSourceTrack = function() {
 		return musicTrack[currentTrack].getSourceTrack();
+	}
+
+	this.getChildTracks = function() {
+		return musicTrack;
 	}
 
 	this.setTime = function(time) {
@@ -2851,6 +2899,10 @@ function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as
 		return musicTrack[currentTrack].getSourceTrack();
 	}
 
+	this.getChildTracks = function() {
+		return musicTrack;
+	}
+
 	this.setTime = function(time) {
 		if (atEnd) {
 			musicTrack[currentTrack].setTime(time);
@@ -3028,6 +3080,10 @@ function musicContainerCrossfade(trackList) {//Can crossfade between list-items
 		return musicTrack[currentTrack].getSourceTrack();
 	}
 
+	this.getChildTracks = function() {
+		return musicTrack;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 	}
@@ -3182,6 +3238,10 @@ function musicContainerCrossfadeLoop(trackList) {//Can crossfade between list-it
 
 	this.getSourceTrack = function() {
 		return musicTrack[currentTrack].getSourceTrack();
+	}
+
+	this.getChildTracks = function() {
+		return musicTrack;
 	}
 
 	this.setTime = function(time) {
@@ -3367,6 +3427,10 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 	this.getSourceTrack = function() {
 		evaluateCurrentTrack();
 		return musicTrack[currentTrack].getSourceTrack();
+	}
+
+	this.getChildTracks = function() {
+		return musicTrack;
 	}
 
 	this.setTime = function(time) {
@@ -3588,6 +3652,10 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 		return musicTrack[currentTrack].getSourceTrack();
 	}
 
+	this.getChildTracks = function() {
+		return musicTrack;
+	}
+
 	this.setTime = function(time) {
 		for (var i in musicTrack) {
 			musicTrack[i].setTime(time);
@@ -3738,6 +3806,10 @@ function musicContainerSequence(trackList) {//Plays list-items in order
 		return musicTrack[currentTrack].getSourceTrack();
 	}
 
+	this.getChildTracks = function() {
+		return musicTrack;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
@@ -3886,6 +3958,10 @@ function musicContainerSequenceLatch(trackList) {//Plays list-items in order, bu
 		return musicTrack[currentTrack].getSourceTrack();
 	}
 
+	this.getChildTracks = function() {
+		return musicTrack;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
@@ -4025,6 +4101,10 @@ function musicContainerSequenceLatchLast(trackList) {//Plays list-items in order
 
 	this.getSourceTrack = function() {
 		return musicTrack[currentTrack].getSourceTrack();
+	}
+
+	this.getChildTracks = function() {
+		return musicTrack;
 	}
 
 	this.setTime = function(time) {
@@ -4173,6 +4253,10 @@ function musicContainerPlaylist(trackList) {//Plays through list-items in order
 		return musicTrack[currentTrack].getSourceTrack();
 	}
 
+	this.getChildTracks = function() {
+		return musicTrack;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
@@ -4312,6 +4396,10 @@ function musicContainerPlaylistLoop(trackList) {//Loops through list-items in or
 
 	this.getSourceTrack = function() {
 		return musicTrack[currentTrack].getSourceTrack();
+	}
+
+	this.getChildTracks = function() {
+		return musicTrack;
 	}
 
 	this.setTime = function(time) {
@@ -4463,6 +4551,10 @@ function musicContainerPlaylistLoopLatch(trackList) {//Plays through list-items 
 		return musicTrack[currentTrack].getSourceTrack();
 	}
 
+	this.getChildTracks = function() {
+		return musicTrack;
+	}
+
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
@@ -4603,6 +4695,10 @@ function musicContainerPlaylistLoopLast(trackList) {//Plays through list-items i
 
 	this.getSourceTrack = function() {
 		return musicTrack[currentTrack].getSourceTrack();
+	}
+
+	this.getChildTracks = function() {
+		return musicTrack;
 	}
 
 	this.setTime = function(time) {
