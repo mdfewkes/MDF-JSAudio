@@ -187,7 +187,6 @@ function audioEventManager() {
 		} else {
 			return (eventList[check][2] - now)/1000;
 		}
-
 	}
 
 	function runList(){
@@ -251,7 +250,7 @@ function audioEventManager() {
 
 	function cleanupList() {
 		//console.log("Cleaning up");
-		eventList.sort(function(a, b){return b-a});
+		eventList.sort(function(a, b){return b[0]-a[0]});
 		while (eventList[eventList.length - 1] == REMOVE) {
 			//console.log("Removing Event");
 			eventList.pop();
