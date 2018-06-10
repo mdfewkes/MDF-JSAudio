@@ -176,6 +176,21 @@ function audioEventManager() {
 		}
 	}
 
+	this.getTimerEventEplapsedTime = function(track, callSign = "") {
+		now = Date.now();
+		var thisTrack = track;
+		var check = checkListFor(TIMER, thisTrack, callSign);
+		var elapsedTime = 0;
+
+		if (check == "none") {
+			return "none";
+		} else {
+			elapsedTime = (eventList[check][2] - now)/1000;
+			return elapsedTime;
+		}
+
+	}
+
 	function runList(){
 		for (var i = 0; i < eventList.length; i++) {
 			if (eventList[i][0] == FADE) {
