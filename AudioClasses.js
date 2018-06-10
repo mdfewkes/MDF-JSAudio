@@ -1023,10 +1023,12 @@ function musicTrack(filename, playLength) {//Single buffer music file
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
 		musicFile.volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
-		if(playing && musicFile.paused) {
-			var newTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
-			this.setTime(newTime);
-			musicFile.play();
+		if(playing && musicFile[currentTrack].paused) {
+			var newTime = AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
+			if(newTime != "none") {
+				this.setTime(duration - newTime);
+				musicFile.play();
+			}
 		}
 		if(trackVolume <= 0) {musicFile.pause();}
 	}
@@ -1163,9 +1165,11 @@ function musicTrackOverlap(filename, playLength) {//Double buffer music file
 		musicFile[0].volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
 		musicFile[1].volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
 		if(playing && musicFile[currentTrack].paused) {
-			var newTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
-			this.setTime(newTime);
-			musicFile[currentTrack].play();
+			var newTime = AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
+			if(newTime != "none") {
+				this.setTime(duration - newTime);
+				musicFile[currentTrack].play();
+			}
 		}
 		if(trackVolume <= 0) {
 			musicFile[0].pause();
@@ -1305,9 +1309,11 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 		musicFile[0].volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
 		musicFile[1].volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
 		if(playing && musicFile[currentTrack].paused) {
-			var newTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
-			this.setTime(newTime);
-			musicFile[currentTrack].play();
+			var newTime = AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
+			if(newTime != "none") {
+				this.setTime(duration - newTime);
+				musicFile[currentTrack].play();
+			}
 		}
 		if(trackVolume <= 0) {
 			musicFile[0].pause();
@@ -1364,7 +1370,7 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 	}
 
 	this.getPaused = function() {
-		return playing;
+		return !playing;
 	}
 
 	return this;
@@ -3723,7 +3729,6 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 	var trackVolume = 1;
 	var currentTrack = 0;
 	var trackVolume = 1;
-	var playing = false;
 	var tick = 0;
 
 	for (var i in trackList) {
@@ -3758,7 +3763,6 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 			}
 		}
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "cue");
-		playing = true;
 	}
 
 	this.stop = function() {
@@ -3766,7 +3770,6 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 			musicTrack[i].stop();
 		}
 		AudioEventManager.removeTimerEvent(this);
-		playing = false;
 	}
 
 	this.resume = function() {
@@ -3776,7 +3779,6 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 			}
 		}
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
-		playing = true;
 	}
 
 	this.pause = function() {
@@ -3784,7 +3786,6 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 			musicTrack[i].pause();
 		}
 		AudioEventManager.removeTimerEvent(this);
-		playing = false;
 	}
 
 	this.playFrom = function(time) {
@@ -3792,18 +3793,11 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 			musicTrack[i].playFrom(time);
 		}
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
-		playing = true;
 	}
 
 	this.trigger = function(callSign) {
 		if(callSign == "cue") {
-			if (tracksToPlay()) {
-				this.play();
-			} else {
-				musicTrackVolume[0] = 0.001;
-				this.play();
-			}
-			tick++;
+			this.play();
 		}
 	}
 
@@ -3920,7 +3914,7 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 		for (var i in musicTrack) {
 			musicTrack[i].setTime(time);
 		}
-		if (playing) {
+		if (!this.getPaused()) {
 			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 		}
 	}
@@ -3946,7 +3940,8 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 	}
 
 	this.getPaused = function() {
-		return !playing;
+		evaluateCurrentTrack();
+		return musicTrack[currentTrack].getPaused();
 	}
 
 	return this;
