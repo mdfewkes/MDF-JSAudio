@@ -176,17 +176,16 @@ function audioEventManager() {
 		}
 	}
 
-	this.getTimerEventEplapsedTime = function(track, callSign = "") {
+	this.getTimerEventSecondsRemaining = function(track, callSign = "") {
+		// Arrayformat [TIMER, track, endTime, callSign]
 		now = Date.now();
 		var thisTrack = track;
 		var check = checkListFor(TIMER, thisTrack, callSign);
-		var elapsedTime = 0;
 
 		if (check == "none") {
 			return "none";
 		} else {
-			elapsedTime = (eventList[check][2] - now)/1000;
-			return elapsedTime;
+			return (eventList[check][2] - now)/1000;
 		}
 
 	}
