@@ -964,6 +964,7 @@ function musicTrack(filename, playLength) {//Single buffer music file
 	var trackVolume = 1;
 	var mixVolume = 1;
 	var tick = 0;
+	var playing = false;
 
 	musicFile.pause();
 	musicFile.loop = false;
@@ -973,33 +974,41 @@ function musicTrack(filename, playLength) {//Single buffer music file
 		musicFile.currentTime = 0;
 		this.updateVolume();
 		musicFile.play();
-		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
+		AudioEventManager.addTimerEvent(this, this.getDuration(), "cue");
+		playing = true;
 	}
 
 	this.stop = function() {
 		musicFile.pause();
 		musicFile.currentTime = 0;
 		AudioEventManager.removeTimerEvent(this);
+		playing = false;
 	}
 
 	this.resume = function() {
 		musicFile.play();
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		playing = true;
 	}
 
 	this.pause = function() {
 		musicFile.pause();
 		AudioEventManager.removeTimerEvent(this);
+		playing = false;
 	}
 
 	this.playFrom = function(time) {
 		this.setTime(time);
 		musicFile.play();
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		playing = true;
 	}
 
 	this.trigger = function(callSign) {
-		if(callSign == "tick") {tick++;}
+		if(callSign == "cue") {
+			tick++;
+			playing = false;
+		}
 	}
 
 	this.updateVolume = function() {
@@ -1014,7 +1023,12 @@ function musicTrack(filename, playLength) {//Single buffer music file
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
 		musicFile.volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
-		if(trackVolume <= 0) {this.stop();}
+		if(playing && musicFile.paused) {
+			var newTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
+			this.setTime(newTime);
+			musicFile.play();
+		}
+		if(trackVolume <= 0) {musicFile.pause();}
 	}
 
 	this.getVolume = function() {
@@ -1046,7 +1060,7 @@ function musicTrack(filename, playLength) {//Single buffer music file
 		while(newTime >= duration) {newTime -= duration;}
 		if(newTime < 0) {newTime = 0;}
 		musicFile.currentTime = newTime;
-		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
+		if(this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");}
 	}
 
 	this.getTime = function() {
@@ -1066,7 +1080,7 @@ function musicTrack(filename, playLength) {//Single buffer music file
 	}
 
 	this.getPaused = function() {
-		return musicFile.paused;
+		return !playing;
 	}
 
 	return this;
