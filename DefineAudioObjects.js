@@ -34,7 +34,7 @@ controles.setMixVolume(0.75);
 
 
 
-var test1 = new musicTrackOverlap("lay4tail16", 16);
+var test1 = new musicTrackOverlapLoop("lay4tail16", 16);
 var test2 = new musicTrackOverlap("cabasatail2", 2);
 var test3 = new musicTrackOverlap("kicktail2", 2);
 

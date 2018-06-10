@@ -1238,6 +1238,7 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 	var trackVolume = 1;
 	var mixVolume = 1;
 	var tick = 0;
+	var playing = false;
 
 	musicFile[0].pause();
 	musicFile[1].pause();
@@ -1248,6 +1249,7 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 		this.updateVolume();
 		musicFile[currentTrack].play();
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "cue");
+		playing = true;
 	}
 
 	this.stop = function() {
@@ -1256,23 +1258,27 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 		musicFile[1].pause();
 		musicFile[1].currentTime = 0;
 		AudioEventManager.removeTimerEvent(this);
+		playing = false;
 	}
 
 	this.resume = function() {
 		musicFile[currentTrack].play();
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		playing = true;
 	}
 
 	this.pause = function() {
 		musicFile[0].pause();
 		musicFile[1].pause();
 		AudioEventManager.removeTimerEvent(this);
+		playing = false;
 	}
 
 	this.playFrom = function(time) {
 		this.setTime(time);
 		musicFile[currentTrack].play();
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		playing = true;
 	}
 
 	this.trigger = function(callSign) {
@@ -1298,7 +1304,15 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 		if(newVolume < 0) {newVolume = 0;}
 		musicFile[0].volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
 		musicFile[1].volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
-		if(trackVolume <= 0) {this.stop();}
+		if(playing && musicFile[currentTrack].paused) {
+			var newTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
+			this.setTime(newTime);
+			musicFile[currentTrack].play();
+		}
+		if(trackVolume <= 0) {
+			musicFile[0].pause();
+			musicFile[1].pause();
+		}
 	}
 
 	this.getVolume = function() {
@@ -1350,7 +1364,7 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 	}
 
 	this.getPaused = function() {
-		return musicFile[currentTrack].paused;
+		return playing;
 	}
 
 	return this;
