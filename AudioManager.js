@@ -176,11 +176,10 @@ function audioEventManager() {
 		}
 	}
 
-	this.getTimerEventSecondsRemaining = function(track, callSign = "") {
-		// Arrayformat [TIMER, track, endTime, callSign]
+	this.getEventSecondsRemaining = function(track, eventType, callSign = "") {
 		now = Date.now();
 		var thisTrack = track;
-		var check = checkListFor(TIMER, thisTrack, callSign);
+		var check = checkListFor(eventType, thisTrack, callSign);
 
 		if (check == "none") {
 			return "none";
