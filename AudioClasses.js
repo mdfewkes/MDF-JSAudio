@@ -1012,7 +1012,7 @@ function musicTrack(filename, playLength) {//Single buffer music file
 	}
 
 	this.updateVolume = function() {
-		musicFile.volume = Math.pow(mixVolume * musicVolume  * trackVolume * !isMuted, 2);
+		musicFile.volume = Math.pow(mixVolume * musicVolume * trackVolume * !isMuted, 2);
 	}
 
 	this.setVolume = function(newVolume) {
@@ -1030,7 +1030,7 @@ function musicTrack(filename, playLength) {//Single buffer music file
 				musicFile.play();
 			}
 		}
-		if(trackVolume <= 0) {musicFile.pause();}
+		if(trackVolume < 0.1) {musicFile.pause();}
 	}
 
 	this.getVolume = function() {
@@ -1151,8 +1151,8 @@ function musicTrackOverlap(filename, playLength) {//Double buffer music file
 	}
 
 	this.updateVolume = function() {
-		musicFile[0].volume = Math.pow(mixVolume * musicVolume  * trackVolume * !isMuted, 2);
-		musicFile[1].volume = Math.pow(mixVolume * musicVolume  * trackVolume * !isMuted, 2);
+		musicFile[0].volume = Math.pow(mixVolume * musicVolume * trackVolume * !isMuted, 2);
+		musicFile[1].volume = Math.pow(mixVolume * musicVolume * trackVolume * !isMuted, 2);
 	}
 
 	this.setVolume = function(newVolume) {
@@ -1171,7 +1171,7 @@ function musicTrackOverlap(filename, playLength) {//Double buffer music file
 				musicFile[currentTrack].play();
 			}
 		}
-		if(trackVolume <= 0) {
+		if(trackVolume < 0.1) {
 			musicFile[0].pause();
 			musicFile[1].pause();
 		}
@@ -1295,8 +1295,8 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 	}
 
 	this.updateVolume = function() {
-		musicFile[0].volume = Math.pow(mixVolume * musicVolume  * trackVolume * !isMuted, 2);
-		musicFile[1].volume = Math.pow(mixVolume * musicVolume  * trackVolume * !isMuted, 2);
+		musicFile[0].volume = Math.pow(mixVolume * musicVolume * trackVolume * !isMuted, 2);
+		musicFile[1].volume = Math.pow(mixVolume * musicVolume * trackVolume * !isMuted, 2);
 	}
 
 	this.setVolume = function(newVolume) {
@@ -1315,7 +1315,7 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 				musicFile[currentTrack].play();
 			}
 		}
-		if(trackVolume <= 0) {
+		if(trackVolume < 0.1) {
 			musicFile[0].pause();
 			musicFile[1].pause();
 		}
