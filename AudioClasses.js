@@ -103,10 +103,13 @@ function sfxClip(filename) {//A simple, single buffer sound clip
 	}
 
 	this.updateVolume = function() {
+		newVolume = clipVolume * mixVolume;
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
 		if (randVolume) {
-			soundFile.volume = Math.pow(mixVolume * sfxVolume * clipVolume * getRandomVolume() * !isMuted, 2);
+			soundFile.volume = Math.pow(newVolume * sfxVolume * getRandomVolume() * !isMuted, 2);
 		} else {
-			soundFile.volume = Math.pow(mixVolume * sfxVolume * clipVolume * !isMuted, 2);
+			soundFile.volume = Math.pow(newVolume * sfxVolume * !isMuted, 2);
 		}
 	}
 
@@ -217,13 +220,16 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 	}
 
 	this.updateVolume = function() {
+		newVolume = clipVolume * mixVolume;
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
 		if (randVolume) {
 			for (var i in soundFile) {
-				soundFile[i].volume = Math.pow(mixVolume * sfxVolume * clipVolume * getRandomVolume() * !isMuted, 2);
+				soundFile[i].volume = Math.pow(newVolume * sfxVolume * getRandomVolume() * !isMuted, 2);
 			}
 		} else {
 			for (var i in soundFile) {
-				soundFile[i].volume = Math.pow(mixVolume * sfxVolume * clipVolume * !isMuted, 2);
+				soundFile[i].volume = Math.pow(newVolume * sfxVolume * !isMuted, 2);
 			}
 		}
 	}
@@ -333,8 +339,11 @@ function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file th
 	}
 
 	this.updateVolume = function() {
-		soundFile[0].volume = Math.pow(mixVolume * sfxVolume  * clipVolume * !isMuted, 2);
-		soundFile[1].volume = Math.pow(mixVolume * sfxVolume  * clipVolume * !isMuted, 2);
+		newVolume = clipVolume * mixVolume;
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
+		soundFile[0].volume = Math.pow(newVolume  * sfxVolume * !isMuted, 2);
+		soundFile[1].volume = Math.pow(newVolume  * sfxVolume * !isMuted, 2);
 	}
 
 	this.setVolume = function(newVolume) {
@@ -445,10 +454,13 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 	}
 
 	this.updateVolume = function() {
+		newVolume = clipVolume * mixVolume;
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
 		if (randVolume) {
-			soundFile.volume = Math.pow(mixVolume * sfxVolume * clipVolume * getRandomVolume() * !isMuted, 2);
+			soundFile.volume = Math.pow(newVolume * sfxVolume * getRandomVolume() * !isMuted, 2);
 		} else {
-			soundFile.volume = Math.pow(mixVolume * sfxVolume * clipVolume * !isMuted, 2);
+			soundFile.volume = Math.pow(newVolume * sfxVolume * !isMuted, 2);
 		}
 	}
 
@@ -1026,7 +1038,10 @@ function musicTrack(filename, playLength) {//Single buffer music file
 	}
 
 	this.updateVolume = function() {
-		musicFile.volume = Math.pow(mixVolume * musicVolume * trackVolume * !isMuted, 2);
+		newVolume = trackVolume * mixVolume;
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
+		musicFile.volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
 	}
 
 	this.setVolume = function(newVolume) {
@@ -1157,8 +1172,11 @@ function musicTrackOverlap(filename, playLength) {//Double buffer music file
 	}
 
 	this.updateVolume = function() {
-		musicFile[0].volume = Math.pow(mixVolume * musicVolume * trackVolume * !isMuted, 2);
-		musicFile[1].volume = Math.pow(mixVolume * musicVolume * trackVolume * !isMuted, 2);
+		newVolume = trackVolume * mixVolume;
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
+		musicFile[0].volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
+		musicFile[1].volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
 	}
 
 	this.setVolume = function(newVolume) {
@@ -1293,8 +1311,11 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 	}
 
 	this.updateVolume = function() {
-		musicFile[0].volume = Math.pow(mixVolume * musicVolume * trackVolume * !isMuted, 2);
-		musicFile[1].volume = Math.pow(mixVolume * musicVolume * trackVolume * !isMuted, 2);
+		newVolume = trackVolume * mixVolume;
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
+		musicFile[0].volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
+		musicFile[1].volume = Math.pow(newVolume * musicVolume * !isMuted, 2);
 	}
 
 	this.setVolume = function(newVolume) {
