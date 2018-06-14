@@ -1069,14 +1069,6 @@ function musicTrack(filename, playLength) {//Single buffer music file
 		return musicFile.currentTime;
 	}
 	
-	this.setTrackName = function(name) {
-		trackName = name;
-	}
-
-	this.getTrackName = function() {
-		return trackName;
-	}
-	
 	this.getDuration = function() {
 		return duration;
 	}
@@ -1213,14 +1205,6 @@ function musicTrackOverlap(filename, playLength) {//Double buffer music file
 		return musicFile[currentTrack].currentTime;
 	}
 	
-	this.setTrackName = function(name) {
-		trackName = name;
-	}
-
-	this.getTrackName = function() {
-		return trackName;
-	}
-	
 	this.getDuration = function() {
 		return duration;
 	}
@@ -1355,14 +1339,6 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 
 	this.getTime = function() {
 		return musicFile[currentTrack].currentTime;
-	}
-	
-	this.setTrackName = function(name) {
-		trackName = name;
-	}
-
-	this.getTrackName = function() {
-		return trackName;
 	}
 	
 	this.getDuration = function() {
@@ -1511,14 +1487,6 @@ function musicContainer(trackList) {//Basic containers
 		return musicTrack[currentTrack].getTime();
 	}
 	
-	this.setTrackName = function(name) {
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		return musicTrack[currentTrack].getTrackName();
-	}
-	
 	this.getDuration = function() {
 		return musicTrack[currentTrack].getDuration();
 	}
@@ -1661,14 +1629,6 @@ function musicContainerRandom(trackList) {//Picks random list-item to play on pl
 
 	this.getTime = function() {
 		return musicTrack[currentTrack].getTime();
-	}
-	
-	this.setTrackName = function(name) {
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		return musicTrack[currentTrack].getTrackName();
 	}
 	
 	this.getDuration = function() {
@@ -1824,14 +1784,6 @@ function musicContainerLoop(trackList) {//Loops current list-item
 		return musicTrack[currentTrack].getTime();
 	}
 	
-	this.setTrackName = function(name) {
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		return musicTrack[currentTrack].getTrackName();
-	}
-	
 	this.getDuration = function() {
 		return musicTrack[currentTrack].getDuration();
 	}
@@ -1976,14 +1928,6 @@ function musicContainerLoopRandom(trackList) {//Picks new random list-item to pl
 
 	this.getTime = function() {
 		return musicTrack[currentTrack].getTime();
-	}
-	
-	this.setTrackName = function(name) {
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		return musicTrack[currentTrack].getTrackName();
 	}
 	
 	this.getDuration = function() {
@@ -2143,14 +2087,6 @@ function musicContainerLoopRandomRepetitionControl(trackList, maxRepetitions = 3
 		return musicTrack[currentTrack].getTime();
 	}
 	
-	this.setTrackName = function(name) {
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		return musicTrack[currentTrack].getTrackName();
-	}
-	
 	this.getDuration = function() {
 		return musicTrack[currentTrack].getDuration();
 	}
@@ -2307,14 +2243,6 @@ function musicContainerLoopRandomDurationControl(trackList, maxDurationInSeconds
 
 	this.getTime = function() {
 		return musicTrack[currentTrack].getTime();
-	}
-	
-	this.setTrackName = function(name) {
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		return musicTrack[currentTrack].getTrackName();
 	}
 	
 	this.getDuration = function() {
@@ -2495,14 +2423,6 @@ function musicContainerConcatenated(trackList) {//Reports all list-items as one 
 				totalTime += musicTrack[i].getTime();
 			}
 		}
-	}
-	
-	this.setTrackName = function(name) {
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		return musicTrack[currentTrack].getTrackName();
 	}
 	
 	this.getDuration = function() {
@@ -2728,14 +2648,6 @@ function musicContainerConcatenatedLatchLast(trackList) {//Reports all list-item
 		return totalTime;
 	}
 	
-	this.setTrackName = function(name) {
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		return musicTrack[currentTrack].getTrackName();
-	}
-	
 	this.getDuration = function() {
 		if (atEnd) {
 			return musicTrack[currentTrack].getDuration();
@@ -2921,14 +2833,6 @@ function musicContainerConcatenatedLoop(trackList) {//Loops list-items as if one
 				totalTime += musicTrack[i].getTime();
 			}
 		}
-	}
-	
-	this.setTrackName = function(name) {
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		return musicTrack[currentTrack].getTrackName();
 	}
 	
 	this.getDuration = function() {
@@ -3151,14 +3055,6 @@ function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as
 		return totalTime;
 	}
 	
-	this.setTrackName = function(name) {
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		return musicTrack[currentTrack].getTrackName();
-	}
-	
 	this.getDuration = function() {
 		if (atEnd) {
 			return musicTrack[currentTrack].getDuration();
@@ -3322,14 +3218,6 @@ function musicContainerCrossfade(trackList) {//Can crossfade between list-items
 		return musicTrack[currentTrack].getTime();
 	}
 	
-	this.setTrackName = function(name) {
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		return musicTrack[currentTrack].getTrackName();
-	}
-	
 	this.getDuration = function() {
 		return musicTrack[currentTrack].getDuration();
 	}
@@ -3491,14 +3379,6 @@ function musicContainerCrossfadeLoop(trackList) {//Can crossfade between list-it
 
 	this.getTime = function() {
 		return musicTrack[currentTrack].getTime();
-	}
-	
-	this.setTrackName = function(name) {
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		return musicTrack[currentTrack].getTrackName();
 	}
 	
 	this.getDuration = function() {
@@ -3698,16 +3578,6 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 	this.getTime = function() {
 		evaluateCurrentTrack();
 		return musicTrack[currentTrack].getTime();
-	}
-	
-	this.setTrackName = function(name) {
-		evaluateCurrentTrack();
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		evaluateCurrentTrack();
-		return musicTrack[currentTrack].getTrackName();
 	}
 	
 	this.getDuration = function() {
@@ -3924,16 +3794,6 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 		return musicTrack[currentTrack].getTime();
 	}
 	
-	this.setTrackName = function(name) {
-		evaluateCurrentTrack();
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		evaluateCurrentTrack();
-		return musicTrack[currentTrack].getTrackName();
-	}
-	
 	this.getDuration = function() {
 		evaluateCurrentTrack();
 		return musicTrack[currentTrack].getDuration();
@@ -4082,14 +3942,6 @@ function musicContainerSequence(trackList) {//Plays list-items in order
 
 	this.getTime = function() {
 		return musicTrack[currentTrack].getTime();
-	}
-	
-	this.setTrackName = function(name) {
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		return musicTrack[currentTrack].getTrackName();
 	}
 	
 	this.getDuration = function() {
@@ -4246,14 +4098,6 @@ function musicContainerSequenceLatch(trackList) {//Plays list-items in order, bu
 		return musicTrack[currentTrack].getTime();
 	}
 	
-	this.setTrackName = function(name) {
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		return musicTrack[currentTrack].getTrackName();
-	}
-	
 	this.getDuration = function() {
 		return musicTrack[currentTrack].getDuration();
 	}
@@ -4399,14 +4243,6 @@ function musicContainerSequenceLatchLast(trackList) {//Plays list-items in order
 
 	this.getTime = function() {
 		return musicTrack[currentTrack].getTime();
-	}
-	
-	this.setTrackName = function(name) {
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		return musicTrack[currentTrack].getTrackName();
 	}
 	
 	this.getDuration = function() {
@@ -4561,14 +4397,6 @@ function musicContainerPlaylist(trackList) {//Plays through list-items in order
 		return musicTrack[currentTrack].getTime();
 	}
 	
-	this.setTrackName = function(name) {
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		return musicTrack[currentTrack].getTrackName();
-	}
-	
 	this.getDuration = function() {
 		return musicTrack[currentTrack].getDuration();
 	}
@@ -4714,14 +4542,6 @@ function musicContainerPlaylistLoop(trackList) {//Loops through list-items in or
 
 	this.getTime = function() {
 		return musicTrack[currentTrack].getTime();
-	}
-	
-	this.setTrackName = function(name) {
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		return musicTrack[currentTrack].getTrackName();
 	}
 	
 	this.getDuration = function() {
@@ -4879,14 +4699,6 @@ function musicContainerPlaylistLoopLatch(trackList) {//Plays through list-items 
 		return musicTrack[currentTrack].getTime();
 	}
 	
-	this.setTrackName = function(name) {
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		return musicTrack[currentTrack].getTrackName();
-	}
-	
 	this.getDuration = function() {
 		return musicTrack[currentTrack].getDuration();
 	}
@@ -5033,16 +4845,7 @@ function musicContainerPlaylistLoopLast(trackList) {//Plays through list-items i
 
 	this.getTime = function() {
 		return musicTrack[currentTrack].getTime();
-	}
-	
-	this.setTrackName = function(name) {
-		musicTrack[currentTrack].setTrackName(name);
-	}
-
-	this.getTrackName = function() {
-		return musicTrack[currentTrack].getTrackName();
-	}
-	
+	}	
 	this.getDuration = function() {
 		return musicTrack[currentTrack].getDuration();
 	}
