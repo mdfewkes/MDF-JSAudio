@@ -59,7 +59,7 @@ function sfxClip(filename) {//A simple, single buffer sound clip
 	soundFile.onerror = function(){soundFile = new Audio(audioPath+filename+audioFormat(true))};
 	var clipVolume = 1;
 	var randVolume = true;
-	var clipName = filename;
+	this.name = filename;
 	var duration = soundFile.duration;
 	var mixVolume = 1;
 
@@ -124,14 +124,6 @@ function sfxClip(filename) {//A simple, single buffer sound clip
 		return soundFile.currentTime;
 	}
 	
-	this.setClipName = function(name) {
-		clipName = name;
-	}
-
-	this.getClipName = function() {
-		return clipName;
-	}
-	
 	this.getDuration = function() {
 		return duration;
 	}
@@ -156,7 +148,7 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 	var currentClip = 0;
 	var clipVolume = 1;
 	var randVolume = true;
-	var clipName = filename;
+	this.name = filename;
 	var duration = soundFile[0].duration;
 	var mixVolume = 1;
 
@@ -233,14 +225,6 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 		return soundFile[currentClip].currentTime;
 	}
 	
-	this.setClipName = function(name) {
-		clipName = name;
-	}
-
-	this.getClipName = function() {
-		return clipName;
-	}
-	
 	this.getDuration = function() {
 		return duration;
 	}
@@ -258,7 +242,7 @@ function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file th
 	soundFile[1].onerror = function(){soundFile[1] = new Audio(audioPath+filename+audioFormat(true))}
 	var currentClip = 0;
 	var duration = playLength;
-	var clipName = filename;
+	this.name = filename;
 	var clipVolume = 1;
 	var mixVolume = 1;
 
@@ -337,14 +321,6 @@ function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file th
 		return soundFile[currentClip].currentTime;
 	}
 	
-	this.setClipName = function(name) {
-		clipName = name;
-	}
-
-	this.getClipName = function() {
-		return clipName;
-	}
-	
 	this.getDuration = function() {
 		return duration;
 	}
@@ -362,7 +338,7 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 	var times = listOfTimePairs;
 	var clipVolume = 1;
 	var randVolume = true;
-	var clipName = filename;
+	this.name = filename;
 	var duration = soundFile.duration;
 	var currentClip = 0;
 	var totalClips = times.length;
@@ -439,14 +415,6 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 		return soundFile.currentTime;
 	}
 	
-	this.setClipName = function(name) {
-		clipName = name;
-	}
-
-	this.getClipName = function() {
-		return clipName;
-	}
-	
 	this.getDuration = function() {
 		return duration;
 	}
@@ -461,7 +429,7 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 function sfxClipSprite(spriteSheet, clipNumber) {//A referance to the clips in sfxClipSpriteSheet
 	var spriteFile = spriteSheet;
 	var clip = clipNumber;
-	var clipName = spriteFile.getClipName();
+	this.name = "sfxClipSprite " + spriteFile.name;
 
 	this.play = function() {
 		spriteFile.setCurrentClip(clip);
@@ -501,14 +469,6 @@ function sfxClipSprite(spriteSheet, clipNumber) {//A referance to the clips in s
 		return spriteFile.getVolume();
 	}
 	
-	this.setClipName = function(name) {
-		clipName = name;
-	}
-
-	this.getClipName = function() {
-		return clipName;
-	}
-	
 	this.getDuration = function() {
 		//ahh?
 	}
@@ -523,6 +483,7 @@ function sfxClipSprite(spriteSheet, clipNumber) {//A referance to the clips in s
 function sfxContainer(clipList) {//Basic Container
 	var soundFile = [];
 	var currentClip = 0;
+	this.name = "sfxContainer";
 	var clipVolume = 1;
 
 	for (var i in clipList) {
@@ -593,14 +554,6 @@ function sfxContainer(clipList) {//Basic Container
 		return soundFile[currentClip].getTime();
 	}
 	
-	this.setClipName = function(name) {
-		soundFile[currentClip].setClipName(name);
-	}
-
-	this.getClipName = function() {
-		return soundFile[currentClip].getClipName();
-	}
-	
 	this.getDuration = function() {
 		return soundFile[currentClip].getDuration();
 	}
@@ -615,6 +568,7 @@ function sfxContainer(clipList) {//Basic Container
 function sfxContainerRandom(clipList) {//Plays a random list-item on playback
 	var soundFile = [];
 	var currentClip = 0;
+	this.name = "sfxContainerRandom";
 	var clipVolume = 1;
 
 	for (var i in clipList) {
@@ -686,14 +640,6 @@ function sfxContainerRandom(clipList) {//Plays a random list-item on playback
 		return soundFile[currentClip].getTime();
 	}
 	
-	this.setClipName = function(name) {
-		soundFile[currentClip].setClipName(name);
-	}
-
-	this.getClipName = function() {
-		return soundFile[currentClip].getClipName();
-	}
-	
 	this.getDuration = function() {
 		return soundFile[currentClip].getDuration();
 	}
@@ -708,6 +654,7 @@ function sfxContainerRandom(clipList) {//Plays a random list-item on playback
 function sfxContainerLayer(clipList) {//Plays all list-items together
 	var soundFile = [];
 	var currentClip = 0;
+	this.name = "sfxContainerLayer";
 	var clipVolume = 1;
 
 	for (var i in clipList) {
@@ -788,14 +735,6 @@ function sfxContainerLayer(clipList) {//Plays all list-items together
 		return soundFile[currentClip].getTime();
 	}
 	
-	this.setClipName = function(name) {
-		soundFile[currentClip].setClipName(name);
-	}
-
-	this.getClipName = function() {
-		return soundFile[currentClip].getClipName();
-	}
-	
 	this.getDuration = function() {
 		return soundFile[currentClip].getDuration();
 	}
@@ -810,6 +749,7 @@ function sfxContainerLayer(clipList) {//Plays all list-items together
 function sfxContainerBlend(clipList, startingLevel = 0) {//Container which blends between the volumes of list-items
 	var soundFile = [];
 	var currentClip = 0;
+	this.name = "sfxContainerBlend";
 	var currentLevel = startingLevel;
 	var clipVolume = 1;
 
@@ -904,14 +844,6 @@ function sfxContainerBlend(clipList, startingLevel = 0) {//Container which blend
 
 	this.getTime = function() {
 		return soundFile[currentClip].getTime();
-	}
-	
-	this.setClipName = function(name) {
-		soundFile[currentClip].setClipName(name);
-	}
-
-	this.getClipName = function() {
-		return soundFile[currentClip].getClipName();
 	}
 	
 	this.getDuration = function() {
