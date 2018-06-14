@@ -959,7 +959,7 @@ function musicTrack(filename, playLength) {//Single buffer music file
 	var musicFile = new Audio(audioPath+filename+audioFormat());
 	musicFile.onerror = function(){musicFile = new Audio(audioPath+filename+audioFormat(true))};
 	var duration = musicFile.duration;
-	var trackName = filename;
+	this.name = filename;
 	var duration = playLength;
 	var trackVolume = 1;
 	var mixVolume = 1;
@@ -1086,7 +1086,7 @@ function musicTrackOverlap(filename, playLength) {//Double buffer music file
 	musicFile[1].onerror = function(){musicFile[1] = new Audio(audioPath+filename+audioFormat(true))}
 	var currentTrack = 0;
 	var duration = playLength;
-	var trackName = filename;
+	this.name = filename;
 	var trackVolume = 1;
 	var mixVolume = 1;
 	var tick = 0;
@@ -1222,7 +1222,7 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 	musicFile[1].onerror = function(){musicFile[1] = new Audio(audioPath+filename+audioFormat(true))}
 	var currentTrack = 0;
 	var duration = playLength;
-	var trackName = filename;
+	this.name = filename;
 	var trackVolume = 1;
 	var mixVolume = 1;
 	var tick = 0;
@@ -1355,6 +1355,7 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 function musicContainer(trackList) {//Basic containers
 	var musicTrack = [];
 	var currentTrack = 0;
+	this.name = "musicContainer";
 	var trackVolume = 1;
 	var tick = 0;
 
@@ -1501,6 +1502,7 @@ function musicContainer(trackList) {//Basic containers
 function musicContainerRandom(trackList) {//Picks random list-item to play on play
 	var musicTrack = [];
 	var currentTrack = 0;
+	this.name = "musicContainerRandom";
 	var trackVolume = 1;
 	var tick = 0;
 
@@ -1645,6 +1647,7 @@ function musicContainerRandom(trackList) {//Picks random list-item to play on pl
 function musicContainerLoop(trackList) {//Loops current list-item
 	var musicTrack = [];
 	var currentTrack = 0;
+	this.name = "musicContainerLoop";
 	var schedualedTrack = 0;
 	var trackVolume = 1;
 	var tick = 0;
@@ -1798,6 +1801,7 @@ function musicContainerLoop(trackList) {//Loops current list-item
 function musicContainerLoopRandom(trackList) {//Picks new random list-item to play every loop
 	var musicTrack = [];
 	var currentTrack = 0;
+	this.name = "musicContainerLoopRandom";
 	var trackVolume = 1;
 	var tick = 0;
 
@@ -1944,6 +1948,7 @@ function musicContainerLoopRandom(trackList) {//Picks new random list-item to pl
 function musicContainerLoopRandomRepetitionControl(trackList, maxRepetitions = 3, minRepetitions = 1) {//Picks new random list-item to play every loop
 	var musicTrack = [];
 	var currentTrack = 0;
+	this.name = "musicContainerLoopRandomRepetitionControl";
 	var lastTrack = 0;
 	var playCountdown = 0;
 	var playMax = maxRepetitions;
@@ -2100,6 +2105,8 @@ function musicContainerLoopRandomRepetitionControl(trackList, maxRepetitions = 3
 
 function musicContainerLoopRandomDurationControl(trackList, maxDurationInSeconds = 180, minDurationInSeconds = 60) {//Picks new random list-item to play every loop
 	var musicTrack = [];
+	var currentTrack = 0;
+	this.name = "musicContainerLoopRandomDurationControl";
 	var lastTrack = 0;
 	var playTime = 0;
 	var playMax = maxDurationInSeconds;
@@ -2259,6 +2266,7 @@ function musicContainerLoopRandomDurationControl(trackList, maxDurationInSeconds
 function musicContainerConcatenated(trackList) {//Reports all list-items as one item and plays through them
 	var musicTrack = [];
 	var currentTrack = 0;
+	this.name = "musicContainerConcatenated";
 	var duration = 0;
 	var trackVolume = 1;
 	var tick = 0;
@@ -2439,6 +2447,7 @@ function musicContainerConcatenated(trackList) {//Reports all list-items as one 
 function musicContainerConcatenatedLatchLast(trackList) {//Reports all list-items as one item, but only repeats last one
 	var musicTrack = [];
 	var currentTrack = 0;
+	this.name = "musicContainerConcatenatedLatchLast";
 	var duration = 0;
 	var atEnd = false;
 	var trackVolume = 1;
@@ -2666,6 +2675,7 @@ function musicContainerConcatenatedLatchLast(trackList) {//Reports all list-item
 function musicContainerConcatenatedLoop(trackList) {//Loops list-items as if one item
 	var musicTrack = [];
 	var currentTrack = 0;
+	this.name = "musicContainerConcatenatedLoop";
 	var duration = 0;
 	var trackVolume = 1;
 	var tick = 0;
@@ -2849,6 +2859,7 @@ function musicContainerConcatenatedLoop(trackList) {//Loops list-items as if one
 function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as one item, but only repeats last one
 	var musicTrack = [];
 	var currentTrack = 0;
+	this.name = "musicContainerConcatenatedLoopLast";
 	var duration = 0;
 	var atEnd = false;
 	var trackVolume = 1;
@@ -3073,6 +3084,7 @@ function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as
 function musicContainerCrossfade(trackList) {//Can crossfade between list-items
 	var musicTrack = [];
 	var currentTrack = 0;
+	this.name = "musicContainerCrossfade";
 	var trackVolume = 1;
 	var tick = 0;
 
@@ -3232,6 +3244,7 @@ function musicContainerCrossfade(trackList) {//Can crossfade between list-items
 function musicContainerCrossfadeLoop(trackList) {//Can crossfade between list-items, loops current item
 	var musicTrack = [];
 	var currentTrack = 0;
+	this.name = "musicContainerCrossfadeLoop";
 	var trackVolume = 1;
 	var tick = 0;
 
@@ -3397,6 +3410,7 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 	var musicTrackVolume = [];
 	var trackVolume = 1;
 	var currentTrack = 0;
+	this.name = "musicContainerLayers";
 	var trackVolume = 1;
 	var tick = 0;
 
@@ -3598,6 +3612,7 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 	var musicTrackVolume = [];
 	var trackVolume = 1;
 	var currentTrack = 0;
+	this.name = "musicContainerLayersLoop";
 	var trackVolume = 1;
 	var tick = 0;
 
@@ -3810,6 +3825,7 @@ function musicContainerLayersLoop(trackList) {//Plays all list-items together, c
 function musicContainerSequence(trackList) {//Plays list-items in order
 	var musicTrack = [];
 	var currentTrack = 0;
+	this.name = "musicContainerSequence";
 	var trackVolume = 1;
 	var tick = 0;
 
@@ -3958,6 +3974,7 @@ function musicContainerSequence(trackList) {//Plays list-items in order
 function musicContainerSequenceLatch(trackList) {//Plays list-items in order, but stays on current one until indicated
 	var musicTrack = [];
 	var currentTrack = 0;
+	this.name = "musicContainerSequenceLatch";
 	var latched = true;
 	var trackVolume = 1;
 	var tick = 0;
@@ -4112,6 +4129,7 @@ function musicContainerSequenceLatch(trackList) {//Plays list-items in order, bu
 function musicContainerSequenceLatchLast(trackList) {//Plays list-items in order, stays on last item
 	var musicTrack = [];
 	var currentTrack = 0;
+	this.name = "musicContainerSequenceLatchLast";
 	var trackVolume = 1;
 	var tick = 0;
 
@@ -4259,6 +4277,7 @@ function musicContainerSequenceLatchLast(trackList) {//Plays list-items in order
 function musicContainerPlaylist(trackList) {//Plays through list-items in order
 	var musicTrack = [];
 	var currentTrack = 0;
+	this.name = "musicContainerPlaylist";
 	var trackVolume = 1;
 	var tick = 0;
 
@@ -4411,6 +4430,7 @@ function musicContainerPlaylist(trackList) {//Plays through list-items in order
 function musicContainerPlaylistLoop(trackList) {//Loops through list-items in order
 	var musicTrack = [];
 	var currentTrack = 0;
+	this.name = "musicContainerPlaylistLoop";
 	var trackVolume = 1;
 	var tick = 0;
 
@@ -4558,6 +4578,7 @@ function musicContainerPlaylistLoop(trackList) {//Loops through list-items in or
 function musicContainerPlaylistLoopLatch(trackList) {//Plays through list-items in order, but loops current one until indicated
 	var musicTrack = [];
 	var currentTrack = 0;
+	this.name = "musicContainerPlaylistLoopLatch";
 	var latched = true;
 	var trackVolume = 1;
 	var tick = 0;
@@ -4713,6 +4734,7 @@ function musicContainerPlaylistLoopLatch(trackList) {//Plays through list-items 
 function musicContainerPlaylistLoopLast(trackList) {//Plays through list-items in order, loops last item
 	var musicTrack = [];
 	var currentTrack = 0;
+	this.name = "musicContainerPlaylistLoopLast";
 	var trackVolume = 1;
 	var tick = 0;
 
