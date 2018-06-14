@@ -17,15 +17,15 @@ var conPlay = new sfxClipSprite(controles, 0);
 var conPause = new sfxClipSprite(controles, 1);
 var conStop = new sfxClipSprite(controles, 2);
 
-track1.setTrackName("track1");
-track2.setTrackName("track2");
-track3.setTrackName("track3");
+track1.name = "track1";
+track2.name = "track2";
+track3.name = "track3";
 track2.setMixVolume(0.85);
 track3.setMixVolume(0.75);
 
-layer1.setTrackName("layer1");
-layer2.setTrackName("layer2");
-layer3.setTrackName("layer3");
+layer1.name = "layer1";
+layer2.name = "layer2";
+layer3.name = "layer3";
 backgroundLayers.setLayerLevel(1,0);
 backgroundLayers.setLayerLevel(2,0);
 
