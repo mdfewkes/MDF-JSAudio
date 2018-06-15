@@ -1041,6 +1041,120 @@ function sfxContainerRandom(clipList) {//Plays a random list-item on playback
 	return this;
 }
 
+function sfxContainerLoopRandom(clipList) {//Plays a random list-item on playback
+	var soundFile = [];
+	var currentClip = 0;
+	this.name = "sfxContainerRandom";
+	var clipVolume = 1;
+	var tick = 0;
+
+	for (var i in clipList) {
+		soundFile[i] = clipList[i];
+	}
+
+	this.play = function() {
+		currentClip = Math.floor(Math.random() * soundFile.length);
+		soundFile[currentClip].play();
+		AudioEventManager.addTimerEvent(this, this.getDuration(), "cue");
+	}
+
+	this.stop = function() {
+		for (var i in soundFile) {
+			soundFile[i].stop();
+		}
+		AudioEventManager.removeTimerEvent(this);
+	}
+
+	this.resume = function() {
+		soundFile[currentClip].resume();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+	}
+
+	this.pause = function() {
+		for (var i in soundFile) {
+			soundFile[i].pause();
+		}
+		AudioEventManager.removeTimerEvent(this);
+	}
+
+	this.trigger = function(callSign) {
+		if(callSign == "cue") {
+			this.play();
+			tick++;
+		}
+	}
+
+	this.loadClip = function(newClip, slot) {
+		soundFile[slot] = newClip;
+	}
+
+	this.updateVolume = function() {
+		for (var i in soundFile) {
+			soundFile[i].updateVolume();
+		}
+	}
+
+	this.setVolume = function (newVolume) {
+		clipVolume = newVolume;
+		for (i in soundFile) {
+			soundFile[i].setVolume(clipVolume);
+		}
+	}
+
+	this.getVolume = function() {
+		return soundFile[currentClip].getVolume();
+	}
+
+	this.getSourceClip = function() {
+		return soundFile[currentClip].getSourceClip();
+	}
+
+	this.getChildClip = function() {
+		return soundFile;
+	}
+
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
+	this.setCurrentClip = function(clipNumber) {
+		currentClip = clipNumber;
+	}
+
+	this.getCurrentClip = function() {
+		 return currentClip;
+	}
+
+	this.getListLength = function() {
+		 return soundFile.length;
+	}
+
+	this.setTime = function(time) {
+		soundFile[currentClip].setTime(time);
+		if (!this.getPaused()) {
+			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		}
+	}
+
+	this.getTime = function() {
+		return soundFile[currentClip].getTime();
+	}
+	
+	this.getDuration = function() {
+		return soundFile[currentClip].getDuration();
+	}
+
+	this.getPaused = function() {
+		return soundFile[currentClip].getPaused();
+	}
+
+	return this;
+}
+
 function sfxContainerLayer(clipList) {//Plays all list-items together
 	var soundFile = [];
 	var currentClip = 0;
