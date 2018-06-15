@@ -15,11 +15,10 @@ Functions that all sound objects share:
 */
 
 //General
-var isMuted = false;
-
 function volumeManager() {
 	var list = [];
 	var volume = 1;
+	var muted = false;
 
 	this.setVolume = function(amount) {
 		if (amount > 1) {volume = 1;}
@@ -32,6 +31,15 @@ function volumeManager() {
 
 	this.getVolume = function() {
 		return volume;
+	}
+
+	this.setMuted = function(ToF) {
+		muted = ToF;
+		this.updateVolume();
+	}
+
+	this.getMuted = function() {
+		return muted;
 	}
 
 	this.updateVolume = function() {
@@ -109,9 +117,9 @@ function sfxClip(filename) {//A simple, single buffer sound clip
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
 		if (randVolume) {
-			soundFile.volume = Math.pow(newVolume * man.getVolume() * getRandomVolume() * !isMuted, 2);
+			soundFile.volume = Math.pow(newVolume * man.getVolume() * getRandomVolume() * !man.getMuted(), 2);
 		} else {
-			soundFile.volume = Math.pow(newVolume * man.getVolume() * !isMuted, 2);
+			soundFile.volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
 		}
 	}
 
@@ -122,7 +130,7 @@ function sfxClip(filename) {//A simple, single buffer sound clip
 		newVolume = clipVolume * mixVolume;
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		soundFile.volume = Math.pow(newVolume * man.getVolume() * !isMuted, 2);
+		soundFile.volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
 		if(playing && musicFile.paused && newVolume >= 0.1) {
 			var newTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
 			this.setTime(newTime);
@@ -132,7 +140,7 @@ function sfxClip(filename) {//A simple, single buffer sound clip
 	}
 
 	this.getVolume = function() {
-		return clipVolume * !isMuted;
+		return clipVolume * !man.getMuted();
 	}
 
 	this.setMixVolume = function(volume) {
@@ -228,11 +236,11 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 		if(newVolume < 0) {newVolume = 0;}
 		if (randVolume) {
 			for (var i in soundFile) {
-				soundFile[i].volume = Math.pow(newVolume * man.getVolume() * getRandomVolume() * !isMuted, 2);
+				soundFile[i].volume = Math.pow(newVolume * man.getVolume() * getRandomVolume() * !man.getMuted(), 2);
 			}
 		} else {
 			for (var i in soundFile) {
-				soundFile[i].volume = Math.pow(newVolume * man.getVolume() * !isMuted, 2);
+				soundFile[i].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
 			}
 		}
 	}
@@ -245,7 +253,7 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
 		for (var i in soundFile) {
-			soundFile[i].volume = Math.pow(newVolume * man.getVolume() * !isMuted, 2);
+			soundFile[i].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
 		}
 		if(playing && soundFile[currentClip].paused && newVolume >= 0.1) {
 			var newTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
@@ -259,7 +267,7 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 	}
 
 	this.getVolume = function() {
-		return clipVolume * !isMuted;
+		return clipVolume * !man.getMuted();
 	}
 
 	this.setMixVolume = function(volume) {
@@ -346,8 +354,8 @@ function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file th
 		newVolume = clipVolume * mixVolume;
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		soundFile[0].volume = Math.pow(newVolume  * man.getVolume() * !isMuted, 2);
-		soundFile[1].volume = Math.pow(newVolume  * man.getVolume() * !isMuted, 2);
+		soundFile[0].volume = Math.pow(newVolume  * man.getVolume() * !man.getMuted(), 2);
+		soundFile[1].volume = Math.pow(newVolume  * man.getVolume() * !man.getMuted(), 2);
 	}
 
 	this.setVolume = function(newVolume) {
@@ -357,8 +365,8 @@ function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file th
 		newVolume = clipVolume * mixVolume;
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		soundFile[0].volume = Math.pow(newVolume * man.getVolume() * !isMuted, 2);
-		soundFile[1].volume = Math.pow(newVolume * man.getVolume() * !isMuted, 2);
+		soundFile[0].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
+		soundFile[1].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
 		if(playing && soundFile[currentClip].paused && newVolume >= 0.1) {
 			var newTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
 			this.setTime(newTime);
@@ -371,7 +379,7 @@ function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file th
 	}
 
 	this.getVolume = function() {
-		return clipVolume * !isMuted;
+		return clipVolume * !man.getMuted();
 	}
 
 	this.setMixVolume = function(volume) {
@@ -464,9 +472,9 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
 		if (randVolume) {
-			soundFile.volume = Math.pow(newVolume * man.getVolume() * getRandomVolume() * !isMuted, 2);
+			soundFile.volume = Math.pow(newVolume * man.getVolume() * getRandomVolume() * !man.getMuted(), 2);
 		} else {
-			soundFile.volume = Math.pow(newVolume * man.getVolume() * !isMuted, 2);
+			soundFile.volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
 		}
 	}
 
@@ -477,7 +485,7 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 		newVolume = clipVolume * mixVolume;
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		soundFile.volume = Math.pow(newVolume * man.getVolume() * !isMuted, 2);
+		soundFile.volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
 		if(playing && musicFile.paused && newVolume >= 0.1) {
 			var newTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
 			this.setTime(newTime);
@@ -487,7 +495,7 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 	}
 
 	this.getVolume = function() {
-		return clipVolume * !isMuted;
+		return clipVolume * !man.getMuted();
 	}
 
 	this.setMixVolume = function(volume) {
@@ -1021,7 +1029,7 @@ function musicTrack(filename, playLength) {//Single buffer music file
 		newVolume = trackVolume * mixVolume;
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		musicFile.volume = Math.pow(newVolume * man.getVolume() * !isMuted, 2);
+		musicFile.volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
 	}
 
 	this.setVolume = function(newVolume) {
@@ -1031,7 +1039,7 @@ function musicTrack(filename, playLength) {//Single buffer music file
 		newVolume = trackVolume * mixVolume;
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		musicFile.volume = Math.pow(newVolume * man.getVolume() * !isMuted, 2);
+		musicFile.volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
 		if(playing && musicFile[currentTrack].paused && newVolume >= 0.1) {
 			var newTime = AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
 			if(newTime != "none") {
@@ -1043,7 +1051,7 @@ function musicTrack(filename, playLength) {//Single buffer music file
 	}
 
 	this.getVolume = function() {
-		return trackVolume * !isMuted;
+		return trackVolume * !man.getMuted();
 	}
 
 	this.setMixVolume = function(volume) {
@@ -1156,8 +1164,8 @@ function musicTrackOverlap(filename, playLength) {//Double buffer music file
 		newVolume = trackVolume * mixVolume;
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		musicFile[0].volume = Math.pow(newVolume * man.getVolume() * !isMuted, 2);
-		musicFile[1].volume = Math.pow(newVolume * man.getVolume() * !isMuted, 2);
+		musicFile[0].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
+		musicFile[1].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
 	}
 
 	this.setVolume = function(newVolume) {
@@ -1167,8 +1175,8 @@ function musicTrackOverlap(filename, playLength) {//Double buffer music file
 		newVolume = trackVolume * mixVolume;
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		musicFile[0].volume = Math.pow(newVolume * man.getVolume() * !isMuted, 2);
-		musicFile[1].volume = Math.pow(newVolume * man.getVolume() * !isMuted, 2);
+		musicFile[0].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
+		musicFile[1].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
 		if(playing && musicFile[currentTrack].paused && newVolume >= 0.1) {
 			var newTime = AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
 			if(newTime != "none") {
@@ -1183,7 +1191,7 @@ function musicTrackOverlap(filename, playLength) {//Double buffer music file
 	}
 
 	this.getVolume = function() {
-		return trackVolume * !isMuted;
+		return trackVolume * !man.getMuted();
 	}
 
 	this.setMixVolume = function(volume) {
@@ -1296,8 +1304,8 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 		newVolume = trackVolume * mixVolume;
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		musicFile[0].volume = Math.pow(newVolume * man.getVolume() * !isMuted, 2);
-		musicFile[1].volume = Math.pow(newVolume * man.getVolume() * !isMuted, 2);
+		musicFile[0].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
+		musicFile[1].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
 	}
 
 	this.setVolume = function(newVolume) {
@@ -1307,8 +1315,8 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 		newVolume = trackVolume * mixVolume;
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		musicFile[0].volume = Math.pow(newVolume * man.getVolume() * !isMuted, 2);
-		musicFile[1].volume = Math.pow(newVolume * man.getVolume() * !isMuted, 2);
+		musicFile[0].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
+		musicFile[1].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
 		if(playing && musicFile[currentTrack].paused && newVolume >= 0.1) {
 			var newTime = AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
 			if(newTime != "none") {
@@ -1323,7 +1331,7 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 	}
 
 	this.getVolume = function() {
-		return trackVolume * !isMuted;
+		return trackVolume * !man.getMuted();
 	}
 
 	this.setMixVolume = function(volume) {

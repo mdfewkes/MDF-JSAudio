@@ -22,19 +22,18 @@ function audioFormat(alt = false) {
 
 
 function toggleMute() {
-	isMuted = !isMuted;
-	SFXVolumeManager.updateVolume();
-	MusicVolumeManager.updateVolume();
+	SFXVolumeManager.setMuted(!SFXVolumeManager.getMuted());
+	MusicVolumeManager.setMuted(!MusicVolumeManager.getMuted());
 }
 
 function setMute(TorF) {
-	isMuted = TorF;
-	SFXVolumeManager.updateVolume();
-	MusicVolumeManager.updateVolume();
+	SFXVolumeManager.setMuted(TorF);
+	MusicVolumeManager.setMuted(TorF);
 }
 
-function getMute(TorF) {
-	return isMuted;
+function getMute() {
+	var isNotMuted = SFXVolumeManager.getMuted() * MusicVolumeManager.getMuted();
+	return isNotMuted;
 }
 
 
