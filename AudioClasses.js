@@ -585,6 +585,10 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 		return (times[clipNumber][1] - times[clipNumber][0])
 	}
 
+	this.getTimePair = function(clipNumber) {
+		return times[clipNumber];
+	}
+
 	this.setTime = function(time) {
 		soundFile.currentTime = time;
 		if (playing) {
@@ -674,9 +678,20 @@ function sfxClipSprite(spriteSheet, clipNumber) {//A referance to the clips in s
 	this.getTick = function() {
 		return tick;
 	}
+
+	this.setTime = function(time) {
+		spriteFile.setTime(time + spriteFile.getTimePair(clip)[0]);
+		if (!spriteFile.getPaused()) {
+			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
+		}
+	}
+
+	this.getTime = function() {
+	}
 	
 	this.getDuration = function() {
 		return duration;
+	}
 
 	this.getPaused = function() {
 		return spriteFile.getPaused();
