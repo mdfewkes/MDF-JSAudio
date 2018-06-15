@@ -487,8 +487,8 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 		soundFile.currentTime = startAt;
 		this.updateVolume();
 		soundFile.play();
-		AudioEventManager.addStopEvent(this, (times[currentClip][1] - times[currentClip][0]));
-		AudioEventManager.addTimerEvent(this, (times[currentClip][1] - times[currentClip][0]), "cue");
+		AudioEventManager.addStopEvent(this, this.getClipDuration(currentClip));
+		AudioEventManager.addTimerEvent(this, this.getClipDuration(currentClip), "cue");
 		playing = true;
 	}
 
@@ -502,7 +502,8 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 
 	this.resume = function() {
 		this.play();
-		AudioEventManager.addTimerEvent(this, (times[currentClip][1] - times[currentClip][0]), "cue");
+		AudioEventManager.addStopEvent(this, (this.getClipDuration(currentClip) - (times[currentClip][1] - this.getTime())));
+		AudioEventManager.addTimerEvent(this, (this.getClipDuration(currentClip) - (times[currentClip][1] - this.getTime())), "cue");
 		playing = true;
 	}
 
@@ -592,7 +593,7 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 	this.setTime = function(time) {
 		soundFile.currentTime = time;
 		if (playing) {
-			AudioEventManager.addTimerEvent(this, (times[currentClip][1] - times[currentClip][0]), "cue");
+			AudioEventManager.addTimerEvent(this, this.getClipDuration(currentClip), "cue");
 		}
 	}
 
