@@ -17,35 +17,36 @@ Functions that all sound objects share:
 //General
 var isMuted = false;
 
-//SFX Classes
-SFXVolumeManager = new sfxVolumeManager();
-function sfxVolumeManager() {
-	var clipList = [];
-	var sfxVolume = 1;
+function volumeManager() {
+	var list = [];
+	var volume = 1;
 
 	this.setVolume = function(amount) {
-		if (amount > 1) {sfxVolume = 1;}
-		else if (amount < 0) {sfxVolume = 0;}
-		else {sfxVolume = amount;}
-		for (var i in clipList) {
-			clipList[i].updateVolume();
+		if (amount > 1) {volume = 1;}
+		else if (amount < 0) {volume = 0;}
+		else {volume = amount;}
+		for (var i in list) {
+			list[i].updateVolume();
 		}
 	}
 
 	this.getVolume = function() {
-		return sfxVolume;
+		return volume;
 	}
 
 	this.updateVolume = function() {
-		for(var i in clipList) {
-			clipList[i].updateVolume();
+		for(var i in list) {
+			list[i].updateVolume();
 		}
 	}
 
-	this.addToList = function(sfxClip) {
-		clipList.push(sfxClip);
+	this.addToList = function(item) {
+		list.push(item);
 	}
 }
+
+//SFX Classes
+SFXVolumeManager = new volumeManager();
 
 function getRandomVolume(){
 	var min = 0.85;
@@ -957,34 +958,7 @@ function sfxContainerBlend(clipList, startingLevel = 0) {//Container which blend
 }
 
 //Music Classes
-MusicVolumeManager = new musicVolumeManager();
-function musicVolumeManager() {
-	var trackList = [];
-	var musicVolume = 1;
-
-	this.setVolume = function(amount) {
-		if (amount > 1) {musicVolume = 1;}
-		else if (amount < 0) {musicVolume = 0;}
-		else {musicVolume = amount;}
-		for (var i in trackList) {
-			trackList[i].updateVolume();
-		}
-	}
-
-	this.getVolume = function() {
-		return musicVolume;
-	}
-
-	this.updateVolume = function() {
-		for(var i in trackList) {
-			trackList[i].updateVolume();
-		}
-	}
-
-	this.addToList = function(musicTrack) {
-		trackList.push(musicTrack);
-	}
-}
+MusicVolumeManager = new volumeManager();
 
 function musicTrack(filename, playLength) {//Single buffer music file
 	var musicFile = new Audio(audioPath+filename+audioFormat());
