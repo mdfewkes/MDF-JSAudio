@@ -687,6 +687,7 @@ function sfxClipSprite(spriteSheet, clipNumber) {//A referance to the clips in s
 	}
 
 	this.getTime = function() {
+		return spriteFile.getTime() - spriteFile.getTimePair(clip)[0];
 	}
 	
 	this.getDuration = function() {
