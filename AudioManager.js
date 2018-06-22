@@ -189,31 +189,28 @@ function audioEventManager() {
 
 	function runList(){
 		for (var i = 0; i < eventList.length; i++) {
+			var thisTrack = eventList[i][1];
 			if (eventList[i][0] == FADE) {
-				// Arrayformat [FADE, track, startTime, endTime, startVolume, endVolume, crossfade]
-				thisTrack = eventList[i][1];
-				if (thisTrack.getPaused() == false) {
-						if(eventList[i][6]) {
-							if(eventList[i][4] < eventList[i][5]){
-								thisTrack.setVolume(scaleRange(0, 1, eventList[i][4], eventList[i][5], 
-									Math.pow(interpolateFade(eventList[i][2], eventList[i][3], 0, 1, now), 0.5)));
-							} else {
-								thisTrack.setVolume(scaleRange(1, 0, eventList[i][4], eventList[i][5], 
-									Math.pow(interpolateFade(eventList[i][2], eventList[i][3], 1, 0, now), 0.5)));
-							}
+			// Arrayformat [FADE, track, startTime, endTime, startVolume, endVolume, crossfade]
+					if(eventList[i][6]) {
+						if(eventList[i][4] < eventList[i][5]){
+							thisTrack.setVolume(scaleRange(0, 1, eventList[i][4], eventList[i][5], 
+								Math.pow(interpolateFade(eventList[i][2], eventList[i][3], 0, 1, now), 0.5)));
 						} else {
-							thisTrack.setVolume(interpolateFade(eventList[i][2], eventList[i][3], eventList[i][4], eventList[i][5], now));
+							thisTrack.setVolume(scaleRange(1, 0, eventList[i][4], eventList[i][5], 
+								Math.pow(interpolateFade(eventList[i][2], eventList[i][3], 1, 0, now), 0.5)));
 						}
-					if (now > eventList[i][3]) {
-						//console.log("Ending Fade Event for " + thisTrack.getTrackName());
-						thisTrack.setVolume(eventList[i][5]);
-						eventList[i] = [REMOVE];
+					} else {
+						thisTrack.setVolume(interpolateFade(eventList[i][2], eventList[i][3], eventList[i][4], eventList[i][5], now));
 					}
+				if (now > eventList[i][3]) {
+					//console.log("Ending Fade Event for " + thisTrack.getTrackName());
+					thisTrack.setVolume(eventList[i][5]);
+					eventList[i] = [REMOVE];
 				}
 			}
 			if (eventList[i][0] == TIMER) {
-				// Arrayformat [TIMER, track, endTime, callSign]
-				thisTrack = eventList[i][1];
+			// Arrayformat [TIMER, track, endTime, callSign]
 				if (now >= eventList[i][2]) {
 					var callSign = eventList[i][3];
 					//console.log("Triggering Timer Event. CallSign is: " + eventList[i][3]);
@@ -222,25 +219,19 @@ function audioEventManager() {
 				}
 			}
 			if (eventList[i][0] == PLAY) {
-				//Arrayformat [PLAY, track, endTime]
-				thisTrack = eventList[i][1];
-				if (thisTrack.getPaused() == false) {
-					if (now >= eventList[i][2]) {
-						//console.log("Executing Play Event for " + thisTrack.getTrackName());
-						thisTrack.play();
-						eventList[i] = [REMOVE];
-					}
+			//Arrayformat [PLAY, track, endTime]
+				if (now >= eventList[i][2]) {
+					//console.log("Executing Play Event for " + thisTrack.getTrackName());
+					thisTrack.play();
+					eventList[i] = [REMOVE];
 				}
 			}
 			if (eventList[i][0] == STOP) {
-				//Arrayformat [STOP, track, endTime]
-				thisTrack = eventList[i][1];
-				if (thisTrack.getPaused() == false) {
-					if (now >= eventList[i][2]) {
-						//console.log("Executing Stop Event for " + thisTrack.getTrackName());
-						thisTrack.stop();
-						eventList[i] = [REMOVE];
-					}
+			//Arrayformat [STOP, track, endTime]
+				if (now >= eventList[i][2]) {
+					//console.log("Executing Stop Event for " + thisTrack.getTrackName());
+					thisTrack.stop();
+					eventList[i] = [REMOVE];
 				}
 			}
 		}
