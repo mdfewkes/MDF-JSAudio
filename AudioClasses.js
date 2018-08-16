@@ -1656,6 +1656,10 @@ function musicTrackOverlap(filename, playLength) {//Double buffer music file
 		return false;
 	}
 
+	this.getSourceFile = function() {
+		return musicFile[1];
+	} // temp
+
 	this.resetTick = function() {
 		tick = 0;
 	}
