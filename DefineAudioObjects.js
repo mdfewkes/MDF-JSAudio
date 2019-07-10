@@ -1,54 +1,41 @@
 setFormat();
 setAudioPath("Audio/");
 
-// //set sound clips and music tracks here
-// var track1 = new musicTrackOverlap("lay4tail16", 16);
-// var track2 = new musicTrackOverlap("lay2tail8", 8);
-// var track3 = new musicTrackOverlap("LayTail34", 8);
-// var backgroundTracks = new musicContainerCrossfadeLoop([track1, track2, track3]);
-var track1 = new musicTrackOverlap("Uni", 8);
-var track2 = new musicTrackOverlap("HaE", 16);
-var track3 = new musicTrackOverlap("Sea", 8);
-var track4 = new musicTrackOverlap("Que", 8);
-var track5 = new musicTrackOverlap("LD", 16);
-var backgroundTracks = new musicContainerCrossfadeLoop([track1, track2, track3, track4, track5]);
-// var layer1 = new musicTrackOverlap("clavtail2", 2);
-// var layer2 = new musicTrackOverlap("cabasatail2", 2);
-// var layer3 = new musicTrackOverlap("kicktail2", 2);
-// var backgroundLayers = new musicContainerLayersLoop([layer1, layer2, layer3]);
-var backgroundMusic = new musicContainerCrossfade([backgroundTracks/*, backgroundLayers*/]);
+//set sound clips and music tracks here
+var track1 = new musicTrackOverlap("lay4tail16", 16);
+var track2 = new musicTrackOverlap("lay2tail8", 8);
+var track3 = new musicTrackOverlap("LayTail34", 8);
+var backgroundTracks = new musicContainerCrossfadeLoop([track1, track2, track3]);
+var layer1 = new musicTrackOverlap("clavtail2", 2);
+var layer2 = new musicTrackOverlap("cabasatail2", 2);
+var layer3 = new musicTrackOverlap("kicktail2", 2);
+var backgroundLayers = new musicContainerLayersLoop([layer1, layer2, layer3]);
+var backgroundMusic = new musicContainerCrossfade([backgroundTracks, backgroundLayers]);
 
-// var controles = new sfxClipSpriteSheet("controls", [[0.242,0.578],[1.326,1.82],[2.6,2.95]]);
-// var conPlay = new sfxClipSprite(controles, 0);
-// var conPause = new sfxClipSprite(controles, 1);
-// var conStop = new sfxClipSprite(controles, 2);
+var controles = new sfxClipSpriteSheet("controls", [[0.242,0.578],[1.326,1.82],[2.6,2.95]]);
+var conPlay = new sfxClipSprite(controles, 0);
+var conPause = new sfxClipSprite(controles, 1);
+var conStop = new sfxClipSprite(controles, 2);
 
 track1.name = "track1";
 track2.name = "track2";
 track3.name = "track3";
-track4.name = "track4";
-track5.name = "track5";
-track1.setVolume(1);
-track2.setVolume(0);
-track3.setVolume(0);
-track4.setVolume(0);
-track5.setVolume(0);
-// track2.setMixVolume(0.85);
-// track3.setMixVolume(0.75);
+track2.setMixVolume(0.85);
+track3.setMixVolume(0.75);
 
-// layer1.name = "layer1";
-// layer2.name = "layer2";
-// layer3.name = "layer3";
-// backgroundLayers.setLayerLevel(1,0);
-// backgroundLayers.setLayerLevel(2,0);
+layer1.name = "layer1";
+layer2.name = "layer2";
+layer3.name = "layer3";
+backgroundLayers.setLayerLevel(1,0);
+backgroundLayers.setLayerLevel(2,0);
 
 
-// controles.setMixVolume(0.75);
+controles.setMixVolume(0.75);
 
 
 
-// var test1 = new musicTrackOverlap("lay4tail16", 16);
-// var test2 = new musicTrackOverlap("cabasatail2", 2);
-// var test3 = new musicTrackOverlap("kicktail2", 2);
+var test1 = new musicTrackOverlap("lay4tail16", 16);
+var test2 = new musicTrackOverlap("cabasatail2", 2);
+var test3 = new musicTrackOverlap("kicktail2", 2);
 
-// var testC = new musicContainerPlaylistLoopLast([test1,test2]);
+var testC = new musicContainerPlaylistLoopLast([test1,test2]);
