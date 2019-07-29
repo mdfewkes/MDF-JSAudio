@@ -1490,7 +1490,7 @@ function musicTrack(filename, playLength) {//Single buffer music file
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
 		musicFile.volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
-		if(playing && musicFile[currentTrack].paused && newVolume >= 0.1) {
+		if(playing && musicFile.paused && newVolume >= 0.1) {
 			var newTime = AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
 			if(newTime != "none") {
 				this.setTime(duration - newTime);
