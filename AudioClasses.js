@@ -132,7 +132,7 @@ function sfxClip(filename) {//A simple, single buffer sound clip
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
 		soundFile.volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
-		if(playing && musicFile.paused && newVolume >= 0.1) {
+		if(playing && soundFile.paused && newVolume >= 0.1) {
 			var newTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
 			this.setTime(newTime);
 			soundFile.play();
@@ -331,7 +331,7 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 }
 
 function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file that loops
-	var musicFile = new Array(new Audio(audioPath+filename+audioFormat()), new Audio(audioPath+filename+audioFormat()));
+	var soundFile = new Array(new Audio(audioPath+filename+audioFormat()), new Audio(audioPath+filename+audioFormat()));
 	soundFile[0].onerror = function(){soundFile[0] = new Audio(audioPath+filename+audioFormat(true))}
 	soundFile[1].onerror = function(){soundFile[1] = new Audio(audioPath+filename+audioFormat(true))}
 	var currentClip = 0;
