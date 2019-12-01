@@ -57,6 +57,12 @@ function volumeManager() {
 			list[i].stop();
 		}
 	}
+
+	this.pauseAll = function() {
+		for(var i in list) {
+			list[i].pause();
+		}
+	}
 }
 
 //SFX Classes
