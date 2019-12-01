@@ -63,6 +63,54 @@ function volumeManager() {
 			list[i].pause();
 		}
 	}
+
+	this.play = function(name) {
+		var searching = true;
+		var i = 0;
+		while(searching) {
+			if (name == list[i].name) {
+				list[i].play();
+				searching = false;
+			}
+		i++;
+		}
+	}
+
+	this.stop = function(name) {
+		var searching = true;
+		var i = 0;
+		while(searching) {
+			if (name == list[i].name) {
+				list[i].stop();
+				searching = false;
+			}
+		i++;
+		}
+	}
+
+	this.resume = function(name) {
+		var searching = true;
+		var i = 0;
+		while(searching) {
+			if (name == list[i].name) {
+				list[i].resume();
+				searching = false;
+			}
+		i++;
+		}
+	}
+
+	this.pause = function(name) {
+		var searching = true;
+		var i = 0;
+		while(searching) {
+			if (name == list[i].name) {
+				list[i].pause();
+				searching = false;
+			}
+		i++;
+		}
+	}
 }
 
 //SFX Classes
