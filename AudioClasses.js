@@ -51,6 +51,12 @@ function volumeManager() {
 	this.addToList = function(item) {
 		list.push(item);
 	}
+
+	this.stopAll = function() {
+		for(var i in list) {
+			list[i].stop();
+		}
+	}
 }
 
 //SFX Classes
