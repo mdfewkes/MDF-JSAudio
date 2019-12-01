@@ -187,9 +187,9 @@ function sfxClip(filename) {//A simple, single buffer sound clip
 }
 
 function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffers as specified
-	var soundFile = new array(voices);
-	var maxVoices = soundfile.length;
-	for (var i in soundFile) {
+	var soundFile = new Array(voices);
+	var maxVoices = soundFile.length;
+	for (var i = 0; i < soundFile.length; i++) {
 		soundFile[i] = new Audio(audioPath+filename+audioFormat());
 		soundFile[i].onerror = function(){soundFile[i] = new Audio(audioPath+filename+audioFormat(true))};
 		soundFile[i].pause();
