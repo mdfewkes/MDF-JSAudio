@@ -15,10 +15,12 @@ Functions that all sound objects share:
 */
 
 //General
+volumeManagerList = [];
 function volumeManager() {
 	var list = [];
 	var volume = 1;
 	var muted = false;
+	volumeManagerList.push(this);
 
 	this.setVolume = function(amount) {
 		if (amount > 1) {volume = 1;}

@@ -22,17 +22,25 @@ function audioFormat(alt = false) {
 
 
 function toggleMute() {
-	SFXVolumeManager.setMuted(!SFXVolumeManager.getMuted());
-	MusicVolumeManager.setMuted(!MusicVolumeManager.getMuted());
+	for (i in volumeManagerList) {
+		volumeManagerList[i].setMuted(!volumeManagerList[i].getMuted());
+	}
 }
 
 function setMute(TorF) {
-	SFXVolumeManager.setMuted(TorF);
-	MusicVolumeManager.setMuted(TorF);
+	for (i in volumeManagerList) {
+		volumeManagerList[i].setMuted(TorF);
+	}
 }
 
 function getMute() {
-	var isNotMuted = SFXVolumeManager.getMuted() * MusicVolumeManager.getMuted();
+	//var isNotMuted = SFXVolumeManager.getMuted() * MusicVolumeManager.getMuted();
+	var isNotMuted = 1;
+
+	for (i in volumeManagerList) {
+		isNotMuted *= volumeManagerList[i].getMuted();
+	}
+
 	return isNotMuted;
 }
 
