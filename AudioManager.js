@@ -65,7 +65,7 @@ function audioEventManager() {
 		var check = checkListFor(FADE, track);
 		var endTime = duration * 1000 + now;
 		var startVolume = track.getVolume();
-		//console.log("Adding Fade Event for " + track.getTrackName());
+		//console.log("Adding Fade Event for " + track.name);
 
 		if (check == "none") {
 			eventList.push([FADE, track, now, endTime, startVolume, endVol, false]);
@@ -79,7 +79,7 @@ function audioEventManager() {
 		var check = checkListFor(FADE, track);
 		var endTime = duration * 1000 + now;
 		var startVolume = track.getVolume();
-		//console.log("Adding Fade Event for " + track.getTrackName());
+		//console.log("Adding Fade Event for " + track.name);
 
 		if (check == "none") {
 			eventList.push([FADE, track, now, endTime, startVolume, endVol, true]);
@@ -95,10 +95,10 @@ function audioEventManager() {
 		var endTime = (duration * 1000) + now;
 
 		if (check == "none") {
-			//console.log("Adding Timer Event for " + track.getTrackName() + ". CallSign: " + callSign);
+			//console.log("Adding Timer Event for " + track.name + ". CallSign: " + callSign);
 			eventList.push([TIMER, track, endTime, callSign]);
 		} else {
-			//console.log("Replacing Timer Event for " + track.getTrackName() + ". CallSign: " + callSign);
+			//console.log("Replacing Timer Event for " + track.name + ". CallSign: " + callSign);
 			eventList[check] = [TIMER, track, endTime, callSign];
 		}
 	}
@@ -110,7 +110,7 @@ function audioEventManager() {
 		var endTime = (duration * 1000) + now;
 
 		if (check == "none") {
-			//console.log("Adding Play Event for " + track.getTrackName());
+			//console.log("Adding Play Event for " + track.name);
 			eventList.push([PLAY, track, endTime]);
 		} else {
 			eventList[check] = [PLAY, track, endTime];
@@ -124,7 +124,7 @@ function audioEventManager() {
 		var endTime = (duration * 1000) + now;
 
 		if (check == "none") {
-			//console.log("Adding Stop Event for " + track.getTrackName());
+			//console.log("Adding Stop Event for " + track.name);
 			eventList.push([STOP, track, endTime]);
 		} else {
 			eventList[check] = [STOP, track, endTime];
@@ -133,20 +133,20 @@ function audioEventManager() {
 
 	this.removeTimerEvent = function(track, callSign = "") {
 		var thisTrack = track;
-		if(callSign != " ") {
+		if(callSign != "") {
 			var check = checkListFor(TIMER, thisTrack, callSign);
 			if (check == "none") {
 				return;
 			} else {
-				//console.log("Removing Timer Event for " + track.getTrackName() + ". CallSign: " + callSign);
+				//console.log("Removing Timer Event for " + track.name + ". CallSign: " + callSign);
 				eventList[check] = [REMOVE];
 			}
 		} else {
-			var check = checkListFor(TIMER, thisTrack, "");
+			var check = checkListFor(TIMER, thisTrack);
 			while(check != "none") {
-			//console.log("Removing Timer Event for " + track.getTrackName());
+			//console.log("Removing Timer Event for " + track.name);
 				eventList[check] = [REMOVE];
-				check = checkListFor(TIMER, thisTrack, "");
+				check = checkListFor(TIMER, thisTrack);
 			}
 		}
 	}
@@ -158,7 +158,7 @@ function audioEventManager() {
 		if (check == "none") {
 			return;
 		} else {
-			//console.log("Removing Stop Event for " + track.getTrackName());
+			//console.log("Removing Stop Event for " + track.name);
 			eventList[check] = [REMOVE];
 		}
 	}
@@ -170,7 +170,7 @@ function audioEventManager() {
 		if (check == "none") {
 			return;
 		} else {
-			//console.log("Removing Stop Event for " + track.getTrackName());
+			//console.log("Removing Stop Event for " + track.name);
 			eventList[check] = [REMOVE];
 		}
 	}
@@ -190,46 +190,50 @@ function audioEventManager() {
 	function runList(){
 		for (var i = 0; i < eventList.length; i++) {
 			var thisTrack = eventList[i][1];
+
 			if (eventList[i][0] == FADE) {
 			// Arrayformat [FADE, track, startTime, endTime, startVolume, endVolume, crossfade]
-					if(eventList[i][6]) {
-						if(eventList[i][4] < eventList[i][5]){
-							thisTrack.setVolume(scaleRange(0, 1, eventList[i][4], eventList[i][5], 
-								Math.pow(interpolateFade(eventList[i][2], eventList[i][3], 0, 1, now), 0.5)));
-						} else {
-							thisTrack.setVolume(scaleRange(1, 0, eventList[i][4], eventList[i][5], 
-								Math.pow(interpolateFade(eventList[i][2], eventList[i][3], 1, 0, now), 0.5)));
-						}
+				if(eventList[i][6]) {
+					if(eventList[i][4] < eventList[i][5]){
+						thisTrack.setVolume(scaleRange(0, 1, eventList[i][4], eventList[i][5], 
+							Math.pow(interpolateFade(eventList[i][2], eventList[i][3], 0, 1, now), 0.5)));
 					} else {
-						thisTrack.setVolume(interpolateFade(eventList[i][2], eventList[i][3], eventList[i][4], eventList[i][5], now));
+						thisTrack.setVolume(scaleRange(1, 0, eventList[i][4], eventList[i][5], 
+							Math.pow(interpolateFade(eventList[i][2], eventList[i][3], 1, 0, now), 0.5)));
 					}
+				} else {
+					thisTrack.setVolume(interpolateFade(eventList[i][2], eventList[i][3], eventList[i][4], eventList[i][5], now));
+				}
 				if (now > eventList[i][3]) {
-					//console.log("Ending Fade Event for " + thisTrack.getTrackName());
+					//console.log("Ending Fade Event for " + thisTrack.name);
 					thisTrack.setVolume(eventList[i][5]);
 					eventList[i] = [REMOVE];
 				}
 			}
+
 			if (eventList[i][0] == TIMER) {
 			// Arrayformat [TIMER, track, endTime, callSign]
 				if (now >= eventList[i][2]) {
 					var callSign = eventList[i][3];
-					//console.log("Triggering Timer Event. CallSign is: " + eventList[i][3]);
+					//console.log("Triggering Timer Event for " + thisTrack.name + ". CallSign is: " + eventList[i][3]);
 					eventList[i] = [REMOVE];
 					thisTrack.trigger(callSign);
 				}
 			}
+
 			if (eventList[i][0] == PLAY) {
 			//Arrayformat [PLAY, track, endTime]
 				if (now >= eventList[i][2]) {
-					//console.log("Executing Play Event for " + thisTrack.getTrackName());
+					//console.log("Executing Play Event for " + thisTrack.name);
 					thisTrack.play();
 					eventList[i] = [REMOVE];
 				}
 			}
+
 			if (eventList[i][0] == STOP) {
 			//Arrayformat [STOP, track, endTime]
 				if (now >= eventList[i][2]) {
-					//console.log("Executing Stop Event for " + thisTrack.getTrackName());
+					//console.log("Executing Stop Event for " + thisTrack.name);
 					thisTrack.stop();
 					eventList[i] = [REMOVE];
 				}
@@ -246,7 +250,7 @@ function audioEventManager() {
 		}
 	}
 
-	function checkListFor(eventType, track, callSign = "none"){
+	function checkListFor(eventType, track, callSign = ""){
 		var foundItem = false;
 		for (var i = 0; i < eventList.length; i++) {
 			if (eventList[i][0] == eventType) {
@@ -254,10 +258,10 @@ function audioEventManager() {
 					if(eventType == TIMER && callSign != "" && eventList[i][3] == callSign) {
 						foundItem = true;
 						return i;
-					} else if (eventType == TIMER && callSign == "") {
+					} else if (eventType == TIMER) {
 						foundItem = true;
 						return i;
-					} else if (eventType != TIMER) {
+					} else {
 						foundItem = true;
 						return i;
 					}
@@ -279,7 +283,8 @@ function audioEventManager() {
 
 		x = currentTime
 		y = y1 + (x - x1)((y2 - y1)/(x2 - x1))
-   	 currentVolume = startVolume + (now - startTime) * ((endVolume - startVolume) / (endTime - startTime))
+
+   		currentVolume = startVolume + (currentTime - startTime) * ((endVolume - startVolume) / (endTime - startTime))
 		*/
 		if (currentTime > endTime) {currentTime = endTime;}
 		var currentVolume = startVolume + (currentTime - startTime) * ((endVolume - startVolume) / (endTime - startTime));
