@@ -144,7 +144,7 @@ function sfxClip(filename) {//A simple, single buffer sound clip
 	this.play = function() {
 		soundFile.currentTime = 0;
 		this.updateVolume();
-		soundFile.play();
+		if (clipVolume > 0.1) {soundFile.play()};
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "cue");
 		playing = true;
 	}
@@ -275,7 +275,7 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 
 		soundFile[currentClip].currentTime = 0;
 		this.updateVolume();
-		soundFile[currentClip].play();
+		if (clipVolume > 0.1) {soundFile[currentClip].play();};
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "cue");
 		playing = true;
 	}
@@ -412,7 +412,7 @@ function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file th
 	this.play = function() {
 		soundFile[currentClip].currentTime = 0;
 		this.updateVolume();
-		soundFile[currentClip].play();
+		if (clipVolume > 0.1) {soundFile[currentClip].play();};
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "cue");
 		playing = true;
 	}
@@ -548,7 +548,7 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 		var startAt = times[currentClip][0];
 		soundFile.currentTime = startAt;
 		this.updateVolume();
-		soundFile.play();
+		if (clipVolume > 0.1) {soundFile.play();};
 		AudioEventManager.addStopEvent(this, this.getClipDuration(currentClip));
 		AudioEventManager.addTimerEvent(this, this.getClipDuration(currentClip), "cue");
 		playing = true;
@@ -1500,6 +1500,7 @@ function musicTrack(filename, playLength) {//Single buffer music file
 		musicFile.currentTime = 0;
 		this.updateVolume();
 		musicFile.play();
+		if (trackVolume > 0.1) {musicFile.play();};
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "cue");
 		playing = true;
 	}
@@ -1632,6 +1633,7 @@ function musicTrackOverlap(filename, playLength) {//Double buffer music file
 		musicFile[currentTrack].currentTime = 0;
 		this.updateVolume();
 		musicFile[currentTrack].play();
+		if (trackVolume > 0.1) {musicFile[currentTrack].play();};
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "cue");
 		playing = true;
 	}
@@ -1773,7 +1775,7 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 	this.play = function() {
 		musicFile[currentTrack].currentTime = 0;
 		this.updateVolume();
-		musicFile[currentTrack].play();
+		if (trackVolume > 0.1) {musicFile[currentTrack].play();};
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "cue");
 		playing = true;
 	}
