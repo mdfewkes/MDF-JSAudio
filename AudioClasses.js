@@ -163,7 +163,9 @@ function sfxClip(filename) {//A simple, single buffer sound clip
 	}
 
 	this.pause = function() {
-		soundFile.pause();
+		if(playing && soundFile.paused && clipVolume < 0.1) {
+			soundFile.currentTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
+		} else {soundFile.pause();}
 		AudioEventManager.removeTimerEvent(this);
 		playing = false;
 	}
@@ -296,6 +298,10 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 	}
 
 	this.pause = function() {
+		if(playing && soundFile[currentClip].paused && clipVolume < 0.1) {
+			soundFile[currentClip].currentTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
+		} else {soundFile.pause();}
+
 		for (var i in soundFile) {
 			soundFile[i].pause();
 		}
@@ -433,8 +439,12 @@ function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file th
 	}
 
 	this.pause = function() {
-		soundFile[0].pause();
-		soundFile[1].pause();
+		if(playing && soundFile[0].paused && soundFile[1].paused && clipVolume < 0.1) {
+			soundFile[currentClip].currentTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
+		} else {
+			soundFile[0].pause();
+			soundFile[1].pause();
+		}
 		AudioEventManager.removeTimerEvent(this);
 		playing = false;
 	}
@@ -570,7 +580,9 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 	}
 
 	this.pause = function() {
-		soundFile.pause();
+		if(playing && soundFile.paused && clipVolume < 0.1) {
+			soundFile.currentTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
+		} else {soundFile.pause();}
 		AudioEventManager.removeStopEvent(this);
 		AudioEventManager.removeTimerEvent(this);
 		playing = false;
@@ -1519,6 +1531,9 @@ function musicTrack(filename, playLength) {//Single buffer music file
 	}
 
 	this.pause = function() {
+		if(playing && musicFile.paused && trackVolume < 0.1) {
+			musicFile.currentTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
+		} else {musicFile.pause();}
 		musicFile.pause();
 		AudioEventManager.removeTimerEvent(this);
 		playing = false;
@@ -1654,8 +1669,12 @@ function musicTrackOverlap(filename, playLength) {//Double buffer music file
 	}
 
 	this.pause = function() {
-		musicFile[0].pause();
-		musicFile[1].pause();
+		if(playing && musicFile[0].paused && musicFile[1].paused && trackVolume < 0.1) {
+			musicFile[currentTrack].currentTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
+		} else {
+			musicFile[0].pause();
+			musicFile[1].pause();
+		}
 		AudioEventManager.removeTimerEvent(this);
 		playing = false;
 	}
@@ -1796,8 +1815,12 @@ function musicTrackOverlapLoop(filename, playLength) {//Double buffer music file
 	}
 
 	this.pause = function() {
-		musicFile[0].pause();
-		musicFile[1].pause();
+		if(playing && musicFile[0].paused && musicFile[1].paused && trackVolume < 0.1) {
+			musicFile[currentTrack].currentTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "cue");
+		} else {
+			musicFile[0].pause();
+			musicFile[1].pause();
+		}
 		AudioEventManager.removeTimerEvent(this);
 		playing = false;
 	}
