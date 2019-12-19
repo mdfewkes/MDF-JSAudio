@@ -1879,7 +1879,7 @@ function musicContainer(trackList) {//Basic containers
 
 	this.play = function() {
 		musicTrack[currentTrack].play();
-		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
+		AudioEventManager.addTimerEvent(this, this.getDuration(), "cue");
 	}
 
 	this.stop = function() {
@@ -1891,7 +1891,7 @@ function musicContainer(trackList) {//Basic containers
 
 	this.resume = function() {
 		musicTrack[currentTrack].resume();
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.pause = function() {
@@ -1903,11 +1903,11 @@ function musicContainer(trackList) {//Basic containers
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.trigger = function(callSign) {
-		if(callSign == "tick") {tick++;}
+		if(callSign == "cue") {tick++;}
 	}
 
 	this.setCurrentTrack = function(trackNumber) {
@@ -1995,7 +1995,7 @@ function musicContainer(trackList) {//Basic containers
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
-		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");}
 	}
 
 	this.getTime = function() {
@@ -2027,7 +2027,7 @@ function musicContainerRandom(trackList) {//Picks random list-item to play on pl
 	this.play = function() {
 		currentTrack = Math.floor(Math.random() * musicTrack.length);
 		musicTrack[currentTrack].play();
-		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
+		AudioEventManager.addTimerEvent(this, this.getDuration(), "cue");
 	}
 
 	this.stop = function() {
@@ -2040,7 +2040,7 @@ function musicContainerRandom(trackList) {//Picks random list-item to play on pl
 
 	this.resume = function() {
 		musicTrack[currentTrack].resume();
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.pause = function() {
@@ -2052,11 +2052,11 @@ function musicContainerRandom(trackList) {//Picks random list-item to play on pl
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.trigger = function(callSign) {
-		if(callSign == "tick") {tick++;}
+		if(callSign == "cue") {tick++;}
 	}
 
 	this.loadTrack = function(newTrack, slot) {
@@ -2140,7 +2140,7 @@ function musicContainerRandom(trackList) {//Picks random list-item to play on pl
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
-		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");}
 	}
 
 	this.getTime = function() {
@@ -3431,7 +3431,7 @@ function musicContainerConcatenatedLoopLast(trackList) {//Loop all list-items as
 	}
 
 	this.trigger = function(callSign) {
-		if(callSign == "secret cue") {
+		if(callSign == "cue") {
 			if (currentTrack < musicTrack.length - 1) {
 				currentTrack++;
 			} 
@@ -3608,7 +3608,7 @@ function musicContainerCrossfade(trackList) {//Can crossfade between list-items
 
 	this.play = function() {
 		musicTrack[currentTrack].play();
-		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
+		AudioEventManager.addTimerEvent(this, this.getDuration(), "cue");
 	}
 
 	this.stop = function() {
@@ -3620,7 +3620,7 @@ function musicContainerCrossfade(trackList) {//Can crossfade between list-items
 
 	this.resume = function() {
 		musicTrack[currentTrack].resume();
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.pause = function() {
@@ -3632,11 +3632,11 @@ function musicContainerCrossfade(trackList) {//Can crossfade between list-items
 
 	this.playFrom = function(time) {
 		musicTrack[currentTrack].playFrom(time);
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.trigger = function(callSign) {
-		if(callSign == "tick") {tick++;}
+		if(callSign == "cue") {tick++;}
 	}
 
 	this.switchTo = function(slot, fadeTime = 1) {
@@ -3735,7 +3735,7 @@ function musicContainerCrossfade(trackList) {//Can crossfade between list-items
 
 	this.setTime = function(time) {
 		musicTrack[currentTrack].setTime(time);
-		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");}
 	}
 
 	this.getTime = function() {
@@ -3948,7 +3948,7 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 				musicTrack[i].play();
 			}
 		}
-		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
+		AudioEventManager.addTimerEvent(this, this.getDuration(), "cue");
 	}
 
 	this.stop = function() {
@@ -3964,7 +3964,7 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 				musicTrack[i].resume();
 			}
 		}
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.pause = function() {
@@ -3978,11 +3978,11 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 		for (var i in musicTrack) {
 			musicTrack[i].playFrom(time);
 		}
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");
 	}
 
 	this.trigger = function(callSign) {
-		if(callSign == "tick") {tick++;}
+		if(callSign == "cue") {tick++;}
 	}
 
 	this.setLayerLevel = function(slot, level, fadeTime = 1) {
@@ -4098,7 +4098,7 @@ function musicContainerLayers(trackList) {//Plays all list-items together, contr
 		for (var i in musicTrack) {
 			musicTrack[i].setTime(time);
 		}
-		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "cue");}
 	}
 
 	this.getTime = function() {
