@@ -51,6 +51,7 @@ const FADE = 1; // Arrayformat [FADE, track, startTime, endTime, startVolume, en
 const TIMER = 2; // Arrayformat [TIMER, track, endTime, callSign]
 const PLAY = 3; // Arrayformat [PLAY, track, endTime]
 const STOP = 4; // Arrayformat [STOP, track, endTime]
+const CHECKING = 5; // Arrayformat [CHECK, track, checkTime, eventType, eventProperty1, eventProperty2]
 
 var AudioEventManager = new audioEventManager();
 
@@ -65,7 +66,7 @@ function audioEventManager() {
 	this.updateEvents = function() {
 		now = Date.now();
 		cleanupList();
-		runList();
+		this.runList();
 	}
 
 	this.addFadeEvent = function(track, duration, endVol) {
@@ -139,6 +140,20 @@ function audioEventManager() {
 		}
 	}
 
+	this.addCheckingEvent = function(track, eventType, eventProperty1, eventProperty2 = 0) {
+		// Arrayformat [CHECK, track, checkTime, eventType, eventProperty1, eventProperty2]
+		var thisTrack = track;
+		var check = checkListFor(CHECKING, thisTrack);
+		var checkTime = thisTrack.getTime();
+
+		if (check == "none") {
+			//console.log("Adding Stop Event for " + track.name);
+			eventList.push([CHECKING, track, checkTime, eventType, eventProperty1, eventProperty2]);
+		} else {
+			eventList[check] = [CHECKING, track, checkTime, eventType, eventProperty1, eventProperty2];
+		}
+	}
+
 	this.removeTimerEvent = function(track, callSign = "") {
 		var thisTrack = track;
 		if(callSign != "") {
@@ -195,7 +210,7 @@ function audioEventManager() {
 		}
 	}
 
-	function runList(){
+	this.runList = function(){
 		for (var i = 0; i < eventList.length; i++) {
 			var thisTrack = eventList[i][1];
 
@@ -243,6 +258,28 @@ function audioEventManager() {
 				if (now >= eventList[i][2]) {
 					//console.log("Executing Stop Event for " + thisTrack.name);
 					thisTrack.stop();
+					eventList[i] = [REMOVE];
+				}
+			}
+
+			if (eventList[i][0] == CHECKING) {
+			//Arrayformat [CHECK, track, checkTime, eventType, eventProperty1, eventProperty2]
+				if (thisTrack.getTime() > eventList[i][2]) {
+					//console.log("Executing Checking Event for " + thisTrack.name);
+					switch(eventList[i][3]) {
+						case FADE:
+							this.addFadeEvent(thisTrack, eventList[i][4], eventList[i][5]);
+							break;
+						case TIMER:
+							this.addTimerEvent(thisTrack, eventList[i][4], eventList[i][5]);
+							break;
+						case PLAY:
+							this.addPlayEvent(thisTrack, eventList[i][4]);
+							break;
+						case STOP:
+							this.addStopEvent(thisTrack, eventList[i][4]);
+							break;
+					}
 					eventList[i] = [REMOVE];
 				}
 			}
