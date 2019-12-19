@@ -118,18 +118,10 @@ function volumeManager() {
 //SFX Classes
 SFXVolumeManager = new volumeManager();
 
-function getRandomVolume(){
-	var min = 0.85;
-	var max = 1;
-	var randomVolume = Math.random() * (max - min) + min;
-	return randomVolume.toFixed(2);
-}
-
 function sfxClip(filename) {//A simple, single buffer sound clip
 	var soundFile = new Audio(audioPath+filename+audioFormat());
 	soundFile.onerror = function(){soundFile = new Audio(audioPath+filename+audioFormat(true))};
 	var clipVolume = 1;
-	var randVolume = true;
 	this.name = filename;
 	var duration = soundFile.duration;
 	var mixVolume = 1;
@@ -181,11 +173,7 @@ function sfxClip(filename) {//A simple, single buffer sound clip
 		newVolume = clipVolume * mixVolume;
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		if (randVolume) {
-			soundFile.volume = Math.pow(newVolume * man.getVolume() * getRandomVolume() * !man.getMuted(), 2);
-		} else {
-			soundFile.volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
-		}
+		soundFile.volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
 	}
 
 	this.setVolume = function(newVolume) {
@@ -260,7 +248,6 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 	}
 	var currentClip = 0;
 	var clipVolume = 1;
-	var randVolume = true;
 	this.name = filename;
 	var duration = soundFile[0].duration;
 	var mixVolume = 1;
@@ -320,14 +307,8 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 		newVolume = clipVolume * mixVolume;
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		if (randVolume) {
-			for (var i in soundFile) {
-				soundFile[i].volume = Math.pow(newVolume * man.getVolume() * getRandomVolume() * !man.getMuted(), 2);
-			}
-		} else {
-			for (var i in soundFile) {
-				soundFile[i].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
-			}
+		for (var i in soundFile) {
+			soundFile[i].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
 		}
 	}
 
@@ -540,7 +521,6 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 	soundFile.onerror = function(){soundFile = new Audio(audioPath+filename+audioFormat(true))};
 	var times = listOfTimePairs;
 	var clipVolume = 1;
-	var randVolume = true;
 	this.name = filename;
 	var duration = soundFile.duration;
 	var currentClip = 0;
@@ -599,11 +579,7 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 		newVolume = clipVolume * mixVolume;
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
-		if (randVolume) {
-			soundFile.volume = Math.pow(newVolume * man.getVolume() * getRandomVolume() * !man.getMuted(), 2);
-		} else {
-			soundFile.volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
-		}
+		soundFile.volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
 	}
 
 	this.setVolume = function(newVolume) {
