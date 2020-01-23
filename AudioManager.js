@@ -47,11 +47,11 @@ function getMute() {
 
 //Time Manager
 const REMOVE = 0; // Arrayformat [REMOVE]
-const FADE = 1; // Arrayformat [FADE, track, startTime, endTime, startVolume, endVolume, crossfade]
-const TIMER = 2; // Arrayformat [TIMER, track, endTime, callSign]
-const PLAY = 3; // Arrayformat [PLAY, track, endTime]
-const STOP = 4; // Arrayformat [STOP, track, endTime]
-const CHECKING = 5; // Arrayformat [CHECK, track, checkTime, eventType, eventProperty1, eventProperty2]
+const FADE = 1; // Arrayformat [FADE, clip, startTime, endTime, startVolume, endVolume, crossfade]
+const TIMER = 2; // Arrayformat [TIMER, clip, endTime, callSign]
+const PLAY = 3; // Arrayformat [PLAY, clip, endTime]
+const STOP = 4; // Arrayformat [STOP, clip, endTime]
+const CHECKING = 5; // Arrayformat [CHECK, clip, checkTime, eventType, eventProperty1, eventProperty2]
 
 var AudioEventManager = new audioEventManager();
 
@@ -69,139 +69,139 @@ function audioEventManager() {
 		this.runList();
 	}
 
-	this.addFadeEvent = function(track, duration, endVol) {
-		// Arrayformat [FADE, track, startTime, endTime, startVolume, endVolume, crossfade = false]
-		var check = checkListFor(FADE, track);
+	this.addFadeEvent = function(clip, duration, endVol) {
+		// Arrayformat [FADE, clip, startTime, endTime, startVolume, endVolume, crossfade = false]
+		var check = checkListFor(FADE, clip);
 		var endTime = duration * 1000 + now;
-		var startVolume = track.getVolume();
-		//console.log("Adding Fade Event for " + track.name);
+		var startVolume = clip.getVolume();
+		//console.log("Adding Fade Event for " + clip.name);
 
 		if (check == "none") {
-			eventList.push([FADE, track, now, endTime, startVolume, endVol, false]);
+			eventList.push([FADE, clip, now, endTime, startVolume, endVol, false]);
 		} else {
-			eventList[check] = [FADE, track, now, endTime, startVolume, endVol, false];
+			eventList[check] = [FADE, clip, now, endTime, startVolume, endVol, false];
 		}
 	}
 
-	this.addCrossfadeEvent = function(track, duration, endVol) {
-		// Arrayformat [FADE, track, startTime, endTime, startVolume, endVolume, crossfade = true]
-		var check = checkListFor(FADE, track);
+	this.addCrossfadeEvent = function(clip, duration, endVol) {
+		// Arrayformat [FADE, clip, startTime, endTime, startVolume, endVolume, crossfade = true]
+		var check = checkListFor(FADE, clip);
 		var endTime = duration * 1000 + now;
-		var startVolume = track.getVolume();
-		//console.log("Adding Fade Event for " + track.name);
+		var startVolume = clip.getVolume();
+		//console.log("Adding Fade Event for " + clip.name);
 
 		if (check == "none") {
-			eventList.push([FADE, track, now, endTime, startVolume, endVol, true]);
+			eventList.push([FADE, clip, now, endTime, startVolume, endVol, true]);
 		} else {
-			eventList[check] = [FADE, track, now, endTime, startVolume, endVol, true];
+			eventList[check] = [FADE, clip, now, endTime, startVolume, endVol, true];
 		}
 	}
 
-	this.addTimerEvent = function(track, duration, callSign = "none") {
-		// Arrayformat [TIMER, track, endTime, callSign]
-		var thisTrack = track;
-		var check = checkListFor(TIMER, thisTrack, callSign);
+	this.addTimerEvent = function(clip, duration, callSign = "none") {
+		// Arrayformat [TIMER, clip, endTime, callSign]
+		var thisClip = clip;
+		var check = checkListFor(TIMER, thisClip, callSign);
 		var endTime = (duration * 1000) + now;
 
 		if (check == "none") {
-			//console.log("Adding Timer Event for " + track.name + ". CallSign: " + callSign);
-			eventList.push([TIMER, track, endTime, callSign]);
+			//console.log("Adding Timer Event for " + clip.name + ". CallSign: " + callSign);
+			eventList.push([TIMER, clip, endTime, callSign]);
 		} else {
-			//console.log("Replacing Timer Event for " + track.name + ". CallSign: " + callSign);
-			eventList[check] = [TIMER, track, endTime, callSign];
+			//console.log("Replacing Timer Event for " + clip.name + ". CallSign: " + callSign);
+			eventList[check] = [TIMER, clip, endTime, callSign];
 		}
 	}
 
-	this.addPlayEvent = function(track, duration) {
-		// Arrayformat [PLAY, track, endTime]
-		var thisTrack = track;
-		var check = checkListFor(PLAY, thisTrack);
+	this.addPlayEvent = function(clip, duration) {
+		// Arrayformat [PLAY, clip, endTime]
+		var thisClip = clip;
+		var check = checkListFor(PLAY, thisClip);
 		var endTime = (duration * 1000) + now;
 
 		if (check == "none") {
-			//console.log("Adding Play Event for " + track.name);
-			eventList.push([PLAY, track, endTime]);
+			//console.log("Adding Play Event for " + clip.name);
+			eventList.push([PLAY, clip, endTime]);
 		} else {
-			eventList[check] = [PLAY, track, endTime];
+			eventList[check] = [PLAY, clip, endTime];
 		}
 	}
 
-	this.addStopEvent = function(track, duration) {
-		// Arrayformat [STOP, track, endTime]
-		var thisTrack = track;
-		var check = checkListFor(STOP, thisTrack);
+	this.addStopEvent = function(clip, duration) {
+		// Arrayformat [STOP, clip, endTime]
+		var thisClip = clip;
+		var check = checkListFor(STOP, thisClip);
 		var endTime = (duration * 1000) + now;
 
 		if (check == "none") {
-			//console.log("Adding Stop Event for " + track.name);
-			eventList.push([STOP, track, endTime]);
+			//console.log("Adding Stop Event for " + clip.name);
+			eventList.push([STOP, clip, endTime]);
 		} else {
-			eventList[check] = [STOP, track, endTime];
+			eventList[check] = [STOP, clip, endTime];
 		}
 	}
 
-	this.addCheckingEvent = function(track, eventType, eventProperty1, eventProperty2 = 0) {
-		// Arrayformat [CHECK, track, checkTime, eventType, eventProperty1, eventProperty2]
-		var thisTrack = track;
-		var check = checkListFor(CHECKING, thisTrack);
-		var checkTime = thisTrack.getTime();
+	this.addCheckingEvent = function(clip, eventType, eventProperty1, eventProperty2 = 0) {
+		// Arrayformat [CHECK, clip, checkTime, eventType, eventProperty1, eventProperty2]
+		var thisClip = clip;
+		var check = checkListFor(CHECKING, thisClip);
+		var checkTime = thisClip.getTime();
 
 		if (check == "none") {
-			//console.log("Adding Stop Event for " + track.name);
-			eventList.push([CHECKING, track, checkTime, eventType, eventProperty1, eventProperty2]);
+			//console.log("Adding Stop Event for " + clip.name);
+			eventList.push([CHECKING, clip, checkTime, eventType, eventProperty1, eventProperty2]);
 		} else {
-			eventList[check] = [CHECKING, track, checkTime, eventType, eventProperty1, eventProperty2];
+			eventList[check] = [CHECKING, clip, checkTime, eventType, eventProperty1, eventProperty2];
 		}
 	}
 
-	this.removeTimerEvent = function(track, callSign = "") {
-		var thisTrack = track;
+	this.removeTimerEvent = function(clip, callSign = "") {
+		var thisClip = clip;
 		if(callSign != "") {
-			var check = checkListFor(TIMER, thisTrack, callSign);
+			var check = checkListFor(TIMER, thisClip, callSign);
 			if (check == "none") {
 				return;
 			} else {
-				//console.log("Removing Timer Event for " + track.name + ". CallSign: " + callSign);
+				//console.log("Removing Timer Event for " + clip.name + ". CallSign: " + callSign);
 				eventList[check] = [REMOVE];
 			}
 		} else {
-			var check = checkListFor(TIMER, thisTrack);
+			var check = checkListFor(TIMER, thisClip);
 			while(check != "none") {
-			//console.log("Removing Timer Event for " + track.name);
+			//console.log("Removing Timer Event for " + clip.name);
 				eventList[check] = [REMOVE];
-				check = checkListFor(TIMER, thisTrack);
+				check = checkListFor(TIMER, thisClip);
 			}
 		}
 	}
 
-	this.removePlayEvent = function(track) {
-		var thisTrack = track;
-		var check = checkListFor(PLAY, thisTrack);
+	this.removePlayEvent = function(clip) {
+		var thisClip = clip;
+		var check = checkListFor(PLAY, thisClip);
 
 		if (check == "none") {
 			return;
 		} else {
-			//console.log("Removing Stop Event for " + track.name);
+			//console.log("Removing Stop Event for " + clip.name);
 			eventList[check] = [REMOVE];
 		}
 	}
 
-	this.removeStopEvent = function(track) {
-		var thisTrack = track;
-		var check = checkListFor(STOP, thisTrack);
+	this.removeStopEvent = function(clip) {
+		var thisClip = clip;
+		var check = checkListFor(STOP, thisClip);
 
 		if (check == "none") {
 			return;
 		} else {
-			//console.log("Removing Stop Event for " + track.name);
+			//console.log("Removing Stop Event for " + clip.name);
 			eventList[check] = [REMOVE];
 		}
 	}
 
-	this.getEventSecondsRemaining = function(track, eventType, callSign = "") {
+	this.getEventSecondsRemaining = function(clip, eventType, callSign = "") {
 		now = Date.now();
-		var thisTrack = track;
-		var check = checkListFor(eventType, thisTrack, callSign);
+		var thisClip = clip;
+		var check = checkListFor(eventType, thisClip, callSign);
 
 		if (check == "none") {
 			return "none";
@@ -212,72 +212,72 @@ function audioEventManager() {
 
 	this.runList = function(){
 		for (var i = 0; i < eventList.length; i++) {
-			var thisTrack = eventList[i][1];
+			var thisClip = eventList[i][1];
 
 			if (eventList[i][0] == FADE) {
-			// Arrayformat [FADE, track, startTime, endTime, startVolume, endVolume, crossfade]
+			// Arrayformat [FADE, clip, startTime, endTime, startVolume, endVolume, crossfade]
 				if(eventList[i][6]) {
 					if(eventList[i][4] < eventList[i][5]){
-						thisTrack.setVolume(scaleRange(0, 1, eventList[i][4], eventList[i][5], 
+						thisClip.setVolume(scaleRange(0, 1, eventList[i][4], eventList[i][5], 
 							Math.pow(interpolateFade(eventList[i][2], eventList[i][3], 0, 1, now), 0.5)));
 					} else {
-						thisTrack.setVolume(scaleRange(1, 0, eventList[i][4], eventList[i][5], 
+						thisClip.setVolume(scaleRange(1, 0, eventList[i][4], eventList[i][5], 
 							Math.pow(interpolateFade(eventList[i][2], eventList[i][3], 1, 0, now), 0.5)));
 					}
 				} else {
-					thisTrack.setVolume(interpolateFade(eventList[i][2], eventList[i][3], eventList[i][4], eventList[i][5], now));
+					thisClip.setVolume(interpolateFade(eventList[i][2], eventList[i][3], eventList[i][4], eventList[i][5], now));
 				}
 				if (now > eventList[i][3]) {
-					//console.log("Ending Fade Event for " + thisTrack.name);
-					thisTrack.setVolume(eventList[i][5]);
+					//console.log("Ending Fade Event for " + thisClip.name);
+					thisClip.setVolume(eventList[i][5]);
 					eventList[i] = [REMOVE];
 				}
 			}
 
 			if (eventList[i][0] == TIMER) {
-			// Arrayformat [TIMER, track, endTime, callSign]
+			// Arrayformat [TIMER, clip, endTime, callSign]
 				if (now >= eventList[i][2]) {
 					var callSign = eventList[i][3];
-					//console.log("Triggering Timer Event for " + thisTrack.name + ". CallSign is: " + eventList[i][3]);
+					//console.log("Triggering Timer Event for " + thisClip.name + ". CallSign is: " + eventList[i][3]);
 					eventList[i] = [REMOVE];
-					thisTrack.trigger(callSign);
+					thisClip.trigger(callSign);
 				}
 			}
 
 			if (eventList[i][0] == PLAY) {
-			//Arrayformat [PLAY, track, endTime]
+			//Arrayformat [PLAY, clip, endTime]
 				if (now >= eventList[i][2]) {
-					//console.log("Executing Play Event for " + thisTrack.name);
-					thisTrack.play();
+					//console.log("Executing Play Event for " + thisClip.name);
+					thisClip.play();
 					eventList[i] = [REMOVE];
 				}
 			}
 
 			if (eventList[i][0] == STOP) {
-			//Arrayformat [STOP, track, endTime]
+			//Arrayformat [STOP, clip, endTime]
 				if (now >= eventList[i][2]) {
-					//console.log("Executing Stop Event for " + thisTrack.name);
-					thisTrack.stop();
+					//console.log("Executing Stop Event for " + thisClip.name);
+					thisClip.stop();
 					eventList[i] = [REMOVE];
 				}
 			}
 
 			if (eventList[i][0] == CHECKING) {
-			//Arrayformat [CHECK, track, checkTime, eventType, eventProperty1, eventProperty2]
-				if (thisTrack.getTime() > eventList[i][2]) {
-					//console.log("Executing Checking Event for " + thisTrack.name);
+			//Arrayformat [CHECK, clip, checkTime, eventType, eventProperty1, eventProperty2]
+				if (thisClip.getTime() > eventList[i][2]) {
+					//console.log("Executing Checking Event for " + thisClip.name);
 					switch(eventList[i][3]) {
 						case FADE:
-							this.addFadeEvent(thisTrack, eventList[i][4], eventList[i][5]);
+							this.addFadeEvent(thisClip, eventList[i][4], eventList[i][5]);
 							break;
 						case TIMER:
-							this.addTimerEvent(thisTrack, eventList[i][4], eventList[i][5]);
+							this.addTimerEvent(thisClip, eventList[i][4], eventList[i][5]);
 							break;
 						case PLAY:
-							this.addPlayEvent(thisTrack, eventList[i][4]);
+							this.addPlayEvent(thisClip, eventList[i][4]);
 							break;
 						case STOP:
-							this.addStopEvent(thisTrack, eventList[i][4]);
+							this.addStopEvent(thisClip, eventList[i][4]);
 							break;
 					}
 					eventList[i] = [REMOVE];
@@ -295,11 +295,11 @@ function audioEventManager() {
 		}
 	}
 
-	function checkListFor(eventType, track, callSign = ""){
+	function checkListFor(eventType, clip, callSign = ""){
 		var foundItem = false;
 		for (var i = 0; i < eventList.length; i++) {
 			if (eventList[i][0] == eventType) {
-				if (eventList[i][1] == track) {
+				if (eventList[i][1] == clip) {
 					if(eventType == TIMER && callSign != "" && eventList[i][3] == callSign) {
 						foundItem = true;
 						return i;
