@@ -55,57 +55,44 @@
 	var layer2ButtonOut = document.getElementById("B_Layer2Out");
 	var layer3ButtonOut = document.getElementById("B_Layer3Out");
 	
-	playButton.addEventListener('click', function(){backgroundMusic.resume();
-													conPlay.play();});
-	pauseButton.addEventListener('click', function(){backgroundMusic.pause();
-													conPause.play();});
-	stopButton.addEventListener('click', function(){backgroundMusic.stop();
-													conStop.play();});
+	playButton.addEventListener('click', function(){
+		backgroundMusic.resume();
+		conPlay.play();});
+	pauseButton.addEventListener('click', function(){
+		backgroundMusic.pause();
+		conPause.play();});
+	stopButton.addEventListener('click', function(){
+		backgroundMusic.stop();
+		conStop.play();});
 
-	sys1Button.addEventListener('click', function(){
-		backgroundMusic.switchTo(0);
-	});
-	sys2Button.addEventListener('click', function(){
-		backgroundMusic.switchTo(1);
-	});
+	sys1Button.addEventListener('click', function(){ backgroundMusic.switchTo(0); });
+	sys2Button.addEventListener('click', function(){ backgroundMusic.switchTo(1); });
 
 	volumeSlider.oninput = function(){MusicVolumeManager.setVolume(this.value/100);}
 
 	track1Button.addEventListener('click', function(){
-		if (backgroundClips.getSourceClip().name != "track1") {backgroundClips.switchTo(0, 0.5);}
-	});
+		if (backgroundClips.getSourceClip().name != "track1") {backgroundClips.switchTo(0, 0.5);}});
 	track2Button.addEventListener('click', function(){
-		if (backgroundClips.getSourceClip().name != "track2") {backgroundClips.switchTo(1, 0.25);}
-	});
+		if (backgroundClips.getSourceClip().name != "track2") {backgroundClips.switchTo(1, 0.25);}});
 	track3Button.addEventListener('click', function(){
-		if (backgroundClips.getSourceClip().name != "track3") {backgroundClips.switchTo(2);}
-	});
+		if (backgroundClips.getSourceClip().name != "track3") {backgroundClips.switchTo(2);}});
 
 	layer1ButtonIn.addEventListener('click', function(){
-		backgroundLayers.setLayerLevel(0, 1, 3);
-	});
+		backgroundLayers.setLayerLevel(0, 1, 3);});
 	layer2ButtonIn.addEventListener('click', function(){
-		backgroundLayers.setLayerLevel(1, 1, 3);
-	});
+		backgroundLayers.setLayerLevel(1, 1, 3);});
 	layer3ButtonIn.addEventListener('click', function(){
-		backgroundLayers.setLayerLevel(2, 1, 3);
-	});
+		backgroundLayers.setLayerLevel(2, 1, 3);});
 	layer1ButtonOut.addEventListener('click', function(){
-		backgroundLayers.setLayerLevel(0, 0, 3);
-	});
+		backgroundLayers.setLayerLevel(0, 0, 3);});
 	layer2ButtonOut.addEventListener('click', function(){
-		backgroundLayers.setLayerLevel(1, 0, 3);
-	});
+		backgroundLayers.setLayerLevel(1, 0, 3);});
 	layer3ButtonOut.addEventListener('click', function(){
-		backgroundLayers.setLayerLevel(2, 0, 3);
-	});
+		backgroundLayers.setLayerLevel(2, 0, 3);});
 	
 	window.onload = function() {
-
 		MusicVolumeManager.setVolume(0.75);
-
 		setInterval(function(){AudioEventManager.updateEvents();}, 10);
-	
 	}
 
 
