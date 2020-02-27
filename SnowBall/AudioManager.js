@@ -57,14 +57,14 @@ var AudioEventManager = new audioEventManager();
 
 function audioEventManager() {
 	var eventList = [];
-	var now = Date.now();
+	var now = window.performance.now();
 
 	this.returnEventList = function() {
 		return eventList;
 	}
 
 	this.updateEvents = function() {
-		now = Date.now();
+		now = window.performance.now();
 		cleanupList();
 		this.runList();
 	}
