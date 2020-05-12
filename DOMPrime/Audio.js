@@ -31,7 +31,7 @@ var backgroundMusic = function backgroundMusicClass() {
 			this.setVolume(musicVolume);
 
 			fadeTrack.ontimeupdate = function() {
-				var newVolume = fadeTrack.volume - 0.01;
+				var newVolume = fadeTrack.volume - VOLUME_INCREMENT;
 
 				if(newVolume > 1.0) {
 					newVolume = 1.0;

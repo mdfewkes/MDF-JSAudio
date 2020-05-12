@@ -14,7 +14,7 @@ Functions that all sound objects share:
 
 */
 
-//General
+//---//---General
 volumeManagerList = [];
 function volumeManager() {
 	var list = [];
@@ -115,7 +115,7 @@ function volumeManager() {
 	}
 }
 
-//SFX Classes
+//---//---SFX Classes
 SFXVolumeManager = new volumeManager();
 
 function sfxClip(filename) {//A simple, single buffer sound clip
@@ -1450,7 +1450,7 @@ function sfxContainerBlend(clipList, startingLevel = 0) {//Container which blend
 	return this;
 }
 
-//Music Classes
+//---//---Music Classes
 MusicVolumeManager = new volumeManager();
 
 function MusicClip(filename, playLength) {//Single buffer music file
