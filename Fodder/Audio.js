@@ -16,13 +16,19 @@ var backgroundMusic = function backgroundMusicClass() {
 	var musicSound = null;
 	var fadeTrack = null;
 
+	this.trackName = "";
+	get playing() {
+		return !musicSound.paused;
+	}
+
 	this.loopSong = function(filenameWithPath) {
 		var newTrack = new Audio(filenameWithPath);
 		newTrack.oncanplaythrough = function() {
-			if (musicSound != null) {
-				if (fadeTrack != null) {
-					fadeTrack.pause();
-				}
+			if (musicSound != null && fadeTrack != null) {
+				fadeTrack.pause();
+				fadeTrack = musicSound;
+				musicSound = null;
+			} else if (musicSound != null) {
 				fadeTrack = musicSound;
 				musicSound = null;
 			}
@@ -30,32 +36,40 @@ var backgroundMusic = function backgroundMusicClass() {
 			musicSound.loop = true;
 			this.setVolume(musicVolume);
 
-			fadeTrack.ontimeupdate = function() {
-				var newVolume = fadeTrack.volume - VOLUME_INCREMENT;
+			if (fadeTrack != null) {
+				fadeTrack.ontimeupdate = function() {
+					var newVolume = fadeTrack.volume - VOLUME_INCREMENT;
 
-				if(newVolume > 1.0) {
-					newVolume = 1.0;
-				} else if (newVolume < 0.0) {
-					newVolume = 0.0;
-				}
+					if(newVolume > 1.0) {newVolume = 1.0;}
 
-				fadeTrack.volume = newVolume;
-
-				if (fadeTrack.volume < 0.015) {
-					fadeTrack.pause();
-					fadeTrack = null;
+					if (newVolume < 0.015) {
+						fadeTrack.pause();
+						fadeTrack = null;
+					} else {
+						fadeTrack.volume = newVolume;
+					}
 				}
 			}
 		}
 	}
 
-	this.pauseSound = function() {
+	this.pause = function() {
 		musicSound.pause();
 		fadeTrack.pause();
 		fadeTrack = null;
 	}
 
-	this.resumeSound = function() {
+	this.stop = function() {
+		musicSound.pause();
+		if (fadeTrack != null) {
+			fadeTrack.pause();
+			fadeTrack = null;
+		}
+
+		musicSound.currentTime = 0;
+	}
+
+	this.resume = function() {
 		musicSound.play();
 	}
 
