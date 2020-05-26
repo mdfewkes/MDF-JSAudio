@@ -16,11 +16,6 @@ var backgroundMusic = function backgroundMusicClass() {
 	var musicSound = null;
 	var fadeTrack = null;
 
-	this.trackName = "";
-	get playing() {
-		return !musicSound.paused;
-	}
-
 	this.loopSong = function(filenameWithPath) {
 		var newTrack = new Audio(filenameWithPath);
 		newTrack.oncanplaythrough = function() {
