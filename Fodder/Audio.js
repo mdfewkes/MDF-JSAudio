@@ -152,25 +152,6 @@ function soundDynamicBufferClass(filenameWithPath) {
 	}
 }
 
-function soundOverlapsClass(filenameWithPath) {
-
-	var fullFilename = filenameWithPath;
-	var soundIndex = 0;
-	var sounds = [new Audio(fullFilename), new Audio(fullFilename)];
-
-	this.play = function() {
-		if(!sounds[soundIndex].paused) {
-			sounds.splice(soundIndex, 0, new Audio(fullFilename));
-		}
-
-		sounds[soundIndex].currentTime = 0;
-		sounds[soundIndex].volume = Math.pow(getRandomVolume() * effectsVolume * !isMuted, 2);
-		sounds[soundIndex].play();
-
-		soundIndex = (++soundIndex) % sounds.length;
-	}
-}
-
 function soundRandomClass(arrayOfFilenames) {
 	var soundIndex = 0;
 	var sounds = [''];
@@ -183,9 +164,12 @@ function soundRandomClass(arrayOfFilenames) {
 	this.play = function() {
 		soundIndex = rndInt(0, sounds.length - 1);
 		if(!sounds[soundIndex].paused) {
+			var startIndex = soundIndex;
 			soundIndex++;
-			if (soundIndex >= sounds.length) {
-				soundIndex = 0;
+			while (!sounds[soundIndex].paused && startIndex != soundIndex) {
+				if (soundIndex >= sounds.length) {
+					soundIndex = 0;
+				}
 			}
 		}
 
