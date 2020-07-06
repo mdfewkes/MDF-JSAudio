@@ -112,6 +112,11 @@ function soundSingleBufferClass(filenameWithPath) {
 		sound.volume = Math.pow(getRandomVolume() * effectsVolume * !isMuted, 2);
 		sounds.play();
 	}
+
+
+	this.stop = function() {
+		sound.pause();
+	}
 }
 
 function soundMultiBufferClass(filenameWithPath, voices = 2) {
@@ -131,6 +136,12 @@ function soundMultiBufferClass(filenameWithPath, voices = 2) {
 
 		soundIndex = ++soundIndex == sounds.length ? 0;
 	}
+
+	this.stop = function() {
+		for (var i in sounds) {
+			sounds[i].pause();
+		}
+	}
 }
 
 function soundDynamicBufferClass(filenameWithPath) {
@@ -149,6 +160,15 @@ function soundDynamicBufferClass(filenameWithPath) {
 		sounds[soundIndex].play();
 
 		soundIndex = (++soundIndex) % sounds.length;
+	}
+
+	this.stop = function() {
+		for (var i in sounds) {
+			sounds[i].pause();
+		}
+
+		sounds = [new Audio(fullFilename)];
+		soundIndex = 0;
 	}
 }
 
@@ -176,6 +196,12 @@ function soundRandomClass(arrayOfFilenames) {
 		sounds[soundIndex].currentTime = 0;
 		sounds[soundIndex].volume = Math.pow(getRandomVolume() * effectsVolume * !isMuted, 2);
 		sounds[soundIndex].play();
+	}
+
+	this.stop = function() {
+		for (var i in sounds) {
+			sounds[i].pause();
+		}
 	}
 }
 
