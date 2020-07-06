@@ -101,6 +101,57 @@ function soundLoopsClass(filenameWithPath) {
 	}
 }
 
+function soundSingleBufferClass(filenameWithPath) {
+
+	var fullFilename = filenameWithPath;
+	var sound = new Audio(fullFilename);
+
+	this.play = function() {
+
+		sound.currentTime = 0;
+		sound.volume = Math.pow(getRandomVolume() * effectsVolume * !isMuted, 2);
+		sounds.play();
+	}
+}
+
+function soundMultiBufferClass(filenameWithPath, voices = 2) {
+
+	var fullFilename = filenameWithPath;
+	var soundIndex = 0;
+	var sounds = new Array(voices);
+	for (var i = 0; i < sounds.length; i++) {
+		sounds[i] = new Audio(fullFilename);
+	}
+
+	this.play = function() {
+
+		sounds[soundIndex].currentTime = 0;
+		sounds[soundIndex].volume = Math.pow(getRandomVolume() * effectsVolume * !isMuted, 2);
+		sounds[soundIndex].play();
+
+		soundIndex = ++soundIndex == sounds.length ? 0;
+	}
+}
+
+function soundDynamicBufferClass(filenameWithPath) {
+
+	var fullFilename = filenameWithPath;
+	var soundIndex = 0;
+	var sounds = [new Audio(fullFilename)];
+
+	this.play = function() {
+		if(!sounds[soundIndex].paused) {
+			sounds.splice(soundIndex, 0, new Audio(fullFilename));
+		}
+
+		sounds[soundIndex].currentTime = 0;
+		sounds[soundIndex].volume = Math.pow(getRandomVolume() * effectsVolume * !isMuted, 2);
+		sounds[soundIndex].play();
+
+		soundIndex = (++soundIndex) % sounds.length;
+	}
+}
+
 function soundOverlapsClass(filenameWithPath) {
 
 	var fullFilename = filenameWithPath;
