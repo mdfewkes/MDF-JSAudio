@@ -1,4 +1,3 @@
-const AUDIO_DEBUG = false;
 const AUDIO_ENABLED = true;
 
 //--//Sound IDs---------------------------------------------------------------
@@ -128,42 +127,6 @@ function AudioGlobal() {
 		}
 	};
 
-	this.draw = function(mapoffset) {
-		if (!initialized || !AUDIO_DEBUG) return;
-
-		let v1 = vec2(0,0);
-		let v2 = vec2(0,0);
-
-		for (var i in currentSoundSources) {
-			v1.x = currentSoundSources[i].pos.x - mapoffset.x;
-			v1.y = currentSoundSources[i].pos.y - mapoffset.y;
-			v2.x = currentPlayerX - mapoffset.x;
-			v2.y = currentPlayerY - mapoffset.y;
-			drawLine(renderer, v1, v2, "#FFFFFF");
-			drawRect(renderer, vec2(v1.x-2, v1.y-2), vec2(5, 5), true, "#FFFFFF", false);
-		}
-
-		for (var i in currentAudGeo) {
-			v1.x = currentAudGeo[i].point.x - mapoffset.x;
-			v1.y = currentAudGeo[i].point.y - mapoffset.y;
-			v2.x = currentPlayerX - mapoffset.x;
-			v2.y = currentPlayerY - mapoffset.y;
-
-			if(lineOfSight(currentAudGeo[i].point, currentPlayerPos)) {
-				drawLine(renderer, v1, v2, "#885088");
-			}
-
-			for (var j in currentAudGeo[i].connections) {
-				var index = currentAudGeo[i].connections[j];
-				v2.x = currentAudGeo[index].point.x - mapoffset.x;
-				v2.y = currentAudGeo[index].point.y - mapoffset.y;
-				drawLine(renderer, v1, v2, "#885088");
-			}
-
-			drawRect(renderer, vec2(v1.x-2, v1.y-2), vec2(5, 5), true, "#885088", false);
-		}
-	};
-
 //--//volume handling functions-----------------------------------------------
 	this.toggleMute = function() {
 		if (!initialized) return;
@@ -277,10 +240,6 @@ function AudioGlobal() {
 		gainNode.gain.value *= Math.pow(mixVolume, 2);
 		source.start();
 
-		source.onended = function() {
-			source.buffer = null;
-		}
-
 		//Return sound object referance and push to list
 		referance = {source: source, volume: gainNode, pan: panNode, pos: location, endTime: audioCtx.currentTime+source.buffer.duration};
 		currentSoundSources.push(referance);
@@ -315,10 +274,6 @@ function AudioGlobal() {
 		source.playbackRate.value = rate;
 		gainNode.gain.value *= Math.pow(mixVolume, 2);
 		source.start();
-
-		source.onended = function() {
-			source.buffer = null;
-		}
 
 		//Return sound object referance and push to list
 		referance = {source: source, volume: gainNode, pan: panNode, pos: location, endTime: audioCtx.currentTime+source.buffer.duration};
@@ -362,10 +317,6 @@ function AudioGlobal() {
 		verbNode.buffer = sounds[REVERB];
 		source.start();
 
-		source.onended = function() {
-			source.buffer = null;
-		}
-
 		//Return sound object referance and push to list
 		referance = {source: source, volume: gainNode, pan: panNode, pos: location, endTime: audioCtx.currentTime+source.buffer.duration+verbNode.buffer.duration};
 		currentSoundSources.push(referance);
@@ -406,10 +357,6 @@ function AudioGlobal() {
 		verbNode.buffer = sounds[REVERB];
 		source.start();
 
-		source.onended = function() {
-			source.buffer = null;
-		}
-
 		//Return sound object referance and push to list
 		referance = {source: source, volume: gainNode, pan: panNode, pos: pos, endTime: audioCtx.currentTime+source.buffer.duration+verbNode.buffer.duration};
 		currentSoundSources.push(referance);
@@ -445,6 +392,15 @@ function AudioGlobal() {
 		return {sound: source, volume: gainNode};
 	};
 
+	this.duckMusic = function (duration, volume = 0) {
+		if (!initialized) return;
+
+		currentMusicTrack.volume.gain.setTargetAtTime(volume, audioCtx.currentTime, CROSSFADE_TIME);
+		currentMusicTrack.volume.gain.setTargetAtTime(1, audioCtx.currentTime + duration, CROSSFADE_TIME);
+		return;
+	};
+
+//--//Buffer loading functions------------------------------------------------
 	this.loadBGMusic = function(url) {
 		if (!initialized) return;
 
@@ -489,16 +445,7 @@ function AudioGlobal() {
 		request.send();
 	};
 
-	this.duckMusic = function (duration, volume = 0) {
-		if (!initialized) return;
-
-		currentMusicTrack.volume.gain.setTargetAtTime(volume, audioCtx.currentTime, CROSSFADE_TIME);
-		currentMusicTrack.volume.gain.setTargetAtTime(1, audioCtx.currentTime + duration, CROSSFADE_TIME);
-		return;
-	};
-
 //--//Sound spatialization functions------------------------------------------
-
 	function calcuatePan(location) {
 		return calcuatePan2(location);
 	}
@@ -648,12 +595,12 @@ function AudioGlobal() {
 		var distance = DROPOFF_MAX;
 		var pos = location;
 
-		//In line of sight to player, no more work for this branch
+		//In line of sight to source, no more work for this branch
 		if (lineOfSight(currentAudGeo[pointToCheck].point, location)) {
 			return location.distance(currentAudGeo[pointToCheck].point);
 		}
 
-		//Checks each connection recursively for the shortest distance to line of sight of the player
+		//Checks each connection recursively for the shortest distance to line of sight of the source
 		for (var i in currentAudGeo[pointToCheck].connections) {
 			//Skips over nodes we've already visited
 			var oldPoint = false;
