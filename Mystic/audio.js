@@ -34,7 +34,7 @@ const AUDIO_ENABLED = true;
 	const DOOR_OPEN = 29;
 	const DEATH = 30;
 
-var soundsList = [
+var soundsList = [ /*
 	"audio/reverb3.wav",
 	"audio/noAmmo.mp3",
 	"audio/take-ammo.mp3",
@@ -65,7 +65,7 @@ var soundsList = [
     "audio/barrel_hit.wav",
 	"audio/barrel_explode.wav",
 	"audio/doorOpen.wav",
-	"audio/deathStab1.mp3",
+	"audio/deathStab1.mp3", */
 ];
 
 var sounds = [];
@@ -128,26 +128,26 @@ function AudioGlobal() {
 		}
 	};
 
-	this.draw = function(off) {
+	this.draw = function(mapoffset) {
 		if (!initialized || !AUDIO_DEBUG) return;
 
 		let v1 = vec2(0,0);
 		let v2 = vec2(0,0);
 
 		for (var i in currentSoundSources) {
-			v1.x = currentSoundSources[i].pos.x - off.x;
-			v1.y = currentSoundSources[i].pos.y - off.y;
-			v2.x = currentPlayerX - off.x;
-			v2.y = currentPlayerY - off.y;
+			v1.x = currentSoundSources[i].pos.x - mapoffset.x;
+			v1.y = currentSoundSources[i].pos.y - mapoffset.y;
+			v2.x = currentPlayerX - mapoffset.x;
+			v2.y = currentPlayerY - mapoffset.y;
 			drawLine(renderer, v1, v2, "#FFFFFF");
 			drawRect(renderer, vec2(v1.x-2, v1.y-2), vec2(5, 5), true, "#FFFFFF", false);
 		}
 
 		for (var i in currentAudGeo) {
-			v1.x = currentAudGeo[i].point.x - off.x;
-			v1.y = currentAudGeo[i].point.y - off.y;
-			v2.x = currentPlayerX - off.x;
-			v2.y = currentPlayerY - off.y;
+			v1.x = currentAudGeo[i].point.x - mapoffset.x;
+			v1.y = currentAudGeo[i].point.y - mapoffset.y;
+			v2.x = currentPlayerX - mapoffset.x;
+			v2.y = currentPlayerY - mapoffset.y;
 
 			if(lineOfSight(currentAudGeo[i].point, currentPlayerPos)) {
 				drawLine(renderer, v1, v2, "#885088");
@@ -155,8 +155,8 @@ function AudioGlobal() {
 
 			for (var j in currentAudGeo[i].connections) {
 				var index = currentAudGeo[i].connections[j];
-				v2.x = currentAudGeo[index].point.x - off.x;
-				v2.y = currentAudGeo[index].point.y - off.y;
+				v2.x = currentAudGeo[index].point.x - mapoffset.x;
+				v2.y = currentAudGeo[index].point.y - mapoffset.y;
 				drawLine(renderer, v1, v2, "#885088");
 			}
 
@@ -249,7 +249,7 @@ function AudioGlobal() {
 
 	this.play3DSound = function(buffer, location,  mixVolume = 1, rate = 1) {
 		if (!initialized) return;
-		return play3DSound1(buffer, location,  mixVolume, rate);
+		return play3DSound3(buffer, location,  mixVolume, rate);
 	};
 
 	function play3DSound1(buffer, location,  mixVolume = 1, rate = 1) {//3d panning and volume
@@ -372,44 +372,7 @@ function AudioGlobal() {
 		return referance;
 	};
 
-	function play3DSound4(buffer, location,  mixVolume = 1, rate = 1) {// +Propogation
-		//Calculate offset position
-		var pos = calculatePropogationPosition(location);
-		//Dont play if out of range
-		if (currentPlayerPos.distance(pos) >= DROPOFF_MAX) {
-			return false;
-		}
-
-		//Setup nodes
-		var source = audioCtx.createBufferSource();
-		var gainNode = audioCtx.createGain();
-		var panNode = audioCtx.createStereoPanner();
-
-		source.connect(gainNode);
-		gainNode.connect(panNode);
-		panNode.connect(soundEffectsBus);
-
-		//Calculate volume and panning
-		gainNode.gain.value = calcuateVolumeDropoff(pos);
-		panNode.pan.value = calcuatePan(pos);
-
-		//Set audio buffer and play
-		source.buffer = buffer;
-		source.playbackRate.value = rate;
-		gainNode.gain.value *= Math.pow(mixVolume, 2);
-		source.start();
-
-		source.onended = function() {
-			source.buffer = null;
-		}
-
-		//Return sound object referance and push to list
-		referance = {source: source, volume: gainNode, pan: panNode, pos: pos, endTime: audioCtx.currentTime+source.buffer.duration};
-		currentSoundSources.push(referance);
-		return referance;
-	};
-
-	function play3DSound5(buffer, location,  mixVolume = 1, rate = 1) {// +Propogation and reverb
+	function play3DSound4(buffer, location,  mixVolume = 1, rate = 1) {// +Propogation and reverb
 		//Calculate offset position
 		var pos = calculatePropogationPosition(location);
 		//Dont play if out of range
@@ -535,51 +498,6 @@ function AudioGlobal() {
 	};
 
 //--//Sound spatialization functions------------------------------------------
-	function calcuateVolumeDropoff(location) {
-		return calcuateVolumeDropoff2(location);
-	}
-
-	function calcuateVolumeDropoff1(location) {//Distance dropoff only
-		var distance = currentPlayerPos.distance(location);
-
-		var newVolume = 1;
-		if (distance > DROPOFF_MIN && distance <= DROPOFF_MAX) {
-			newVolume = Math.abs((distance - DROPOFF_MIN)/(DROPOFF_MAX - DROPOFF_MIN) - 1);
-		} else if (distance > DROPOFF_MAX) {
-			newVolume = 0;
-		}
-
-		return Math.pow(newVolume, 2);
-	}
-
-	function calcuateVolumeDropoff2(location) {// +Head shadow
-		var distance = currentPlayerPos.distance(location);
-
-		//Distance attenuation
-		var newVolume = 1;
-		if (distance > DROPOFF_MIN && distance <= DROPOFF_MAX) {
-			newVolume = Math.abs((distance - DROPOFF_MIN)/(DROPOFF_MAX - DROPOFF_MIN) - 1);
-		} else if (distance > DROPOFF_MAX) {
-			newVolume = 0;
-		}
-
-		var direction = currentPlayerAngleDegrees + radToDeg(location.angle(currentPlayerPos));
-		while (direction >= 360) {
-			direction -= 360;
-		}
-		while (direction < 0) {
-			direction += 360;
-		}
-
-		//Back of head attenuation
-		if (direction > 90 && direction <= 180) {
-			newVolume *= lerp(1, BEHIND_THE_HEAD, (direction-90)/90);
-		} else if (direction > 180 && direction <= 270) {
-			newVolume *= lerp(BEHIND_THE_HEAD, 1, (direction-180)/90);
-		}
-
-		return Math.pow(newVolume, 2);
-	}
 
 	function calcuatePan(location) {
 		return calcuatePan2(location);
@@ -638,6 +556,52 @@ function AudioGlobal() {
 		}
 
 		return pan;
+	}
+
+	function calcuateVolumeDropoff(location) {
+		return calcuateVolumeDropoff2(location);
+	}
+
+	function calcuateVolumeDropoff1(location) {//Distance dropoff only
+		var distance = currentPlayerPos.distance(location);
+
+		var newVolume = 1;
+		if (distance > DROPOFF_MIN && distance <= DROPOFF_MAX) {
+			newVolume = Math.abs((distance - DROPOFF_MIN)/(DROPOFF_MAX - DROPOFF_MIN) - 1);
+		} else if (distance > DROPOFF_MAX) {
+			newVolume = 0;
+		}
+
+		return Math.pow(newVolume, 2);
+	}
+
+	function calcuateVolumeDropoff2(location) {// +Head shadow
+		var distance = currentPlayerPos.distance(location);
+
+		//Distance attenuation
+		var newVolume = 1;
+		if (distance > DROPOFF_MIN && distance <= DROPOFF_MAX) {
+			newVolume = Math.abs((distance - DROPOFF_MIN)/(DROPOFF_MAX - DROPOFF_MIN) - 1);
+		} else if (distance > DROPOFF_MAX) {
+			newVolume = 0;
+		}
+
+		var direction = currentPlayerAngleDegrees + radToDeg(location.angle(currentPlayerPos));
+		while (direction >= 360) {
+			direction -= 360;
+		}
+		while (direction < 0) {
+			direction += 360;
+		}
+
+		//Back of head attenuation
+		if (direction > 90 && direction <= 180) {
+			newVolume *= lerp(1, BEHIND_THE_HEAD, (direction-90)/90);
+		} else if (direction > 180 && direction <= 270) {
+			newVolume *= lerp(BEHIND_THE_HEAD, 1, (direction-180)/90);
+		}
+
+		return Math.pow(newVolume, 2);
 	}
 
 	function calcuateReverbPresence(location) {
@@ -772,4 +736,10 @@ function lineOfSight(v1, v2) {
 		}
 	}
 	return true;
+}
+
+function lerp(val1, val2, amount) {
+	amount = amount < 0 ? 0 : amount;
+	amount = amount > 1 ? 1 : amount;
+	return (1 - amount) * val1 + amount * val2;
 }
