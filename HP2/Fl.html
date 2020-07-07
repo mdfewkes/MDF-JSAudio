@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<html>
+	<title>Flute</title>
+
+<head>
+	<style>
+	a:link {color: orange;}
+	a:visited {color: orange;}
+	a:hover {color: orange;}
+	a:active {color: orange;}
+	body {color: gray;}
+	</style>
+</head>
+<body>
+	Set the EWI <a href="../index.html">down</a> and return to the musical emporium
+	<canvas id="laCanvas" width="800" height="600" style="display: block;background: #000000;position: absolute; left: 0px; top: 35px; margin:0px auto 0px auto;"></canvas>
+</body>
+
+<script>
+
+	document.addEventListener('pointerdown', mouseDown);
+	document.addEventListener('pointerup', mouseUp);
+	document.getElementById('laCanvas').addEventListener('pointermove', calculateMousePos);
+	window.addEventListener('keyup', keyUp);
+	window.addEventListener('keydown', keyDown);
+
+	var audio_context = window.AudioContext || window.webkitAudioContext;
+	var audioCtx = new audio_context();
+
+	var pitch = audioCtx.createOscillator();
+	var volume = audioCtx.createGain();
+	pitch.type = 'triangle';
+	pitch.frequency.setValueAtTime(880, audioCtx.currentTime);
+	volume.gain.setValueAtTime(0, audioCtx.currentTime + 0.001);
+
+	pitch.connect(volume);
+	volume.connect(audioCtx.destination);
+
+	pitch.start();
+
+	var canvas = document.getElementById('laCanvas');
+	var canvasContext = canvas.getContext('2d');
+
+	window.onload = function() {
+		window.requestAnimationFrame(loop);
+		draw();
+	}
+
+	function loop() {
+		var now = audioCtx.currentTime;
+		
+		updateFlute();
+
+		window.requestAnimationFrame(loop);
+	}
+
+	var rootFreq = 880;
+	var halfsteps = 0;
+
+	var maxVolume = 0.5
+
+	function updateFlute() {
+
+		pitch.frequency.setValueAtTime(rootFreq * keysDown(), audioCtx.currentTime + 0.001);
+
+		if ((mousePressed || spacePressed) && volume.gain.value == 0) {
+			volume.gain.setValueAtTime(maxVolume, audioCtx.currentTime + 0.001);
+		}
+		if ((!mousePressed & !spacePressed) && volume.gain.value == maxVolume) {
+			volume.gain.setValueAtTime(0, audioCtx.currentTime + 0.001);
+		}
+	}
+
+	function draw() {
+
+		colorText("1", canvas.width/2, canvas.height/2 - 80);
+		colorText("2", canvas.width/2, canvas.height/2 - 60);
+		colorText("3", canvas.width/2, canvas.height/2 - 40);
+		colorText("4", canvas.width/2, canvas.height/2 - 20);
+		colorText("7", canvas.width/2, canvas.height/2 + 20);
+		colorText("8", canvas.width/2, canvas.height/2 + 40);
+		colorText("9", canvas.width/2, canvas.height/2 + 60);
+	}
+
+
+	function colorText(showWords, textX, textY) {
+		canvasContext.textAlign = "center";
+		canvasContext.font = "20px Arial";
+		canvasContext.fillStyle = "White";
+		canvasContext.fillText(showWords, textX, textY);
+	}
+
+	function keysDown() {
+		if (halfsteps < 0) halfsteps = 0;
+		if (halfsteps > 13) halfsteps = 13;
+		switch (halfsteps) {
+			case 0:
+				return 1;
+			case 1:
+				return 0.94387;
+			case 2:
+				return 0.8909;
+			case 3:
+				return 0.8409;
+			case 4:
+				return 0.7937;
+			case 5:
+				return 0.74915;
+			case 6:
+				return 0.70711;
+			case 7:
+				return 0.66742;
+			case 8:
+				return 0.62996;
+			case 9:
+				return 0.5946;
+			case 10:
+				return 0.56123;
+			case 11:
+				return 0.52973;
+			case 12:
+				return 0.5;
+			case 13:
+				return 0.47194;
+			default:
+				return 1;
+		}
+	}
+	
+	var mousePressed = false;
+	var mouseX = 0;
+	var mouseY = 0;
+
+	function mouseDown(evt) {
+		calculateMousePos(evt);
+		mousePressed = true;
+		audioCtx.resume();
+	}
+
+	function mouseUp(evt) {
+		mousePressed = false;
+	}
+
+	function calculateMousePos(evt) {
+		var rect = canvas.getBoundingClientRect(),
+		root = document.documentElement;
+		mouseX = evt.clientX - rect.left - root.scrollLeft;
+		mouseY = evt.clientY - rect.top - root.scrollTop;
+	}
+
+	var spacePressed = false;
+	var key1 = false;
+	var key2 = false;
+	var key3 = false;
+	var key4 = false;
+	var key5 = false;
+	var key6 = false;
+	var key7 = false;
+	var key8 = false;
+
+	function keyUp(evt) {
+		if (evt.keyCode == 32) {
+			spacePressed = false;
+		}
+		if (evt.keyCode == 49 && key1) {
+			halfsteps -= 1;
+			key1 = false;
+		}
+		if (evt.keyCode == 50 && key2) {
+			halfsteps -= 2;
+			key2 = false;
+		}
+		if (evt.keyCode == 51 && key3) {
+			halfsteps -= 2;
+			valve3 = false;
+		}
+		if (evt.keyCode == 52 && key4) {
+			halfsteps -= 2;
+			key4 = false;
+		}
+		if (evt.keyCode == 55 && key5) {
+			halfsteps -= 1;
+			key5 = false;
+		}
+		if (evt.keyCode == 56 && key6) {
+			halfsteps -= 2;
+			key6 = false;
+		}
+		if (evt.keyCode == 57 && key7) {
+			halfsteps -= 2;
+			key7 = false;
+		}
+		if (evt.keyCode == 48 && key8) {
+			halfsteps -= 1;
+			key8 = false;
+		}
+	}
+
+	function keyDown(evt) {
+		if (evt.keyCode == 32) {
+			spacePressed = true;
+		}
+		if (evt.keyCode == 49 && !key1) {
+			halfsteps += 1;
+			key1 = true;
+		}
+		if (evt.keyCode == 50 && !key2) {
+			halfsteps += 2;
+			key2 = true;
+		}
+		if (evt.keyCode == 51 && !key3) {
+			halfsteps += 2;
+			key3 = true;
+		}
+		if (evt.keyCode == 52 && !key4) {
+			halfsteps += 2;
+			key4 = true;
+		}
+		if (evt.keyCode == 55 && !key5) {
+			halfsteps += 1;
+			key5 = true;
+		}
+		if (evt.keyCode == 56 && !key6) {
+			halfsteps += 2;
+			key6 = true;
+		}
+		if (evt.keyCode == 57 && !key7) {
+			halfsteps += 2;
+			key7 = true;
+		}
+		if (evt.keyCode == 48 && !key8) {
+			halfsteps += 1;
+			key8 = true;
+		}
+		audioCtx.resume();
+	}
+
+	
+</script>
+<body bgcolor="black"></body>
+</html>

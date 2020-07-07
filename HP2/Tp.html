@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<html>
+	<title>Trumpet</title>
+
+<head>
+	<style>
+	a:link {color: orange;}
+	a:visited {color: orange;}
+	a:hover {color: orange;}
+	a:active {color: orange;}
+	body {color: gray;}
+	</style>
+</head>
+<body>
+	Set the EVI <a href="../index.html">down</a> and return to the musical emporium
+	<canvas id="laCanvas" width="800" height="600" style="display: block;background: #000000;position: absolute; left: 0px; top: 35px; margin:0px auto 0px auto;"></canvas>
+</body>
+
+<script>
+
+	document.addEventListener('pointerdown', mouseDown);
+	document.addEventListener('pointerup', mouseUp);
+	document.getElementById('laCanvas').addEventListener('pointermove', calculateMousePos);
+	window.addEventListener('keyup', keyUp);
+	window.addEventListener('keydown', keyDown);
+
+	var audio_context = window.AudioContext || window.webkitAudioContext;
+	var audioCtx = new audio_context();
+
+	var pitch = audioCtx.createOscillator();
+	var tone = audioCtx.createBiquadFilter();
+	var volume = audioCtx.createGain();
+	pitch.type = 'sawtooth';
+	pitch.frequency.setValueAtTime(55, audioCtx.currentTime);
+	tone.type = 'lowpass';
+	volume.gain.setValueAtTime(0, audioCtx.currentTime);
+
+	pitch.connect(tone);
+	tone.connect(volume);
+	volume.connect(audioCtx.destination);
+
+	pitch.start();
+
+	var canvas = document.getElementById('laCanvas');
+	var canvasContext = canvas.getContext('2d');
+
+	window.onload = function() {
+		window.requestAnimationFrame(loop);
+		draw();
+	}
+
+	function loop() {
+		var now = audioCtx.currentTime;
+		
+		updateTrumpet();
+
+		window.requestAnimationFrame(loop);
+	}
+
+	var rootFreq = 110;
+	var partial = 1;
+	var halfsteps = 0;
+
+	var rowSize = 20;
+	var colSize = 40;
+	var totalPartials = 8-1;
+
+	var maxVolume = 0.5
+
+	function updateTrumpet() {
+		var left = canvas.width/2 - (colSize)/2;
+		var top = canvas.height/2 - (rowSize*totalPartials)/2;
+		var right = canvas.width/2 + (colSize)/2;
+		var bottom = canvas.height/2 + (rowSize*totalPartials)/2;
+
+		partial = (mouseY-top)/(bottom-top);
+		if (partial > 1.1) partial = 1.1;
+		if (partial < 0.1) partial = 0.1;
+		partial = 10-Math.ceil(partial*totalPartials+1);
+
+		pitch.frequency.setValueAtTime(rootFreq * partial * valveLength(), audioCtx.currentTime + 0.001);
+		tone.frequency.setValueAtTime(pitch.frequency.value * 3, audioCtx.currentTime + 0.001);
+
+		if ((mousePressed || spacePressed) && volume.gain.value == 0) {
+			volume.gain.setValueAtTime(maxVolume, audioCtx.currentTime + 0.001);
+		}
+		if ((!mousePressed & !spacePressed) && volume.gain.value == maxVolume) {
+			volume.gain.setValueAtTime(0, audioCtx.currentTime + 0.001);
+		}
+	}
+
+	function draw() {
+		var offsetX = canvas.width/2 - (colSize)/2;
+		var offsetY = canvas.height/2 - (rowSize*totalPartials-1)/2;
+
+		var lastOffset = 1;
+		for(var j = 0; j < totalPartials; j++) {
+			drawBox(offsetX, offsetY+(j*rowSize), colSize, rowSize);
+		}
+
+		colorText("1", canvas.width/2 - 20, canvas.height/2 + (rowSize*totalPartials)/2 + 40);
+		colorText("2", canvas.width/2, canvas.height/2 + (rowSize*totalPartials)/2 + 40);
+		colorText("3", canvas.width/2 + 20, canvas.height/2 + (rowSize*totalPartials)/2 + 40);
+
+
+	}
+
+	function drawBox(x, y, w, h) {
+		canvasContext.fillStyle = 'rgb(255, 255, 255)';
+        canvasContext.fillRect(x, y, w, h);
+
+        canvasContext.fillStyle = 'rgb(0, 0, 0)';
+        canvasContext.fillRect(x+1, y+1, w-2, h-2);
+
+	}
+
+
+	function colorText(showWords, textX, textY) {
+		canvasContext.textAlign = "center";
+		canvasContext.font = "20px Arial";
+		canvasContext.fillStyle = "White";
+		canvasContext.fillText(showWords, textX, textY);
+	}
+
+	function valveLength() {
+		if (halfsteps < 0) halfsteps = 0;
+		if (halfsteps > 6) halfsteps = 6;
+		switch (halfsteps) {
+			case 0:
+				return 1;
+			case 1:
+				return 0.94387;
+			case 2:
+				return 0.8909;
+			case 3:
+				return 0.8409;
+			case 4:
+				return 0.7937;
+			case 5:
+				return 0.74915;
+			case 6:
+				return 0.70711;
+			default:
+				return 1;
+		}
+		/*
+		Slide positions
+		1
+		0.94387
+		0.8909
+		0.8409
+		0.7937
+		0.74915
+		0.70711
+		*/
+	}
+	
+	var mousePressed = false;
+	var mouseX = 0;
+	var mouseY = 0;
+
+	function mouseDown(evt) {
+		calculateMousePos(evt);
+		mousePressed = true;
+		audioCtx.resume();
+	}
+
+	function mouseUp(evt) {
+		mousePressed = false;
+	}
+
+	function calculateMousePos(evt) {
+		var rect = canvas.getBoundingClientRect(),
+		root = document.documentElement;
+		mouseX = evt.clientX - rect.left - root.scrollLeft;
+		mouseY = evt.clientY - rect.top - root.scrollTop;
+	}
+
+	var spacePressed = false;
+	var valve1 = false;
+	var valve2 = false;
+	var valve3 = false;
+
+	function keyUp(evt) {
+		if (evt.keyCode == 32) {
+			spacePressed = false;
+		}
+		if (evt.keyCode == 49 && valve1) {
+			halfsteps -= 2;
+			valve1 = false;
+		}
+		if (evt.keyCode == 50 && valve2) {
+			halfsteps -= 1;
+			valve2 = false;
+		}
+		if (evt.keyCode == 51 && valve3) {
+			halfsteps -= 3;
+			valve3 = false;
+		}
+	}
+
+	function keyDown(evt) {
+		if (evt.keyCode == 32) {
+			spacePressed = true;
+		}
+		if (evt.keyCode == 49 && !valve1) {
+			halfsteps += 2;
+			valve1 = true;
+		}
+		if (evt.keyCode == 50 && !valve2) {
+			halfsteps += 1;
+			valve2 = true;
+		}
+		if (evt.keyCode == 51 && !valve3) {
+			halfsteps += 3;
+			valve3 = true;
+		}
+		audioCtx.resume();
+	}
+
+	
+</script>
+<body bgcolor="black"></body>
+</html>

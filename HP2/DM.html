@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<html>
+	<title>Drum Machine</title>
+
+<head>
+	<style>
+	a:link {color: orange;}
+	a:visited {color: orange;}
+	a:hover {color: orange;}
+	a:active {color: orange;}
+	body {color: gray;}
+	</style>
+</head>
+<body>
+	Set the drum machine <a href="../index.html">down</a> and return to the musical emporium
+	<canvas id="laCanvas" width="800" height="600" style="display: block;background: #000;position: absolute; left: 0px; top: 35px; margin:0px auto 0px auto;"></canvas>
+</body>
+
+<script>
+
+	document.addEventListener('pointerdown', mouseDown);
+	document.addEventListener('pointerup', mouseUp);
+	document.getElementById('laCanvas').addEventListener('pointermove', calculateMousePos);
+
+	var audio_context = window.AudioContext || window.webkitAudioContext;
+	var audioCtx = new audio_context();
+
+	var canvas = document.getElementById('laCanvas');
+	var canvasContext = canvas.getContext('2d');
+
+	var seq = [
+		[1,0,1,0,1,0,1,0],
+		[0,0,0,0,1,0,0,0],
+		[1,0,0.2,0,0,0,0,0]
+	];
+
+	var toggle = true;
+
+	var but00 = new buttonClass(canvas.width/2-140, canvas.height/2-40, 20, 0, 0);
+	var but01 = new buttonClass(canvas.width/2-100, canvas.height/2-40, 20, 0, 1);
+	var but02 = new buttonClass(canvas.width/2-60,  canvas.height/2-40, 20, 0, 2);
+	var but03 = new buttonClass(canvas.width/2-20,  canvas.height/2-40, 20, 0, 3);
+	var but04 = new buttonClass(canvas.width/2+20,  canvas.height/2-40, 20, 0, 4);
+	var but05 = new buttonClass(canvas.width/2+60,  canvas.height/2-40, 20, 0, 5);
+	var but06 = new buttonClass(canvas.width/2+100, canvas.height/2-40, 20, 0, 6);
+	var but07 = new buttonClass(canvas.width/2+140, canvas.height/2-40, 20, 0, 7);
+
+	var but10 = new buttonClass(canvas.width/2-140, canvas.height/2-0,  20, 1, 0);
+	var but11 = new buttonClass(canvas.width/2-100, canvas.height/2-0,  20, 1, 1);
+	var but12 = new buttonClass(canvas.width/2-60,  canvas.height/2-0,  20, 1, 2);
+	var but13 = new buttonClass(canvas.width/2-20,  canvas.height/2-0,  20, 1, 3);
+	var but14 = new buttonClass(canvas.width/2+20,  canvas.height/2-0,  20, 1, 4);
+	var but15 = new buttonClass(canvas.width/2+60,  canvas.height/2-0,  20, 1, 5);
+	var but16 = new buttonClass(canvas.width/2+100, canvas.height/2-0,  20, 1, 6);
+	var but17 = new buttonClass(canvas.width/2+140, canvas.height/2-0,  20, 1, 7);
+
+	var but20 = new buttonClass(canvas.width/2-140, canvas.height/2+40,  20, 2, 0);
+	var but21 = new buttonClass(canvas.width/2-100, canvas.height/2+40,  20, 2, 1);
+	var but22 = new buttonClass(canvas.width/2-60,  canvas.height/2+40,  20, 2, 2);
+	var but23 = new buttonClass(canvas.width/2-20,  canvas.height/2+40,  20, 2, 3);
+	var but24 = new buttonClass(canvas.width/2+20,  canvas.height/2+40,  20, 2, 4);
+	var but25 = new buttonClass(canvas.width/2+60,  canvas.height/2+40,  20, 2, 5);
+	var but26 = new buttonClass(canvas.width/2+100, canvas.height/2+40,  20, 2, 6);
+	var but27 = new buttonClass(canvas.width/2+140, canvas.height/2+40,  20, 2, 7);
+		
+	var step = 0;
+	var interval = 0.125;
+	var wait_time = 0.1;
+	var got_up_to = 0;
+	
+	window.onload = function() {
+		window.requestAnimationFrame(loop);
+	}
+
+	function loop() {
+		var now = audioCtx.currentTime;
+		
+		var max_future_time = now + (wait_time * 1.5);
+		if(got_up_to > now) {
+			now = got_up_to;
+		}
+		
+		while(now <= max_future_time) {
+			step++;
+			if (Math.random() <= (seq[0][step % seq[0].length])) {
+				playHiHat(now);
+			}
+			if (Math.random() <= (seq[1][step % seq[1].length])) {
+				playSnare(now);
+			}
+			if (Math.random() <= (seq[2][step % seq[2].length])) {
+				playKick(now);
+			}
+			now += interval;
+		}
+		got_up_to = now;
+
+		but00.update();
+		but01.update();
+		but02.update();
+		but03.update();
+		but04.update();
+		but05.update();
+		but06.update();
+		but07.update();
+
+		but10.update();
+		but11.update();
+		but12.update();
+		but13.update();
+		but14.update();
+		but15.update();
+		but16.update();
+		but17.update();
+
+		but20.update();
+		but21.update();
+		but22.update();
+		but23.update();
+		but24.update();
+		but25.update();
+		but26.update();
+		but27.update();
+
+		if (mouseClicked && distance(canvas.width/2-180, canvas.height/2-80, mouseX, mouseY) <= 20) {
+			toggle = !toggle;
+		}
+		colorCircle(canvas.width/2-180, canvas.height/2-80, 20, "Grey");
+		if (toggle) {
+			colorCircle(canvas.width/2-180, canvas.height/2-80, 18, "Blue");
+		}
+
+		mouseClicked = false;
+
+		window.requestAnimationFrame(loop);
+	}
+	
+	function playKick(now) {
+		var kick = new Kick();
+		kick.trigger(now);
+	}
+	
+	function playSnare(now) {
+		var snare = new Snare();
+		snare.trigger(now);
+	}
+	
+	function playHiHat(now) {
+		var hiHat = new HiHat();
+		hiHat.trigger(now);
+	}
+
+	// https://dev.opera.com/articles/drum-sounds-webaudio/
+	function Kick() {
+	
+		var osc = audioCtx.createOscillator();
+		var gain = audioCtx.createGain();
+		osc.connect(gain);
+		gain.connect(audioCtx.destination)
+
+		this.trigger = function(time) {
+			osc.frequency.setValueAtTime(150, time);
+			gain.gain.setValueAtTime(1, time);
+
+			osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.5);
+			gain.gain.exponentialRampToValueAtTime(0.01, time + 0.5);
+
+			osc.start(time);
+
+			osc.stop(time + 0.5);
+		}
+	}
+
+	// https://dev.opera.com/articles/drum-sounds-webaudio/
+	function Snare() {
+
+		function noiseBuffer() {
+			var bufferSize = audioCtx.sampleRate;
+			var buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+			var output = buffer.getChannelData(0);
+
+			for (var i = 0; i < bufferSize; i++) {
+				output[i] = Math.random() * 2 - 1;
+			}
+
+			return buffer;
+		}
+
+		var noise = audioCtx.createBufferSource();
+		noise.buffer = noiseBuffer();
+		var noiseFilter = audioCtx.createBiquadFilter();
+		noiseFilter.type = 'highpass';
+		noiseFilter.frequency.value = 1000;
+		noise.connect(noiseFilter);
+
+		var noiseEnvelope = audioCtx.createGain();
+		noiseFilter.connect(noiseEnvelope);
+
+		noiseEnvelope.connect(audioCtx.destination);
+
+		var osc = audioCtx.createOscillator();
+		osc.type = 'triangle';
+
+		var oscEnvelope = audioCtx.createGain();
+		osc.connect(oscEnvelope);
+		oscEnvelope.connect(audioCtx.destination);
+
+		this.trigger = function(time) {
+
+			noiseEnvelope.gain.setValueAtTime(1, time);
+			noiseEnvelope.gain.exponentialRampToValueAtTime(0.01, time + 0.2);
+			noise.start(time)
+
+			osc.frequency.setValueAtTime(100, time);
+			oscEnvelope.gain.setValueAtTime(0.7, time);
+			oscEnvelope.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
+			osc.start(time)
+
+			osc.stop(time + 0.2);
+			noise.stop(time + 0.2);
+		}
+	}
+
+	// http://joesul.li/van/synthesizing-hi-hats/
+	function HiHat() {
+		var fundamental = 40;
+		var ratios = [2, 3, 4.16, 5.43, 6.79, 8.21];
+
+		var gain = audioCtx.createGain();
+
+		// Bandpass
+		var bandpass = audioCtx.createBiquadFilter();
+		bandpass.type = "bandpass";
+		bandpass.frequency.value = 10000;
+
+		// Highpass
+		var highpass = audioCtx.createBiquadFilter();
+		highpass.type = "highpass";
+		highpass.frequency.value = 7000;
+
+		// Connect the graph
+		bandpass.connect(highpass);
+		highpass.connect(gain);
+		gain.connect(audioCtx.destination);
+
+		this.trigger = function(now) {
+			// Create the oscillators
+			ratios.forEach(function(ratio) {
+			  var osc = audioCtx.createOscillator();
+			  osc.type = "square";
+			  // Frequency is the fundamental * this oscillator's ratio
+			  osc.frequency.value = fundamental * ratio;
+			  osc.connect(bandpass);
+			  osc.start(now);
+			  osc.stop(now + 0.3);
+			});
+
+			// Define the volume envelope
+			gain.gain.setValueAtTime(0.00001, now);
+			gain.gain.exponentialRampToValueAtTime(1, now + 0.02);
+			gain.gain.exponentialRampToValueAtTime(0.3, now + 0.03);
+			gain.gain.exponentialRampToValueAtTime(0.00001, now + 0.3);
+		}
+	}
+
+	function buttonClass(x, y, radius, row, col) {
+		var x = x;
+		var y = y;
+		var radius = radius;
+		var col = col;
+		var row = row;
+		var value = seq[row][col];
+
+		this.update = function() {
+			if (toggle && mouseClicked && distance(x, y, mouseX, mouseY) <= radius) {
+				value = value < 0.15 ? 1 :0 ;
+				seq[row][col] = value;
+			}
+
+			if (!toggle && mousePressed && distance(x, y, mouseX, mouseY) <= radius) {
+				value = distance(x, y, mouseX, mouseY)/radius;
+				seq[row][col] = value;
+			}
+			
+			colorCircle(x, y, radius, "Grey");
+			colorCircle(x, y, radius*value, "Red");
+		}
+	}
+
+	function colorCircle(centerX, centerY, radius, fillColor) {
+		canvasContext.fillStyle = fillColor;
+		canvasContext.beginPath();
+		canvasContext.arc(centerX, centerY, radius, 0, Math.PI*2, true);
+		canvasContext.fill();
+	}
+
+	function distance(ax, ay, bx, by) {
+		var dx = ax - bx;
+		var dy = ay - by;
+		return Math.sqrt(dx * dx + dy * dy);
+	}
+
+	var mousePressed = false;
+	var mouseClicked = false;
+	var mouseX = 0;
+	var mouseY = 0;
+
+	function mouseDown(evt) {
+		calculateMousePos(evt);
+		mousePressed = true;
+		mouseClicked = true;
+		audioCtx.resume();
+	}
+
+	function mouseUp(evt) {
+		mousePressed = false;
+	}
+
+	function calculateMousePos(evt) {
+		var rect = canvas.getBoundingClientRect(),
+		root = document.documentElement;
+		mouseX = evt.clientX - rect.left - root.scrollLeft;
+		mouseY = evt.clientY - rect.top - root.scrollTop;
+	}
+
+	
+</script>
+<body bgcolor="black"></body>
+</html>

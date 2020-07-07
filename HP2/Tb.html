@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<html>
+	<title>Trombone</title>
+
+<head>
+	<style>
+	a:link {color: orange;}
+	a:visited {color: orange;}
+	a:hover {color: orange;}
+	a:active {color: orange;}
+	body {color: gray;}
+	</style>
+</head>
+<body>
+	Set the ESI <a href="../index.html">down</a> and return to the musical emporium
+	<canvas id="laCanvas" width="800" height="600" style="display: block;background: #000000;position: absolute; left: 0px; top: 35px; margin:0px auto 0px auto;"></canvas>
+</body>
+
+<script>
+
+	document.addEventListener('pointerdown', mouseDown);
+	document.addEventListener('pointerup', mouseUp);
+	document.getElementById('laCanvas').addEventListener('pointermove', calculateMousePos);
+	window.addEventListener('keyup', keyUp);
+	window.addEventListener('keydown', keyDown);
+
+	var audio_context = window.AudioContext || window.webkitAudioContext;
+	var audioCtx = new audio_context();
+
+	var pitch = audioCtx.createOscillator();
+	var tone = audioCtx.createBiquadFilter();
+	var volume = audioCtx.createGain();
+	pitch.type = 'sawtooth';
+	pitch.frequency.setValueAtTime(55, audioCtx.currentTime);
+	tone.type = 'lowpass';
+	volume.gain.setValueAtTime(0, audioCtx.currentTime);
+
+	pitch.connect(tone);
+	tone.connect(volume);
+	volume.connect(audioCtx.destination);
+
+	pitch.start();
+
+	var canvas = document.getElementById('laCanvas');
+	var canvasContext = canvas.getContext('2d');
+
+	window.onload = function() {
+		window.requestAnimationFrame(loop);
+		draw();
+	}
+
+	function loop() {
+		var now = audioCtx.currentTime;
+		
+		updateTrombone();
+
+		window.requestAnimationFrame(loop);
+	}
+
+	var rootFreq = 55;
+	var partial = 1;
+	var slidePosition = 1;
+
+	var rowSize = 20;
+	var colSize = 40;
+	var totalSlidePositions = 7-1;
+	var totalPartials = 8-1;
+
+	var maxVolume = 0.5
+
+	/*
+	Slide positions
+	1
+	0.94387
+	0.8909
+	0.8409
+	0.7937
+	0.74915
+	0.70711
+	*/
+
+	function updateTrombone() {
+		var left = canvas.width/2 - (colSize*totalSlidePositions)/2;
+		var top = canvas.height/2 - (rowSize*totalPartials)/2;
+		var right = canvas.width/2 + (colSize*totalSlidePositions)/2;
+		var bottom = canvas.height/2 + (rowSize*totalPartials)/2;
+
+		slidePosition = (mouseX-left)/(right-left);
+		if (slidePosition > 1) slidePosition = 1;
+		if (slidePosition < 0) slidePosition = 0;
+		slidePosition = scaleRange(0, 1, 1, 0.70711, slidePosition);
+
+		partial = (mouseY-top)/(bottom-top);
+		if (partial > 1.1) partial = 1.1;
+		if (partial < 0.1) partial = 0.1;
+		partial = 10-Math.ceil(partial*totalPartials+1);
+
+		pitch.frequency.setValueAtTime(rootFreq * partial * slidePosition, audioCtx.currentTime + 0.001);
+		tone.frequency.setValueAtTime(pitch.frequency.value * 3, audioCtx.currentTime + 0.001);
+
+		if ((mousePressed || spacePressed) && volume.gain.value == 0) {
+			volume.gain.setValueAtTime(maxVolume, audioCtx.currentTime + 0.001);
+		}
+		if ((!mousePressed & !spacePressed) && volume.gain.value == maxVolume) {
+			volume.gain.setValueAtTime(0, audioCtx.currentTime + 0.001);
+		}
+	}
+
+	function draw() {
+		var offsetX = canvas.width/2 - (colSize*totalSlidePositions)/2;
+		var offsetY = canvas.height/2 - (rowSize*totalPartials-1)/2;
+
+		for(var i = 0; i < totalPartials; i++) {
+			drawBox(offsetX, offsetY+(i*rowSize), totalSlidePositions*colSize, rowSize);
+		}
+
+		var boxWidth = 0.70711;
+		for(var i = 0; i < totalPartials; i++) {
+			var width = boxWidth * colSize * i;
+			drawBox(offsetX, offsetY, width, totalPartials*rowSize);
+			boxWidth *= 1.06;
+			console.log(boxWidth)
+		}
+	}
+
+	function drawBox(x, y, w, h) {
+		canvasContext.strokeStyle  = 'rgb(255, 255, 255)';
+		canvasContext.rect(x, y, w, h);
+		canvasContext.stroke();
+	}
+
+
+
+	function scaleRange(inputStart, inputEnd, outputStart, outputEnd, value) {
+		var scale = (outputEnd - outputStart) / (inputEnd - inputStart);
+		return outputStart + ((value - inputStart) * scale);
+	}
+	
+	var mousePressed = false;
+	var mouseX = 0;
+	var mouseY = 0;
+
+	function mouseDown(evt) {
+		calculateMousePos(evt);
+		mousePressed = true;
+		audioCtx.resume();
+	}
+
+	function mouseUp(evt) {
+		mousePressed = false;
+	}
+
+	function calculateMousePos(evt) {
+		var rect = canvas.getBoundingClientRect(),
+		root = document.documentElement;
+		mouseX = evt.clientX - rect.left - root.scrollLeft;
+		mouseY = evt.clientY - rect.top - root.scrollTop;
+	}
+
+	var spacePressed = false;
+
+	function keyUp(evt) {
+		if (evt.keyCode == 32) {
+			spacePressed = false;
+		}
+	}
+
+	function keyDown(evt) {
+		if (evt.keyCode == 32) {
+			spacePressed = true;
+		}
+		audioCtx.resume();
+	}
+
+	
+</script>
+<body bgcolor="black"></body>
+</html>
