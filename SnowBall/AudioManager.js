@@ -46,16 +46,16 @@ function getMute() {
 
 
 //Time Manager
-const REMOVE = 0; // Arrayformat [REMOVE]
-const FADE = 1; // Arrayformat [FADE, clip, startTime, endTime, startVolume, endVolume, crossfade]
-const TIMER = 2; // Arrayformat [TIMER, clip, endTime, callSign]
-const PLAY = 3; // Arrayformat [PLAY, clip, endTime]
-const STOP = 4; // Arrayformat [STOP, clip, endTime]
-const CHECKING = 5; // Arrayformat [CHECK, clip, checkTime, eventType, eventProperty1, eventProperty2]
-
 var AudioEventManager = new audioEventManager();
 
 function audioEventManager() {
+	const REMOVE = 0; // Arrayformat [REMOVE]
+	const FADE = 1; // Arrayformat [FADE, clip, startTime, endTime, startVolume, endVolume, crossfade]
+	const TIMER = 2; // Arrayformat [TIMER, clip, endTime, callSign]
+	const PLAY = 3; // Arrayformat [PLAY, clip, endTime]
+	const READY = 4; // Arrayformat [READY, clip, file]
+	const STOP = 5; // Arrayformat [STOP, clip, endTime]
+
 	var eventList = [];
 	var now = window.performance.now();
 
@@ -126,6 +126,20 @@ function audioEventManager() {
 		}
 	}
 
+	this.addPlayOnReadyEvent = function(clip) {
+		// Arrayformat [READY, clip, file]
+		var thisClip = clip;
+		var check = checkListFor(READY, thisClip);
+		var file = clip.getSourceClip().getAudioFile();
+
+		if (check == "none") {
+			//console.log("Adding PlayOnReady Event for " + clip.name);
+			eventList.push([READY, clip, file]);
+		} else {
+			eventList[check] = [READY, clip, file];
+		}
+	}
+
 	this.addStopEvent = function(clip, duration) {
 		// Arrayformat [STOP, clip, endTime]
 		var thisClip = clip;
@@ -137,20 +151,6 @@ function audioEventManager() {
 			eventList.push([STOP, clip, endTime]);
 		} else {
 			eventList[check] = [STOP, clip, endTime];
-		}
-	}
-
-	this.addCheckingEvent = function(clip, eventType, eventProperty1, eventProperty2 = 0) {
-		// Arrayformat [CHECK, clip, checkTime, eventType, eventProperty1, eventProperty2]
-		var thisClip = clip;
-		var check = checkListFor(CHECKING, thisClip);
-		var checkTime = thisClip.getTime();
-
-		if (check == "none") {
-			//console.log("Adding Stop Event for " + clip.name);
-			eventList.push([CHECKING, clip, checkTime, eventType, eventProperty1, eventProperty2]);
-		} else {
-			eventList[check] = [CHECKING, clip, checkTime, eventType, eventProperty1, eventProperty2];
 		}
 	}
 
@@ -186,6 +186,18 @@ function audioEventManager() {
 		}
 	}
 
+	this.removePlayOnReadyEvent = function(clip) {
+		var thisClip = clip;
+		var check = checkListFor(READY, thisClip);
+
+		if (check == "none") {
+			return;
+		} else {
+			//console.log("Removing Stop Event for " + clip.name);
+			eventList[check] = [REMOVE];
+		}
+	}
+
 	this.removeStopEvent = function(clip) {
 		var thisClip = clip;
 		var check = checkListFor(STOP, thisClip);
@@ -199,7 +211,7 @@ function audioEventManager() {
 	}
 
 	this.getEventSecondsRemaining = function(clip, eventType, callSign = "") {
-		now = Date.now();
+		now = window.performance.now();
 		var thisClip = clip;
 		var check = checkListFor(eventType, thisClip, callSign);
 
@@ -253,33 +265,20 @@ function audioEventManager() {
 				}
 			}
 
+			if (eventList[i][0] == READY) {
+			//Arrayformat [REAADY, clip, file]
+				if (eventList[i][2].readyState >= 4) {
+					//console.log("Executing PlayOnReady Event for " + thisClip.name);
+					thisClip.play();
+					eventList[i] = [REMOVE];
+				}
+			}
+
 			if (eventList[i][0] == STOP) {
 			//Arrayformat [STOP, clip, endTime]
 				if (now >= eventList[i][2]) {
 					//console.log("Executing Stop Event for " + thisClip.name);
 					thisClip.stop();
-					eventList[i] = [REMOVE];
-				}
-			}
-
-			if (eventList[i][0] == CHECKING) {
-			//Arrayformat [CHECK, clip, checkTime, eventType, eventProperty1, eventProperty2]
-				if (thisClip.getTime() > eventList[i][2]) {
-					//console.log("Executing Checking Event for " + thisClip.name);
-					switch(eventList[i][3]) {
-						case FADE:
-							this.addFadeEvent(thisClip, eventList[i][4], eventList[i][5]);
-							break;
-						case TIMER:
-							this.addTimerEvent(thisClip, eventList[i][4], eventList[i][5]);
-							break;
-						case PLAY:
-							this.addPlayEvent(thisClip, eventList[i][4]);
-							break;
-						case STOP:
-							this.addStopEvent(thisClip, eventList[i][4]);
-							break;
-					}
 					eventList[i] = [REMOVE];
 				}
 			}
