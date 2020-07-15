@@ -181,7 +181,7 @@ function audioEventManager() {
 		if (check == "none") {
 			return;
 		} else {
-			//console.log("Removing Stop Event for " + clip.name);
+			//console.log("Removing PlayOnReady Event for " + clip.name);
 			eventList[check] = [REMOVE];
 		}
 	}
@@ -193,7 +193,7 @@ function audioEventManager() {
 		if (check == "none") {
 			return;
 		} else {
-			//console.log("Removing Stop Event for " + clip.name);
+			//console.log("Removing PlayOnReady Event for " + clip.name);
 			eventList[check] = [REMOVE];
 		}
 	}
@@ -299,13 +299,13 @@ function audioEventManager() {
 		for (var i = 0; i < eventList.length; i++) {
 			if (eventList[i][0] == eventType) {
 				if (eventList[i][1] == clip) {
-					if(eventType == TIMER && callSign != "" && eventList[i][3] == callSign) {
+					if (eventType != TIMER) {
 						foundItem = true;
 						return i;
-					} else if (eventType == TIMER) {
+					} else if (callSign == "") {
 						foundItem = true;
 						return i;
-					} else {
+					} else if (eventList[i][3] == callSign) {
 						foundItem = true;
 						return i;
 					}
