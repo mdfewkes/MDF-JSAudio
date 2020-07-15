@@ -205,6 +205,12 @@ function sfxClip(filename) {//A simple, single buffer sound clip
 		return false;
 	}
 
+	this.getAudioFile = function() {
+		var audioArray = new Array(1);
+		audioArray[0] = audioFile;
+		return audioArray;
+	}
+
 	this.resetTick = function() {
 		tick = 0;
 	}
@@ -341,6 +347,10 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 		return false;
 	}
 
+	this.getAudioFile = function() {
+		return audioFile;
+	}
+
 	this.resetTick = function() {
 		tick = 0;
 	}
@@ -471,6 +481,10 @@ function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file th
 		return false;
 	}
 
+	this.getAudioFile = function() {
+		return audioFile;
+	}
+
 	this.resetTick = function() {
 		tick = 0;
 	}
@@ -597,6 +611,12 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 
 	this.getChildClip = function() {
 		return false;
+	}
+
+	this.getAudioFile = function() {
+		var audioArray = new Array(1);
+		audioArray[0] = audioFile;
+		return audioArray;
 	}
 
 	this.resetTick = function() {
@@ -1551,6 +1571,16 @@ function MusicClip(filename, playLength) {//Single buffer music file
 		return false;
 	}
 
+	this.getAudioFile = function() {
+		return audioFile;
+	}
+
+	this.getAudioFile = function() {
+		var audioArray = new Array(1);
+		audioArray[0] = audioFile;
+		return audioArray;
+	}
+
 	this.resetTick = function() {
 		tick = 0;
 	}
@@ -1691,9 +1721,9 @@ function musicClipOverlap(filename, playLength) {//Double buffer music file
 		return false;
 	}
 
-	this.getSourceFile = function() {
-		return audioFile[1];
-	} // temp
+	this.getAudioFile = function() {
+		return audioFile;
+	}
 
 	this.resetTick = function() {
 		tick = 0;
@@ -1833,6 +1863,10 @@ function musicClipOverlapLoop(filename, playLength) {//Double buffer music file 
 
 	this.getChildClips = function() {
 		return false;
+	}
+
+	this.getAudioFile = function() {
+		return audioFile;
 	}
 
 	this.resetTick = function() {
