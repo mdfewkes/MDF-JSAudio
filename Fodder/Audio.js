@@ -2,6 +2,7 @@
 var musicVolume = 0.7;
 var effectsVolume = 0.7;
 var isMuted = false;
+var firstGesture = false;
 const VOLUME_INCREMENT = 0.0333;
 
 
@@ -9,15 +10,21 @@ const VOLUME_INCREMENT = 0.0333;
 
 
 
-//sound classes
-
+//--//sound classes-----------------------------------------------------------
 var backgroundMusic = function backgroundMusicClass() {
 
 	var musicSound = null;
 	var fadeTrack = null;
+	var fileName;
 
-	this.loopSong = function(filenameWithPath) {
-		var newTrack = new Audio(filenameWithPath);
+	this.loopSong = function(fullFilenameWithPath) {
+		if (fullFilenameWithPath == fileName) {
+			return false;
+		} else {
+			fileName = fullFilenameWithPath;
+		}
+
+		var newTrack = new Audio(fileName);
 		newTrack.oncanplaythrough = function() {
 			if (musicSound != null && fadeTrack != null) {
 				fadeTrack.pause();
@@ -68,8 +75,13 @@ var backgroundMusic = function backgroundMusicClass() {
 		musicSound.play();
 	}
 
+	this.restart = function() {
+		musicSound.pause();
+		musicSound.currentTime = 0;
+		musicSound.play();
+	}
+
 	this.setVolume = function(value) {
-		// Multipliction by a boolean serves as 1 for true and 0 for false
 		if (musicSound == null) {return;}
 
 		musicSound.volume = Math.pow(value * !isMuted, 2);
@@ -82,10 +94,10 @@ var backgroundMusic = function backgroundMusicClass() {
 	}
 }
 
-function soundLoopsClass(filenameWithPath) {
+function soundLoopsClass(fullFilenameWithPath) {
 
-	var fullFilename = filenameWithPath;
-	var sound = new Audio(fullFilename);
+	var fileName = fullFilenameWithPath;
+	var sound = new Audio(fileName);
 	sound.loop = true;
 
 	this.play = function() {
@@ -101,10 +113,10 @@ function soundLoopsClass(filenameWithPath) {
 	}
 }
 
-function soundSingleBufferClass(filenameWithPath) {
+function soundSingleBufferClass(fullFilenameWithPath) {
 
-	var fullFilename = filenameWithPath;
-	var sound = new Audio(fullFilename);
+	var fileName = fullFilenameWithPath;
+	var sound = new Audio(fileName);
 
 	this.play = function() {
 
@@ -119,13 +131,13 @@ function soundSingleBufferClass(filenameWithPath) {
 	}
 }
 
-function soundMultiBufferClass(filenameWithPath, voices = 2) {
+function soundMultiBufferClass(fullFilenameWithPath, voices = 2) {
 
-	var fullFilename = filenameWithPath;
+	var fileName = fullFilenameWithPath;
 	var soundIndex = 0;
 	var sounds = new Array(voices);
 	for (var i = 0; i < sounds.length; i++) {
-		sounds[i] = new Audio(fullFilename);
+		sounds[i] = new Audio(fileName);
 	}
 
 	this.play = function() {
@@ -144,15 +156,15 @@ function soundMultiBufferClass(filenameWithPath, voices = 2) {
 	}
 }
 
-function soundDynamicBufferClass(filenameWithPath) {
+function soundDynamicBufferClass(fullFilenameWithPath) {
 
-	var fullFilename = filenameWithPath;
+	var fileName = fullFilenameWithPath;
 	var soundIndex = 0;
-	var sounds = [new Audio(fullFilename)];
+	var sounds = [new Audio(fileName)];
 
 	this.play = function() {
 		if(!sounds[soundIndex].paused) {
-			sounds.splice(soundIndex, 0, new Audio(fullFilename));
+			sounds.splice(soundIndex, 0, new Audio(fileName));
 		}
 
 		sounds[soundIndex].currentTime = 0;
@@ -167,7 +179,7 @@ function soundDynamicBufferClass(filenameWithPath) {
 			sounds[i].pause();
 		}
 
-		sounds = [new Audio(fullFilename)];
+		sounds = [new Audio(fileName)];
 		soundIndex = 0;
 	}
 }
@@ -205,7 +217,7 @@ function soundRandomClass(arrayOfFilenames) {
 	}
 }
 
-//sound functions
+//--//sound functions---------------------------------------------------------
 function getRandomVolume(){
 	var min = 0.8;
 	var max = 1;
@@ -266,4 +278,12 @@ function turnVolumeUp() {
 function turnVolumeDown() {
 	turnMusicVolumeDown();
 	turnEffectsVolumeDown();
+}
+
+function Gesture() {
+	if (firstGesture) return;
+
+	//On first click code, probably title music
+
+	firstGesture = true;
 }
