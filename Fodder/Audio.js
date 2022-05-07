@@ -122,7 +122,7 @@ function soundSingleBufferClass(fullFilenameWithPath) {
 
 		sound.currentTime = 0;
 		sound.volume = Math.pow(getRandomVolume() * effectsVolume * !isMuted, 2);
-		sounds.play();
+		sound.play();
 	}
 
 

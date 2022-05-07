@@ -1,0 +1,10 @@
+// Returns the page location type
+// 0 (falsey) = Local file, direct from disk (file://path/to/file.html)
+// 1 (truthy) = Virtually remote file, from local server (http://localhost)
+// 2 (truthy) = Remote file from remote server (http://example.com)
+
+function locationType(){
+    if( window.location.protocol == 'file:' ){ return 0; }
+    if( !window.location.host.replace( /localhost|127\.0\.0\.1/i, '' ) ){ return 2; }
+    return 1;
+}

@@ -46,16 +46,16 @@ function getMute() {
 
 
 //Time Manager
+const REMOVE = 0; // Arrayformat [REMOVE]
+const FADE = 1; // Arrayformat [FADE, clip, startTime, endTime, startVolume, endVolume, crossfade]
+const TIMER = 2; // Arrayformat [TIMER, clip, endTime, callSign]
+const PLAY = 3; // Arrayformat [PLAY, clip, endTime]
+const READY = 4; // Arrayformat [READY, clip, file]
+const STOP = 5; // Arrayformat [STOP, clip, endTime]
+
 var AudioEventManager = new audioEventManager();
 
 function audioEventManager() {
-	const REMOVE = 0; // Arrayformat [REMOVE]
-	const FADE = 1; // Arrayformat [FADE, clip, startTime, endTime, startVolume, endVolume, crossfade]
-	const TIMER = 2; // Arrayformat [TIMER, clip, endTime, callSign]
-	const PLAY = 3; // Arrayformat [PLAY, clip, endTime]
-	const READY = 4; // Arrayformat [READY, clip, file]
-	const STOP = 5; // Arrayformat [STOP, clip, endTime]
-
 	var eventList = [];
 	var now = window.performance.now();
 

@@ -119,7 +119,7 @@ function AudioGlobal() {
 		now = audioCtx.currentTime;
 		currentSoundSources = currentSoundSources.filter(function(referance){
 			return referance.endTime > now && !referance.source.loop;
-		}); //Removed completed sounds.  temporarally removed
+		}); //Removed completed sounds.
 
 		for (var i in currentSoundSources) {
 			currentSoundSources[i].volume.gain.setValueAtTime(calcuateVolumeDropoff(currentSoundSources[i].pos), now);
@@ -491,7 +491,7 @@ function AudioGlobal() {
 			pan = lerp(-1, 0, (direction-90)/90);
 		} else if (direction <= 270) {
 			pan = lerp(0, 1, (direction-180)/90);
-		} else if (direction < 360) {
+		} else if (direction <= 360) {
 			pan = lerp(1, 0, (direction-270)/90);
 		}
 
@@ -569,15 +569,16 @@ function AudioGlobal() {
 		var distance = DROPOFF_MAX;
 		var pos = location;
 		for (var i in currentAudGeo) {
-			if (lineOfSight(currentPlayerPos, currentAudGeo[i].point)) {
-				var newDistance = checkAudGeo(i, location, []);
-				if (newDistance < distance) {
+			//If AudGeo has lineOfSight to the player, use checkAudGeo() to find the distance through the network back to the sound location
+			if (lineOfSight(currentPlayerPos, currentAudGeo[i].point)) { //LineOfSight to player
+				var newDistance = checkAudGeo(i, location, []); //Recursive function to find shortest distance through node netowrk
+				if (newDistance < distance) { //If a shorter distance than curent holding, replace with this distance and AudGeo
 					distance = newDistance;
 					pos = currentAudGeo[i].point;
 				}
 			}
 		}
-		distance += currentPlayerPos.distance(pos);
+		distance += currentPlayerPos.distance(pos); //Add the players distance to the AudGeo's network distance
 
 		//Calculate new location from angle and distance
 		var direction = currentPlayerPos.angle(pos);
@@ -600,7 +601,7 @@ function AudioGlobal() {
 			return location.distance(currentAudGeo[pointToCheck].point);
 		}
 
-		//Checks each connection recursively for the shortest distance to line of sight of the source
+		//Checks each connection recursively for the shortest distance to lineOfSight of the source
 		for (var i in currentAudGeo[pointToCheck].connections) {
 			//Skips over nodes we've already visited
 			var oldPoint = false;
@@ -671,6 +672,7 @@ function generateAudGeo() {
 	}
 }
 
+//Checks if there are no walls in between two points
 function lineOfSight(v1, v2) {
 	for (var i in wall) {
 		if (isLineOnLine(
