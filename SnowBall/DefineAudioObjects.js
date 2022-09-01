@@ -12,7 +12,7 @@ var layer3 = new musicClipOverlap("kicktail2", 2);
 var backgroundLayers = new musicContainerLayersLoop([layer1, layer2, layer3]);
 var backgroundMusic = new musicContainerCrossfade([backgroundClips, backgroundLayers]);
 
-var controles = new sfxClipSpriteSheet("controls", [[0.242,0.578],[1.326,1.82],[2.6,2.95]]);
+var controles = new sfxClipSpriteSheet("controls", [[0.242,0.578],[1.326,1.82],[2.6,3.1]]);
 var conPlay = new sfxClipSprite(controles, 0);
 var conPause = new sfxClipSprite(controles, 1);
 var conStop = new sfxClipSprite(controles, 2);

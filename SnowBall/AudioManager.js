@@ -52,6 +52,7 @@ const TIMER = 2; // Arrayformat [TIMER, clip, endTime, callSign]
 const PLAY = 3; // Arrayformat [PLAY, clip, endTime]
 const READY = 4; // Arrayformat [READY, clip, file]
 const STOP = 5; // Arrayformat [STOP, clip, endTime]
+const CALLBACK = 6; // Arrayformat [CALLBACK, callback, endTime]
 
 var AudioEventManager = new audioEventManager();
 
@@ -140,6 +141,15 @@ function audioEventManager() {
 		}
 	}
 
+	this.addCallbackEvent = function(callback, duration) {
+		// Arrayformat [CALLBACK, callback, endTime]
+		var thisCallback = callback;
+		var endTime = (duration * 1000) + now;
+
+		//console.log("Adding Callback Event);
+		eventList.push([CALLBACK, thisCallback, endTime]);
+	}
+
 	this.addStopEvent = function(clip, duration) {
 		// Arrayformat [STOP, clip, endTime]
 		var thisClip = clip;
@@ -201,6 +211,18 @@ function audioEventManager() {
 	this.removeStopEvent = function(clip) {
 		var thisClip = clip;
 		var check = checkListFor(STOP, thisClip);
+
+		if (check == "none") {
+			return;
+		} else {
+			//console.log("Removing Stop Event for " + clip.name);
+			eventList[check] = [REMOVE];
+		}
+	}
+
+	this.removeCallbackEvent = function(callback) {
+		var thisCallback = callback;
+		var check = checkListFor(CALLBACK, thisCallback);
 
 		if (check == "none") {
 			return;
@@ -279,6 +301,15 @@ function audioEventManager() {
 				if (now >= eventList[i][2]) {
 					//console.log("Executing Stop Event for " + thisClip.name);
 					thisClip.stop();
+					eventList[i] = [REMOVE];
+				}
+			}
+
+			if (eventList[i][0] == CALLBACK) {
+			// Arrayformat [CALLBACK, callback, endTime]
+				if (now >= eventList[i][2]) {
+					//console.log("Executing Callback");
+					eventList[i][1]();
 					eventList[i] = [REMOVE];
 				}
 			}
