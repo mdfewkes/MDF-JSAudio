@@ -1,3 +1,5 @@
 `~`~` Snowball:
 Compare "identical" containers
 musicClip not devirtualizing when the volume comes back up
+
+getVolume on containers should return the clipVolume

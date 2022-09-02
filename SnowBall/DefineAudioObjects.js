@@ -35,5 +35,4 @@ controles.setMixVolume(0.75);
 
 
 var test1 = new sfxClip("kicktail2", 2);
-
 var testC = new sfxContainerDelayControl([test1], 4, 2);
