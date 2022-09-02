@@ -2872,7 +2872,7 @@ function sfxContainerBlend(clipList, startingLevel = 0) {//Container which blend
 	return this;
 }
 
-function sfxContainerPlayDelayControl(clipList, maxDurationInSeconds = 1, minDurationInSeconds = 0) {//Plays clip after a random duration
+function sfxContainerDelayControl(clipList, maxDurationInSeconds = 1, minDurationInSeconds = 0) {//Plays clip after a random duration
 	var audioClip = [];
 	var currentClip = 0;
 	this.name = "sfxContainerPlayDelayRandom";
@@ -2881,6 +2881,8 @@ function sfxContainerPlayDelayControl(clipList, maxDurationInSeconds = 1, minDur
 	var lastRandomIndex = -1;
 	var clipVolume = 1;
 	var tick = 0;
+	var randomDelay = 0;
+	var stopTime = 0;
 
 	for (var i in clipList) {
 		audioClip[i] = clipList[i];
@@ -2890,7 +2892,7 @@ function sfxContainerPlayDelayControl(clipList, maxDurationInSeconds = 1, minDur
 		var nextClip = Math.floor(Math.random() * audioClip.length);
 		currentClip = nextClip != lastRandomIndex ? nextClip : nextClip++ % audioClip.length;
 
-		var randomDelay = (Math.random() * playMax - playMin) + playMin;
+		randomDelay = (Math.random() * playMax - playMin) + playMin;
 		AudioEventManager.addPlayEvent(audioClip[currentClip], randomDelay);
 
 		AudioEventManager.addTimerEvent(this, randomDelay + this.getDuration(), "tick");
@@ -2906,7 +2908,7 @@ function sfxContainerPlayDelayControl(clipList, maxDurationInSeconds = 1, minDur
 
 	this.resume = function() {
 		audioClip[currentClip].resume();
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+		AudioEventManager.addTimerEvent(this, (randomDelay + this.getDuration() - this.getTime()), "tick");
 	}
 
 	this.pause = function() {

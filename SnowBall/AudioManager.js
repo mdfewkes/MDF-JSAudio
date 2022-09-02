@@ -67,7 +67,7 @@ function audioEventManager() {
 	this.updateEvents = function() {
 		now = window.performance.now();
 		cleanupList();
-		this.runList();
+		runList();
 	}
 
 	this.addFadeEvent = function(clip, duration, endVol) {
@@ -244,7 +244,7 @@ function audioEventManager() {
 		}
 	}
 
-	this.runList = function(){
+	function runList(){
 		for (var i = 0; i < eventList.length; i++) {
 			var thisClip = eventList[i][1];
 
