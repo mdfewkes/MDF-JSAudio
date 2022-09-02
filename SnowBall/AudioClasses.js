@@ -2881,8 +2881,9 @@ function sfxContainerDelayControl(clipList, maxDurationInSeconds = 1, minDuratio
 	var lastRandomIndex = -1;
 	var clipVolume = 1;
 	var tick = 0;
-	var randomDelay = 0;
-	var stopTime = 0;
+	var delayTime = (Math.random() * playMax - playMin) + playMin;
+	var timeLeft = delayTime;
+	var playing = false;
 
 	for (var i in clipList) {
 		audioClip[i] = clipList[i];
@@ -2892,35 +2893,48 @@ function sfxContainerDelayControl(clipList, maxDurationInSeconds = 1, minDuratio
 		var nextClip = Math.floor(Math.random() * audioClip.length);
 		currentClip = nextClip != lastRandomIndex ? nextClip : nextClip++ % audioClip.length;
 
-		randomDelay = (Math.random() * playMax - playMin) + playMin;
-		AudioEventManager.addPlayEvent(audioClip[currentClip], randomDelay);
-
-		AudioEventManager.addTimerEvent(this, randomDelay + this.getDuration(), "tick");
+		AudioEventManager.addPlayEvent(audioClip[currentClip], delayTime);
+		AudioEventManager.addTimerEvent(this, (delayTime + audioClip[currentClip].getDuration()), "tick");
+		playing = true;
 	}
 
 	this.stop = function() {
 		for (var i in audioClip) {
 			audioClip[i].stop();
 		}
-		AudioEventManager.removePlayEvent(audioClip[currentClip])
+		delayTime = (Math.random() * playMax - playMin) + playMin;
+		AudioEventManager.removePlayEvent(audioClip[currentClip]);
 		AudioEventManager.removeTimerEvent(this);
+		playing = false;
 	}
 
 	this.resume = function() {
-		audioClip[currentClip].resume();
-		AudioEventManager.addTimerEvent(this, (randomDelay + this.getDuration() - this.getTime()), "tick");
+		if (timeLeft > 0) {
+			AudioEventManager.addPlayEvent(audioClip[currentClip], timeLeft);
+			AudioEventManager.addTimerEvent(this, (timeLeft + audioClip[currentClip].getDuration()), "tick");
+		} else {
+			audioClip[currentClip].resume();
+			AudioEventManager.addTimerEvent(this, (audioClip[currentClip].getDuration() - audioClip[currentClip].getTime()), "tick");
+		}
+		playing = true;
 	}
 
 	this.pause = function() {
 		for (var i in audioClip) {
 			audioClip[i].pause();
 		}
+		timeLeft = AudioEventManager.getEventSecondsRemaining(PLAY, audioClip[currentClip]);
+		if (timeLeft == "none") {timeLeft = 0;}
+		AudioEventManager.removePlayEvent(audioClip[currentClip]);
 		AudioEventManager.removeTimerEvent(this);
+		playing = false;
 	}
 
 	this.trigger = function(callSign) {
 		if(callSign == "tick") {
 			tick++;
+			playing = false;
+			delayTime = (Math.random() * playMax - playMin) + playMin;
 		}
 	}
 
@@ -2974,22 +2988,33 @@ function sfxContainerDelayControl(clipList, maxDurationInSeconds = 1, minDuratio
 	}
 
 	this.setTime = function(time) {
-		audioClip[currentClip].setTime(time);
-		if (!this.getPaused()) {
-			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+		if (time > delayTime) {
+			audioClip[currentClip].setTime(time - delayTime);
+			if (!audioClip[currentClip].getPaused()) {
+				AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+			} else if (!this.getPaused()) {
+				audioClip[currentClip].resume();
+				AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+			}
+		} else {
+			timeLeft = delayTime - time;
+			AudioEventManager.addPlayEvent(audioClip[currentClip], timeLeft);
+			AudioEventManager.addTimerEvent(this, (timeLeft + audioClip[currentClip].getDuration()), "tick");
 		}
 	}
 
 	this.getTime = function() {
-		return audioClip[currentClip].getTime();
+		var delayRemaining = AudioEventManager.getEventSecondsRemaining(PLAY, audioClip[currentClip]);
+		if (delayRemaining == "none") delayRemaining = 0;
+		return audioClip[currentClip].getTime() + delayTime - delayRemaining;
 	}
 	
 	this.getDuration = function() {
-		return audioClip[currentClip].getDuration();
+		return audioClip[currentClip].getDuration() + delayTime;
 	}
 
 	this.getPaused = function() {
-		return audioClip[currentClip].getPaused();
+		return !playing;
 	}
 
 	return this;
