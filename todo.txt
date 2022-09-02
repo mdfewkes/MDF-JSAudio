@@ -1,8 +1,3 @@
 `~`~` Snowball:
-fullproof callback event
-rename getEventSecondsRemaining to getTimerEventSecondsRemaining, or expand it for move types
-
 Compare "identical" containers
-devirtualize past end point, what happens? music can catch
-look at set time (example musicClipOverlap)
 musicClip not devirtualizing when the volume comes back up

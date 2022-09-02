@@ -233,7 +233,9 @@ function sfxClip(filename, playLength = -1) {//A simple, single buffer sound cli
 	}
 
 	this.setTime = function(time) {
-		audioFile.currentTime = time;
+		var newTime = time % duration;
+		if(newTime < 0) {newTime = duration - newTime;}
+		audioFile[currentClip].currentTime = newTime;
 		if (playing) {
 			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 		}
@@ -369,7 +371,9 @@ function sfxClipLoop(filename) {//A simple, single buffer sound clip that loops
 	}
 
 	this.setTime = function(time) {
-		audioFile.currentTime = time;
+		var newTime = time % duration;
+		if(newTime < 0) {newTime = duration - newTime;}
+		audioFile[currentClip].currentTime = newTime;
 		if (playing) {
 			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 		}
@@ -516,7 +520,9 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 	}
 
 	this.setTime = function(time) {
-		audioFile[currentClip].currentTime = time;
+		var newTime = time % duration;
+		if(newTime < 0) {newTime = duration - newTime;}
+		audioFile[currentClip].currentTime = newTime;
 		if(playing) {
 			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 		}
@@ -653,9 +659,8 @@ function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file th
 	}
 
 	this.setTime = function(time) {
-		var newTime = time;
-		while (newTime >= duration) {newTime -= duration;}
-		if(newTime < 0) {newTime = 0;}
+		var newTime = time % duration;
+		if(newTime < 0) {newTime = duration - newTime;}
 		audioFile[currentClip].currentTime = newTime;
 		if (playing) {
 			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
@@ -1050,9 +1055,8 @@ function musicClip(filename, playLength) {//Single buffer music file
 	}
 
 	this.setTime = function(time) {
-		var newTime = time;
-		while(newTime >= duration) {newTime -= duration;}
-		if(newTime < 0) {newTime = 0;}
+		var newTime = time % duration;
+		if(newTime < 0) {newTime = duration - newTime;}
 		audioFile.currentTime = newTime;
 		if(this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
 	}
@@ -1195,9 +1199,8 @@ function musicClipOverlap(filename, playLength) {//Double buffer music file
 	}
 
 	this.setTime = function(time) {
-		var newTime = time;
-		while (newTime >= duration) {newTime -= duration;}
-		if(newTime < 0) {newTime = 0;}
+		var newTime = time % duration;
+		if(newTime < 0) {newTime = duration - newTime;}
 		audioFile[currentClip].currentTime = newTime;
 		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
 	}
@@ -1340,9 +1343,8 @@ function musicClipOverlapLoop(filename, playLength) {//Double buffer music file 
 	}
 
 	this.setTime = function(time) {
-		var newTime = time;
-		while (newTime >= duration) {newTime -= duration;}
-		if(newTime < 0) {newTime = 0;}
+		var newTime = time % duration;
+		if(newTime < 0) {newTime = duration - newTime;}
 		audioFile[currentClip].currentTime = newTime;
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 	}
