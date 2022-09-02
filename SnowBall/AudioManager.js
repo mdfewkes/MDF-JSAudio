@@ -148,6 +148,7 @@ function audioEventManager() {
 
 		//console.log("Adding Callback Event);
 		eventList.push([CALLBACK, thisCallback, endTime]);
+		return thisCallback;
 	}
 
 	this.addStopEvent = function(clip, duration) {
@@ -331,21 +332,16 @@ function audioEventManager() {
 			if (eventList[i][0] == eventType) {
 				if (eventList[i][1] == clip) {
 					if (eventType != TIMER) {
-						foundItem = true;
 						return i;
 					} else if (callSign == "") {
-						foundItem = true;
 						return i;
 					} else if (eventList[i][3] == callSign) {
-						foundItem = true;
 						return i;
 					}
 				}
 			}
 		}
-		if (!foundItem) {
-			return "none";
-		}
+		return "none";
 	}
 
 	function interpolateFade(startTime, endTime, startVolume, endVolume, currentTime) {
