@@ -118,15 +118,16 @@ function volumeManager() {
 //---//---SFX Classes
 SFXVolumeManager = new volumeManager();
 
-function sfxClip(filename) {//A simple, single buffer sound clip
+function sfxClip(filename, playLength = -1) {//A simple, single buffer sound clip
 	var audioFile = new Audio(audioPath+filename+audioFormat());
 	audioFile.onerror = function(){audioFile = new Audio(audioPath+filename+audioFormat(true))};
-	audioFile.onloadeddata = init;
+	audioFile.onloadedmetadata = init;
 	var clipVolume = 1;
 	this.name = filename;
-	var duration = 0;
+	var duration = playLength;
 	var mixVolume = 1;
 	var playing = false;
+	var virtual = false;
 	var tick = 0;
 
 	audioFile.pause();
@@ -134,43 +135,47 @@ function sfxClip(filename) {//A simple, single buffer sound clip
 	man.addToList(this);
 
 	function init() {
-		duration = audioFile.duration;
+		if (duration = -1) duration = audioFile.duration;
 	}
 
 	this.play = function() {
 		audioFile.currentTime = 0;
-		this.updateVolume();
-		if (clipVolume > 0.1) {audioFile.play()};
-		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
-		playing = true;
+		this.resume();
 	}
 
 	this.stop = function() {
-		audioFile.pause();
-		AudioEventManager.removeTimerEvent(this);
-		audioFile.currentTime = 0;
 		playing = false;
+		this.pause();
+		audioFile.currentTime = 0;
 	}
 
 	this.resume = function() {
 		this.updateVolume();
-		if (clipVolume > 0.1) {audioFile.play()};
+		if (clipVolume > 0.1) {
+			audioFile.play();
+		} else {
+			virtual = true;
+		}
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 		playing = true;
 	}
 
 	this.pause = function() {
-		if(playing && audioFile.paused && clipVolume < 0.1) {
+		if(playing && virtual) {
 			audioFile.currentTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
-		} else {audioFile.pause();}
+		} else {
+			audioFile.pause();
+		}
 		AudioEventManager.removeTimerEvent(this);
 		playing = false;
+		virtual = false;
 	}
 
 	this.trigger = function(callSign) {
 		if(callSign == "tick") {
 			tick++;
 			playing = false;
+			virtual = false;
 		}
 	}
 
@@ -179,12 +184,15 @@ function sfxClip(filename) {//A simple, single buffer sound clip
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
 		audioFile.volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
-		if(playing && audioFile.paused && newVolume >= 0.1) {
+		if(playing && virtual && newVolume >= 0.1) {
 			var newTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
 			this.setTime(newTime);
 			audioFile.play();
+			virtual = false;
+		} else if(clipVolume < 0.1) {
+			audioFile.pause();
+			virtual = true;
 		}
-		if(clipVolume < 0.1) {audioFile.pause();}
 	}
 
 	this.setVolume = function(newVolume) {
@@ -246,7 +254,7 @@ function sfxClip(filename) {//A simple, single buffer sound clip
 	return this;
 }
 
-function sfxClipLoop(filename) {//A simple, single buffer sound clip
+function sfxClipLoop(filename) {//A simple, single buffer sound clip that loops
 	var audioFile = new Audio(audioPath+filename+audioFormat());
 	audioFile.onerror = function(){audioFile = new Audio(audioPath+filename+audioFormat(true))};
 	audioFile.onloadedmetadata = init;
@@ -255,6 +263,7 @@ function sfxClipLoop(filename) {//A simple, single buffer sound clip
 	var duration = 0;
 	var mixVolume = 1;
 	var playing = false;
+	var virtual = false;
 	var tick = 0;
 
 	audioFile.pause();
@@ -268,37 +277,41 @@ function sfxClipLoop(filename) {//A simple, single buffer sound clip
 
 	this.play = function() {
 		audioFile.currentTime = 0;
-		this.updateVolume();
-		if (clipVolume > 0.1) {audioFile.play()};
-		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
-		playing = true;
+		this.resume();
 	}
 
 	this.stop = function() {
-		audioFile.pause();
-		AudioEventManager.removeTimerEvent(this);
-		audioFile.currentTime = 0;
 		playing = false;
+		this.pause();
+		audioFile.currentTime = 0;
 	}
 
 	this.resume = function() {
-		if (clipVolume > 0.1) {audioFile.play()};
+		this.updateVolume();
+		if (clipVolume > 0.1) {
+			audioFile.play()
+		} else {
+			virtual = true;
+		}
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 		playing = true;
 	}
 
 	this.pause = function() {
-		if(playing && audioFile.paused && clipVolume < 0.1) {
+		if(playing && virtual) {
 			audioFile.currentTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
-		} else {audioFile.pause();}
+		} else {
+			audioFile.pause();
+		}
 		AudioEventManager.removeTimerEvent(this);
 		playing = false;
+		virtual = false;
 	}
 
 	this.trigger = function(callSign) {
 		if(callSign == "tick") {
 			tick++;
-			playing = false;
+			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 		}
 	}
 
@@ -307,12 +320,15 @@ function sfxClipLoop(filename) {//A simple, single buffer sound clip
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
 		audioFile.volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
-		if(playing && audioFile.paused && newVolume >= 0.1) {
+		if(playing && virtual && newVolume >= 0.1) {
 			var newTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
 			this.setTime(newTime);
 			audioFile.play();
+			virtual = false;
+		} else if (clipVolume < 0.1) {
+			audioFile.pause();
+			virtual = true;
 		}
-		if(clipVolume < 0.1) {audioFile.pause();}
 	}
 
 	this.setVolume = function(newVolume) {
@@ -389,6 +405,7 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 	var duration = audioFile[0].duration;
 	var mixVolume = 1;
 	var playing = false;
+	var virtual = false;
 	var tick = 0;
 
 
@@ -401,40 +418,37 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 	}
 
 	this.play = function() {
-		currentClip++;
-		if (currentClip >= maxVoices) {currentClip = 0;}
-
+		currentClip = (currentClip + 1) % maxVoices;
 		audioFile[currentClip].currentTime = 0;
-		this.updateVolume();
-		if (clipVolume > 0.1) {audioFile[currentClip].play();};
-		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
-		playing = true;
+		this.resume();
 	}
 
 	this.stop = function() {
-		for (var i in audioFile) {
-			audioFile[i].pause();
-			audioFile[i].currentTime = 0;
-		}
 		playing = false;
-		AudioEventManager.removeTimerEvent(this);
+		this.pause();
+		audioFile[currentClip].currentTime = 0;
 	}
 
 	this.resume = function() {
-		if (clipVolume > 0.1) {audioFile[currentClip].play();};
+		this.updateVolume();
+		if (clipVolume > 0.1) {
+			audioFile[currentClip].play();
+		} else {
+			virtual = true;
+		}
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 		playing = true;
 	}
 
 	this.pause = function() {
-		if(playing && audioFile[currentClip].paused && clipVolume < 0.1) {
+		if(playing && virtual) {
 			audioFile[currentClip].currentTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
-		} else {audioFile.pause();}
-
+		}
 		for (var i in audioFile) {
 			audioFile[i].pause();
 		}
 		playing = false;
+		virtual = false;
 		AudioEventManager.removeTimerEvent(this);
 	}
 
@@ -442,6 +456,7 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 		if(callSign == "tick") {
 			tick++;
 			playing = false;
+			virtual = false;
 		}
 	}
 
@@ -452,14 +467,16 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 		for (var i in audioFile) {
 			audioFile[i].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
 		}
-		if(playing && audioFile[currentClip].paused && newVolume >= 0.1) {
+		if(playing && virtual && newVolume >= 0.1) {
 			var newTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
 			this.setTime(newTime);
 			audioFile[currentClip].play();
+			virtual = false;
 		}
 		if(clipVolume < 0.1) {
 			audioFile[0].pause();
 			audioFile[1].pause();
+			virtual = true;
 		}
 	}
 
@@ -499,7 +516,7 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 	}
 
 	this.setTime = function(time) {
-		audioFile.currentTime[currentClip] = time;
+		audioFile[currentClip].currentTime = time;
 		if(playing) {
 			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 		}
@@ -522,8 +539,8 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 
 function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file that loops
 	var audioFile = new Array(new Audio(audioPath+filename+audioFormat()), new Audio(audioPath+filename+audioFormat()));
-	//audioFile[0].onerror = function(){audioFile[0] = new Audio(audioPath+filename+audioFormat(true))};
-	//audioFile[1].onerror = function(){audioFile[1] = new Audio(audioPath+filename+audioFormat(true))};
+	audioFile[0].onerror = function(){audioFile[0] = new Audio(audioPath+filename+audioFormat(true))};
+	audioFile[1].onerror = function(){audioFile[1] = new Audio(audioPath+filename+audioFormat(true))};
 	var currentClip = 0;
 	var duration = playLength;
 	this.name = filename;
@@ -539,24 +556,16 @@ function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file th
 	man.addToList(this);
 
 	this.play = function() {
+		currentClip = (currentClip + 1) % 2;
 		audioFile[currentClip].currentTime = 0;
-		this.updateVolume();
-		if (clipVolume > 0.1) {
-			audioFile[currentClip].play();
-		} else {
-			virtual = true;
-		}
-		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
-		playing = true;
+		this.resume();
 	}
 
 	this.stop = function() {
-		audioFile[0].pause();
-		audioFile[0].currentTime = 0;
-		audioFile[1].pause();
-		audioFile[1].currentTime = 0;
-		AudioEventManager.removeTimerEvent(this);
 		playing = false;
+		this.pause();
+		audioFile[0].currentTime = 0;
+		audioFile[1].currentTime = 0;
 	}
 
 	this.resume = function() {
@@ -571,7 +580,7 @@ function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file th
 	}
 
 	this.pause = function() {
-		if(playing && audioFile[0].paused && audioFile[1].paused && clipVolume < 0.1) {
+		if(playing && virtual) {
 			audioFile[currentClip].currentTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
 		} else {
 			audioFile[0].pause();
@@ -579,14 +588,13 @@ function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file th
 		}
 		AudioEventManager.removeTimerEvent(this);
 		playing = false;
+		virtual = false
 	}
 
 	this.trigger = function(callSign) {
 		if(callSign == "tick") {
-			currentClip++;
-			if (currentClip > 1) {currentClip = 0;}
-			this.play();
 			tick++;
+			this.play();
 		}
 	}
 
@@ -711,6 +719,7 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 	}
 
 	this.resume = function() {
+		this.updateVolume();
 		if (clipVolume > 0.1) {audioFile.play();};
 		AudioEventManager.addStopEvent(this, (this.getClipDuration(currentClip) - (times[currentClip][1] - this.getTime())));
 		AudioEventManager.addTimerEvent(this, (this.getClipDuration(currentClip) - (times[currentClip][1] - this.getTime())), "tick");
@@ -914,6 +923,447 @@ function sfxClipSprite(spriteSheet, clipNumber) {//A referance to the clips in s
 	return this;
 }
 
+//---//---Music Classes
+MusicVolumeManager = new volumeManager();
+
+function musicClip(filename, playLength) {//Single buffer music file
+	var audioFile = new Audio(audioPath+filename+audioFormat());
+	audioFile.onerror = function(){audioFile = new Audio(audioPath+filename+audioFormat(true))};
+	this.name = filename;
+	var duration = playLength;
+	var clipVolume = 1;
+	var mixVolume = 1;
+	var tick = 0;
+	var playing = false;
+	var virtual = false;
+
+	audioFile.pause();
+	audioFile.loop = false;
+	var man = MusicVolumeManager;
+	man.addToList(this);
+
+	this.play = function() {
+		audioFile.currentTime = 0;
+		this.resume();
+	}
+
+	this.stop = function() {
+		playing = false;
+		this.pause();
+		audioFile.currentTime = 0;
+	}
+
+	this.resume = function() {
+		this.updateVolume();
+		if (clipVolume > 0.1) {
+			audioFile.play();
+		} else {
+			virtual = true;
+		}
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+		playing = true;
+	}
+
+	this.pause = function() {
+		if(playing && virtual) {
+			audioFile.currentTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
+		} else {
+			audioFile.pause();
+		}
+		audioFile.pause();
+		AudioEventManager.removeTimerEvent(this);
+		playing = false;
+		virtual = false;
+	}
+
+	this.playFrom = function(time) {
+		this.setTime(time);
+		this.resume();
+	}
+
+	this.trigger = function(callSign) {
+		if(callSign == "tick") {
+			tick++;
+			playing = false;
+			virtual = false;
+		}
+	}
+
+	this.updateVolume = function() {
+		newVolume = clipVolume * mixVolume;
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
+		audioFile.volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
+		if(playing && virtual && newVolume >= 0.1) {
+			var newTime = AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
+			if(newTime == "none") {
+				this.setTime(duration - newTime);
+				audioFile.play();
+			}
+			virtual = false;
+		}
+		if(clipVolume < 0.1) {
+			audioFile.pause();
+			virtual = true;
+		}
+	}
+
+	this.setVolume = function(newVolume) {
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
+		clipVolume = newVolume;
+		this.updateVolume();
+	}
+
+	this.getVolume = function() {
+		return clipVolume * !man.getMuted();
+	}
+
+	this.setMixVolume = function(volume) {
+		mixVolume = volume;
+	}
+
+	this.getSourceClip = function() {
+		return this;
+	}
+
+	this.getChildClips = function() {
+		return false;
+	}
+
+	this.getAudioFile = function() {
+		return audioFile;
+	}
+
+	this.getAudioFile = function() {
+		var audioArray = new Array(1);
+		audioArray[0] = audioFile;
+		return audioArray;
+	}
+
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
+	this.setTime = function(time) {
+		var newTime = time;
+		while(newTime >= duration) {newTime -= duration;}
+		if(newTime < 0) {newTime = 0;}
+		audioFile.currentTime = newTime;
+		if(this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
+	}
+
+	this.getTime = function() {
+		return audioFile.currentTime;
+	}
+	
+	this.getDuration = function() {
+		return duration;
+	}
+
+	this.getPaused = function() {
+		return !playing;
+	}
+
+	return this;
+}
+
+function musicClipOverlap(filename, playLength) {//Double buffer music file
+	var audioFile = new Array(new Audio(audioPath+filename+audioFormat()), new Audio(audioPath+filename+audioFormat()));
+	audioFile[0].onerror = function(){audioFile[0] = new Audio(audioPath+filename+audioFormat(true))}
+	audioFile[1].onerror = function(){audioFile[1] = new Audio(audioPath+filename+audioFormat(true))}
+	var currentClip = 0;
+	var duration = playLength;
+	this.name = filename;
+	var clipVolume = 1;
+	var mixVolume = 1;
+	var tick = 0;
+	var playing = false;
+	var virtual = false;
+
+	audioFile[0].pause();
+	audioFile[1].pause();
+	var man = MusicVolumeManager;
+	man.addToList(this);
+
+	this.play = function() {
+		currentClip = (currentClip + 1) % 2;
+		audioFile[currentClip].currentTime = 0;
+		this.resume();
+	}
+
+	this.stop = function() {
+		playing = false;
+		this.pause();
+		audioFile[0].currentTime = 0;
+		audioFile[1].currentTime = 0;
+	}
+
+	this.resume = function() {
+		this.updateVolume();
+		if (clipVolume > 0.1) {
+			audioFile[currentClip].play();
+		} else {
+			virtual = true;
+		}
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+		playing = true;
+	}
+
+	this.pause = function() {
+		if(playing && virtual) {
+			audioFile[currentClip].currentTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
+		} else {
+			audioFile[0].pause();
+			audioFile[1].pause();
+		}
+		AudioEventManager.removeTimerEvent(this);
+		playing = false;
+		virtual = false;
+	}
+
+	this.playFrom = function(time) {
+		this.setTime(time);
+		this.resume();
+	}
+
+	this.trigger = function(callSign) {
+		if(callSign == "tick") {
+			tick++;
+			playing = false;
+			virtual = false;
+		}
+	}
+
+	this.updateVolume = function() {
+		newVolume = clipVolume * mixVolume;
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
+		audioFile[currentClip].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
+		if(playing && virtual && newVolume >= 0.1) {
+			var newTime = AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
+			if(newTime != "none") {
+				this.setTime(duration - newTime);
+				audioFile[currentClip].play();
+			}
+			virtual = false;
+		}
+		if(clipVolume < 0.1) {
+			audioFile[0].pause();
+			audioFile[1].pause();
+			virtual = true;
+		}
+	}
+
+	this.setVolume = function(newVolume) {
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
+		clipVolume = newVolume;
+		this.updateVolume();
+	}
+
+	this.getVolume = function() {
+		return clipVolume * !man.getMuted();
+	}
+
+	this.setMixVolume = function(volume) {
+		mixVolume = volume;
+	}
+
+	this.getSourceClip = function() {
+		return this;
+	}
+
+	this.getChildClips = function() {
+		return false;
+	}
+
+	this.getAudioFile = function() {
+		return audioFile;
+	}
+
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
+	this.setTime = function(time) {
+		var newTime = time;
+		while (newTime >= duration) {newTime -= duration;}
+		if(newTime < 0) {newTime = 0;}
+		audioFile[currentClip].currentTime = newTime;
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
+	}
+
+	this.getTime = function() {
+		return audioFile[currentClip].currentTime;
+	}
+	
+	this.getDuration = function() {
+		return duration;
+	}
+
+	this.getPaused = function() {
+		return !playing;
+	}
+
+	return this;
+}
+
+function musicClipOverlapLoop(filename, playLength) {//Double buffer music file that loops
+	var audioFile = new Array(new Audio(audioPath+filename+audioFormat()), new Audio(audioPath+filename+audioFormat()));
+	audioFile[0].onerror = function(){audioFile[0] = new Audio(audioPath+filename+audioFormat(true))}
+	audioFile[1].onerror = function(){audioFile[1] = new Audio(audioPath+filename+audioFormat(true))}
+	var currentClip = 0;
+	var duration = playLength;
+	this.name = filename;
+	var clipVolume = 1;
+	var mixVolume = 1;
+	var tick = 0;
+	var playing = false;
+	var virtual = false;
+
+	audioFile[0].pause();
+	audioFile[1].pause();
+	var man = MusicVolumeManager;
+	man.addToList(this);
+
+	this.play = function() {
+		currentClip = (currentClip + 1) % 2;
+		audioFile[currentClip].currentTime = 0;
+		this.resume();
+	}
+
+	this.stop = function() {
+		playing = false;
+		this.pause();
+		audioFile[0].currentTime = 0;
+		audioFile[1].currentTime = 0;
+	}
+
+	this.resume = function() {
+		this.updateVolume();
+		if (clipVolume > 0.1) {
+			audioFile[currentClip].play();
+		} else {
+			virtual = true;
+		}
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+		playing = true;
+	}
+
+	this.pause = function() {
+		if(playing && virtual) {
+			audioFile[currentClip].currentTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
+		} else {
+			audioFile[0].pause();
+			audioFile[1].pause();
+		}
+		AudioEventManager.removeTimerEvent(this);
+		playing = false;
+		virtual = false;
+	}
+
+	this.playFrom = function(time) {
+		this.setTime(time);
+		this.resume();
+	}
+
+	this.trigger = function(callSign) {
+		if(callSign == "tick") {
+			tick++;
+			this.play();
+		}
+	}
+
+	this.updateVolume = function() {
+		newVolume = clipVolume * mixVolume;
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
+		audioFile[0].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
+		audioFile[1].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
+		if(playing && virtual && newVolume >= 0.1) {
+			var newTime = AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
+			if(newTime != "none") {
+				this.setTime(duration - newTime);
+				audioFile[currentClip].play();
+			}
+			virtual = false;
+		}
+		if(clipVolume < 0.1) {
+			audioFile[0].pause();
+			audioFile[1].pause();
+			virtual = true;
+		}
+	}
+
+	this.setVolume = function(newVolume) {
+		if(newVolume > 1) {newVolume = 1;}
+		if(newVolume < 0) {newVolume = 0;}
+		clipVolume = newVolume;
+		this.updateVolume();
+	}
+
+	this.getVolume = function() {
+		return clipVolume * !man.getMuted();
+	}
+
+	this.setMixVolume = function(volume) {
+		mixVolume = volume;
+	}
+
+	this.getSourceClip = function() {
+		return this;
+	}
+
+	this.getChildClips = function() {
+		return false;
+	}
+
+	this.getAudioFile = function() {
+		return audioFile;
+	}
+
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
+	this.setTime = function(time) {
+		var newTime = time;
+		while (newTime >= duration) {newTime -= duration;}
+		if(newTime < 0) {newTime = 0;}
+		audioFile[currentClip].currentTime = newTime;
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+	}
+
+	this.getTime = function() {
+		return audioFile[currentClip].currentTime;
+	}
+	
+	this.getDuration = function() {
+		return duration;
+	}
+
+	this.getPaused = function() {
+		return !playing;
+	}
+
+	return this;
+}
+
+//---//---Container Classes
+
 function sfxContainer(clipList) {//Basic Container
 	var audioClip = [];
 	var currentClip = 0;
@@ -1009,6 +1459,153 @@ function sfxContainer(clipList) {//Basic Container
 		if (!this.getPaused()) {
 			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 		}
+	}
+
+	this.getTime = function() {
+		return audioClip[currentClip].getTime();
+	}
+	
+	this.getDuration = function() {
+		return audioClip[currentClip].getDuration();
+	}
+
+	this.getPaused = function() {
+		return audioClip[currentClip].getPaused();
+	}
+
+	return this;
+}
+
+function musicContainer(trackList) {//Basic containers
+	var audioClip = [];
+	var currentClip = 0;
+	this.name = "musicContainer";
+	var clipVolume = 1;
+	var tick = 0;
+
+	for (var i in trackList) {
+		audioClip[i] = trackList[i];
+	}
+
+	this.play = function() {
+		audioClip[currentClip].play();
+		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
+	}
+
+	this.stop = function() {
+		for (var i in audioClip) {
+			audioClip[i].stop();
+		AudioEventManager.removeTimerEvent(this);
+		}
+	}
+
+	this.resume = function() {
+		audioClip[currentClip].resume();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+	}
+
+	this.pause = function() {
+		for (var i in audioClip) {
+			audioClip[i].pause();
+		AudioEventManager.removeTimerEvent(this);
+		}
+	}
+
+	this.playFrom = function(time) {
+		audioClip[currentClip].playFrom(time);
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+	}
+
+	this.trigger = function(callSign) {
+		if(callSign == "tick") {tick++;}
+	}
+
+	this.setCurrentClip = function(trackNumber) {
+		currentClip = trackNumber;
+	}
+
+	this.loadClip = function(newClip, slot) {
+		var timeNow = audioClip[currentClip].getTime();
+		if(!audioClip[slot].getPaused()) {
+			audioClip[slot].pause();
+			audioClip[slot].setTime(0);
+			audioClip[slot] = newClip;
+			audioClip[slot].setVolume(clipVolume);
+			audioClip[slot].playFrom(timeNow);
+		} else {
+			audioClip[slot] = newClip;
+			audioClip[slot].setVolume(clipVolume);
+			audioClip[slot].setTime(timeNow);
+		}
+	}
+
+	this.loadClipWithCrossfade = function(newClip, slot, fadeTime = 1) {
+		var timeNow = audioClip[currentClip].getTime();
+		if(currentClip == slot && !audioClip[currentClip].getPaused()) {
+			newClip.playFrom(timeNow);
+			AudioEventManager.addCrossfadeEvent(audioClip[currentClip], fadeTime, 0);
+			AudioEventManager.addCrossfadeEvent(newClip, fadeTime, clipVolume);
+			audioClip[slot] = newClip;
+		} else {
+			audioClip[slot] = newClip;
+			audioClip[slot].setVolume(clipVolume);
+			audioClip[slot].setTime(timeNow);
+		}
+	}
+
+	this.addClip = function(newClip) {
+		audioClip.push(newClip);
+	}
+
+	this.removeClip = function(slot) {
+		audioClip.splice(slot,1);
+		if (currentClip >= slot) {currentClip--;}
+	}
+
+	this.updateVolume = function() {
+		for (var i in audioClip) {
+			audioClip[i].updateVolume();
+		}
+	}
+
+	this.setVolume = function(newVolume) {
+		clipVolume = newVolume;
+		for (i in audioClip) {
+			audioClip[i].setVolume(clipVolume);
+		}
+	}
+
+	this.getVolume = function() {
+		return audioClip[currentClip].getVolume();
+	}
+
+	this.getListLength = function() {
+		 return audioClip.length;
+	}
+
+	this.getCurrentClip = function() {
+		 return currentClip;
+	}
+
+	this.getSourceClip = function() {
+		return audioClip[currentClip].getSourceClip();
+	}
+
+	this.getChildClips = function() {
+		return audioClip;
+	}
+
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
+	this.setTime = function(time) {
+		audioClip[currentClip].setTime(time);
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
 	}
 
 	this.getTime = function() {
@@ -1141,6 +1738,158 @@ function sfxContainerLoop(clipList) {//Basic Container
 	return this;
 }
 
+function musicContainerLoop(trackList) {//Loops current list-item
+	var audioClip = [];
+	var currentClip = 0;
+	this.name = "musicContainerLoop";
+	var schedualedClip = 0;
+	var clipVolume = 1;
+	var tick = 0;
+
+	for (var i in trackList) {
+		audioClip[i] = trackList[i];
+	}
+
+	this.play = function() {
+		currentClip = schedualedClip;
+		audioClip[currentClip].play();
+		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
+	}
+
+	this.stop = function() {
+		for (var i in audioClip) {
+			audioClip[i].stop();
+		}
+		AudioEventManager.removeTimerEvent(this);
+	}
+
+	this.resume = function() {
+		audioClip[currentClip].resume();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+	}
+
+	this.pause = function() {
+		for (var i in audioClip) {
+			audioClip[i].pause();
+		}
+		AudioEventManager.removeTimerEvent(this);
+	}
+
+	this.playFrom = function(time) {
+		audioClip[currentClip].playFrom(time);
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+	}
+
+	this.trigger = function(callSign) {
+		if (callSign == "tick") {
+			this.play();
+			tick++;
+		}
+	}
+
+	this.setCurrentClip = function(trackNumber) {
+		schedualedClip = trackNumber;
+	}
+
+	this.loadClip = function(newClip, slot) {
+		var timeNow = audioClip[currentClip].getTime();
+		if(!audioClip[slot].getPaused()) {
+			audioClip[slot].pause();
+			audioClip[slot].setTime(0);
+			audioClip[slot] = newClip;
+			audioClip[slot].setVolume(clipVolume);
+			audioClip[slot].playFrom(timeNow);
+		} else {
+			audioClip[slot] = newClip;
+			audioClip[slot].setVolume(clipVolume);
+			audioClip[slot].setTime(timeNow);
+		}
+	}
+
+	this.loadClipWithCrossfade = function(newClip, slot, fadeTime = 1) {
+		var timeNow = audioClip[currentClip].getTime();
+		if(currentClip == slot && !audioClip[currentClip].getPaused()) {
+			newClip.playFrom(timeNow);
+			AudioEventManager.addCrossfadeEvent(audioClip[currentClip], fadeTime, 0);
+			AudioEventManager.addCrossfadeEvent(newClip, fadeTime, clipVolume);
+			audioClip[slot] = newClip;
+		} else {
+			audioClip[slot] = newClip;
+			audioClip[slot].setVolume(clipVolume);
+			audioClip[slot].setTime(timeNow);
+		}
+	}
+
+	this.addClip = function(newClip) {
+		audioClip.push(newClip);
+	}
+
+	this.removeClip = function(slot) {
+		audioClip.splice(slot,1);
+		if (currentClip >= slot) {currentClip--;}
+	}
+
+	this.updateVolume = function() {
+		for (var i in audioClip) {
+			audioClip[i].updateVolume();
+		}
+	}
+
+	this.setVolume = function(newVolume) {
+		clipVolume = newVolume;
+		for (i in audioClip) {
+			audioClip[i].setVolume(clipVolume);
+		}
+	}
+
+	this.getVolume = function() {
+		return audioClip[currentClip].getVolume();
+	}
+
+	this.getListLength = function() {
+		 return audioClip.length;
+	}
+
+	this.getCurrentClip = function() {
+		 return currentClip;
+	}
+
+	this.getSourceClip = function() {
+		return audioClip[currentClip].getSourceClip();
+	}
+
+	this.getChildClips = function() {
+		return audioClip;
+	}
+
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
+	this.setTime = function(time) {
+		audioClip[currentClip].setTime(time);
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
+	}
+
+	this.getTime = function() {
+		return audioClip[currentClip].getTime();
+	}
+	
+	this.getDuration = function() {
+		return audioClip[currentClip].getDuration();
+	}
+
+	this.getPaused = function() {
+		return audioClip[currentClip].getPaused();
+	}
+
+	return this;
+}
+
 function sfxContainerRandom(clipList) {//Plays a random list-item on playback
 	var audioClip = [];
 	var currentClip = 0;
@@ -1256,6 +2005,151 @@ function sfxContainerRandom(clipList) {//Plays a random list-item on playback
 	return this;
 }
 
+function musicContainerRandom(trackList) {//Picks random list-item to play on play
+	var audioClip = [];
+	var currentClip = 0;
+	this.name = "musicContainerRandom";
+	var clipVolume = 1;
+	var tick = 0;
+
+	for (var i in trackList) {
+		audioClip[i] = trackList[i];
+	}
+
+	this.play = function() {
+		currentClip = Math.floor(Math.random() * audioClip.length);
+		audioClip[currentClip].play();
+		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
+	}
+
+	this.stop = function() {
+		for (var i in audioClip) {
+			audioClip[i].stop();
+		}
+		currentClip = Math.floor(Math.random() * audioClip.length);
+		AudioEventManager.removeTimerEvent(this);
+	}
+
+	this.resume = function() {
+		audioClip[currentClip].resume();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+	}
+
+	this.pause = function() {
+		for (var i in audioClip) {
+			audioClip[i].pause();
+		}
+		AudioEventManager.removeTimerEvent(this);
+	}
+
+	this.playFrom = function(time) {
+		audioClip[currentClip].playFrom(time);
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+	}
+
+	this.trigger = function(callSign) {
+		if(callSign == "tick") {tick++;}
+	}
+
+	this.loadClip = function(newClip, slot) {
+		var timeNow = audioClip[currentClip].getTime();
+		if(!audioClip[slot].getPaused()) {
+			audioClip[slot].pause();
+			audioClip[slot].setTime(0);
+			audioClip[slot] = newClip;
+			audioClip[slot].setVolume(clipVolume);
+			audioClip[slot].playFrom(timeNow);
+		} else {
+			audioClip[slot] = newClip;
+			audioClip[slot].setVolume(clipVolume);
+			audioClip[slot].setTime(timeNow);
+		}
+	}
+
+	this.loadClipWithCrossfade = function(newClip, slot, fadeTime = 1) {
+		var timeNow = audioClip[currentClip].getTime();
+		if(currentClip == slot && !audioClip[currentClip].getPaused()) {
+			newClip.playFrom(timeNow);
+			AudioEventManager.addCrossfadeEvent(audioClip[currentClip], fadeTime, 0);
+			AudioEventManager.addCrossfadeEvent(newClip, fadeTime, clipVolume);
+			audioClip[slot] = newClip;
+		} else {
+			audioClip[slot] = newClip;
+			audioClip[slot].setVolume(clipVolume);
+			audioClip[slot].setTime(timeNow);
+		}
+	}
+
+	this.addClip = function(newClip) {
+		audioClip.push(newClip);
+	}
+
+	this.removeClip = function(slot) {
+		audioClip.splice(slot,1);
+		if (currentClip >= slot) {currentClip--;}
+	}
+
+	this.updateVolume = function() {
+		for (var i in audioClip) {
+			audioClip[i].updateVolume();
+		}
+	}
+
+	this.setVolume = function(newVolume) {
+		clipVolume = newVolume;
+		for (i in audioClip) {
+			audioClip[i].setVolume(clipVolume);
+		}
+	}
+
+	this.getVolume = function() {
+		return audioClip[currentClip].getVolume();
+	}
+
+	this.getListLength = function() {
+		 return audioClip.length;
+	}
+
+	this.getCurrentClip = function() {
+		 return currentClip;
+	}
+
+	this.getSourceClip = function() {
+		return audioClip[currentClip].getSourceClip();
+	}
+
+	this.getChildClips = function() {
+		return audioClip;
+	}
+
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
+	this.setTime = function(time) {
+		audioClip[currentClip].setTime(time);
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
+	}
+
+	this.getTime = function() {
+		return audioClip[currentClip].getTime();
+	}
+	
+	this.getDuration = function() {
+		return audioClip[currentClip].getDuration();
+	}
+
+	this.getPaused = function() {
+		return audioClip[currentClip].getPaused();
+	}
+
+	return this;
+}
+
 function sfxContainerLoopRandom(clipList) {//Plays a random list-item on playback
 	var audioClip = [];
 	var currentClip = 0;
@@ -1353,6 +2247,153 @@ function sfxContainerLoopRandom(clipList) {//Plays a random list-item on playbac
 		if (!this.getPaused()) {
 			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 		}
+	}
+
+	this.getTime = function() {
+		return audioClip[currentClip].getTime();
+	}
+	
+	this.getDuration = function() {
+		return audioClip[currentClip].getDuration();
+	}
+
+	this.getPaused = function() {
+		return audioClip[currentClip].getPaused();
+	}
+
+	return this;
+}
+
+function musicContainerLoopRandom(trackList) {//Picks new random list-item to play every loop
+	var audioClip = [];
+	var currentClip = 0;
+	this.name = "musicContainerLoopRandom";
+	var clipVolume = 1;
+	var tick = 0;
+
+	for (var i in trackList) {
+		audioClip[i] = trackList[i];
+	}
+
+	this.play = function() {
+		audioClip[currentClip].play();
+		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
+	}
+
+	this.stop = function() {
+		for (var i in audioClip) {
+			audioClip[i].stop();
+		}
+		AudioEventManager.removeTimerEvent(this);
+	}
+
+	this.resume = function() {
+		audioClip[currentClip].resume();
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+	}
+
+	this.pause = function() {
+		for (var i in audioClip) {
+			audioClip[i].pause();
+		}
+		AudioEventManager.removeTimerEvent(this);
+	}
+
+	this.playFrom = function(time) {
+		audioClip[currentClip].playFrom(time);
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+	}
+
+	this.trigger = function(callSign) {
+		if(callSign == "tick") {
+			currentClip = Math.floor(Math.random() * audioClip.length);
+			this.play();
+			tick++;
+		}
+	}
+
+	this.loadClip = function(newClip, slot) {
+		var timeNow = audioClip[currentClip].getTime();
+		if(!audioClip[slot].getPaused()) {
+			audioClip[slot].pause();
+			audioClip[slot].setTime(0);
+			audioClip[slot] = newClip;
+			audioClip[slot].setVolume(clipVolume);
+			audioClip[slot].playFrom(timeNow);
+		} else {
+			audioClip[slot] = newClip;
+			audioClip[slot].setVolume(clipVolume);
+			audioClip[slot].setTime(timeNow);
+		}
+	}
+
+	this.loadClipWithCrossfade = function(newClip, slot, fadeTime = 1) {
+		var timeNow = audioClip[currentClip].getTime();
+		if(currentClip == slot && !audioClip[currentClip].getPaused()) {
+			newClip.playFrom(timeNow);
+			AudioEventManager.addCrossfadeEvent(audioClip[currentClip], fadeTime, 0);
+			AudioEventManager.addCrossfadeEvent(newClip, fadeTime, clipVolume);
+			audioClip[slot] = newClip;
+		} else {
+			audioClip[slot] = newClip;
+			audioClip[slot].setVolume(clipVolume);
+			audioClip[slot].setTime(timeNow);
+		}
+	}
+
+	this.addClip = function(newClip) {
+		audioClip.push(newClip);
+	}
+
+	this.removeClip = function(slot) {
+		audioClip.splice(slot,1);
+		if (currentClip >= slot) {currentClip--;}
+	}
+
+	this.updateVolume = function() {
+		for (var i in audioClip) {
+			audioClip[i].updateVolume();
+		}
+	}
+
+	this.setVolume = function(newVolume) {
+		clipVolume = newVolume;
+		for (i in audioClip) {
+			audioClip[i].setVolume(clipVolume);
+		}
+	}
+
+	this.getVolume = function() {
+		return audioClip[currentClip].getVolume();
+	}
+
+	this.getListLength = function() {
+		 return audioClip.length;
+	}
+
+	this.getCurrentClip = function() {
+		 return currentClip;
+	}
+
+	this.getSourceClip = function() {
+		return audioClip[currentClip].getSourceClip();
+	}
+
+	this.getChildClips = function() {
+		return audioClip;
+	}
+
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
+	this.setTime = function(time) {
+		audioClip[currentClip].setTime(time);
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
 	}
 
 	this.getTime = function() {
@@ -1486,6 +2527,208 @@ function sfxContainerLayer(clipList) {//Plays all list-items together
 	}
 
 	this.getPaused = function() {
+		return audioClip[currentClip].getPaused();
+	}
+
+	return this;
+}
+
+function musicContainerLayers(trackList) {//Plays all list-items together, controls volumes
+	var audioClip = [];
+	var musicClipVolume = [];
+	var clipVolume = 1;
+	var currentClip = 0;
+	this.name = "musicContainerLayers";
+	var clipVolume = 1;
+	var tick = 0;
+
+	for (var i in trackList) {
+		audioClip[i] = trackList[i];
+		musicClipVolume[i] = 1;
+		audioClip[i].setVolume(1);
+	}
+
+	function evaluateCurrentClip(){
+		var trackNow = 0;
+		for(var i = audioClip.length-1; i >= 0; i--) {
+			if (!audioClip[i].getPaused()) {
+				trackNow = i;
+			}
+		}
+		currentClip = trackNow;
+	}
+
+	this.play = function() {
+		for (var i in audioClip) {
+			if (musicClipVolume[i] > 0) {
+				audioClip[i].play();
+			}
+		}
+		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
+	}
+
+	this.stop = function() {
+		for (var i in audioClip) {
+			audioClip[i].stop();
+		}
+		AudioEventManager.removeTimerEvent(this);
+	}
+
+	this.resume = function() {
+		for (var i in audioClip) {
+			if (musicClipVolume[i] > 0) {
+				audioClip[i].resume();
+			}
+		}
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+	}
+
+	this.pause = function() {
+		for (var i in audioClip) {
+			audioClip[i].pause();
+		}
+		AudioEventManager.removeTimerEvent(this);
+	}
+
+	this.playFrom = function(time) {
+		for (var i in audioClip) {
+			audioClip[i].playFrom(time);
+		}
+		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+	}
+
+	this.trigger = function(callSign) {
+		if(callSign == "tick") {tick++;}
+	}
+
+	this.setLayerLevel = function(slot, level, fadeTime = 1) {
+		musicClipVolume[slot] = level;
+		if (audioClip[slot].getPaused()) {
+			var timeNow = audioClip[0].getTime();
+			var tracksPlaying = 0;
+			for(var i in audioClip) {
+				if (!audioClip[i].getPaused()) {
+					timeNow = audioClip[i].getTime();
+					tracksPlaying++;
+				}
+			}
+			if (tracksPlaying > 0) {
+				audioClip[slot].setVolume(musicClipVolume[slot] * clipVolume);
+				audioClip[slot].playFrom(timeNow);
+			} else {
+				audioClip[slot].setVolume(musicClipVolume[slot] * clipVolume);
+			}
+		} else {
+			AudioEventManager.addFadeEvent(audioClip[slot], fadeTime, musicClipVolume[slot] * clipVolume);
+		}
+	}
+
+	this.loadClip = function(newClip, slot) {
+		var timeNow = audioClip.getTime();
+		if(!audioClip[slot].getPaused()) {
+			audioClip[slot].pause();
+			audioClip[slot].setTime(0);
+			audioClip[slot] = newClip;
+			audioClip[slot].setVolume(musicClipVolume[slot] * clipVolume);
+			audioClip[slot].playFrom(timeNow);
+		} else {
+			audioClip[slot] = newClip;
+			audioClip[slot].setVolume(musicClipVolume[slot] * clipVolume);
+			audioClip[slot].setTime(timeNow);
+		}
+	}
+
+	this.loadClipWithCrossfade = function(newClip, slot, fadeTime = 1) { //Needs a look
+		evaluateCurrentClip();
+		var timeNow = audioClip[currentClip].getTime();
+		if(!audioClip[slot].getPaused()) {
+			newClip.playFrom(timeNow);
+			AudioEventManager.addCrossfadeEvent(audioClip[slot], fadeTime, 0);
+			AudioEventManager.addCrossfadeEvent(newClip, fadeTime, musicClipVolume[slot] *  clipVolume);
+			audioClip[slot] = newClip;
+		} else {
+			audioClip[slot] = newClip;
+			audioClip[slot].setVolume(musicClipVolume[slot] * clipVolume);
+			audioClip[slot].setTime(timeNow);
+		}
+	}
+
+	this.addClip = function(newClip) {
+		audioClip.push(newClip);
+		musicClipVolume.push(0);
+		newClip.setVolume(0);
+	}
+
+	this.removeClip = function(slot) {
+		evaluateCurrentClip();
+		audioClip.splice(slot,1);
+		musicClipVolume.splice(slot,1);
+		if (currentClip >= slot) {currentClip--;}
+	}
+
+	this.updateVolume = function() {
+		for (var i in audioClip) {
+			audioClip[i].updateVolume();
+		}
+	}
+
+	this.setVolume = function(newVolume) {
+		clipVolume = newVolume;
+		for (var i in audioClip) {
+			audioClip[i].setVolume(musicClipVolume[i] * clipVolume);
+		}
+	}
+
+	this.getVolume = function() {
+		evaluateCurrentClip();
+		return audioClip[currentClip].getVolume();
+	}
+
+	this.getListLength = function() {
+		 return audioClip.length;
+	}
+
+	this.getCurrentClip = function() {
+		evaluateCurrentClip();
+		 return currentClip;
+	}
+
+	this.getSourceClip = function() {
+		evaluateCurrentClip();
+		return audioClip[currentClip].getSourceClip();
+	}
+
+	this.getChildClips = function() {
+		return audioClip;
+	}
+
+	this.resetTick = function() {
+		tick = 0;
+	}
+
+	this.getTick = function() {
+		return tick;
+	}
+
+	this.setTime = function(time) {
+		for (var i in audioClip) {
+			audioClip[i].setTime(time);
+		}
+		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
+	}
+
+	this.getTime = function() {
+		evaluateCurrentClip();
+		return audioClip[currentClip].getTime();
+	}
+	
+	this.getDuration = function() {
+		evaluateCurrentClip();
+		return audioClip[currentClip].getDuration();
+	}
+
+	this.getPaused = function() {
+		evaluateCurrentClip();
 		return audioClip[currentClip].getPaused();
 	}
 
@@ -1733,1026 +2976,6 @@ function sfxContainerPlayDelayControl(clipList, maxDurationInSeconds = 1, minDur
 		if (!this.getPaused()) {
 			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 		}
-	}
-
-	this.getTime = function() {
-		return audioClip[currentClip].getTime();
-	}
-	
-	this.getDuration = function() {
-		return audioClip[currentClip].getDuration();
-	}
-
-	this.getPaused = function() {
-		return audioClip[currentClip].getPaused();
-	}
-
-	return this;
-}
-
-//---//---Music Classes
-MusicVolumeManager = new volumeManager();
-
-function musicClip(filename, playLength) {//Single buffer music file
-	var audioFile = new Audio(audioPath+filename+audioFormat());
-	audioFile.onerror = function(){audioFile = new Audio(audioPath+filename+audioFormat(true))};
-	this.name = filename;
-	var duration = playLength;
-	var clipVolume = 1;
-	var mixVolume = 1;
-	var tick = 0;
-	var playing = false;
-
-	audioFile.pause();
-	audioFile.loop = false;
-	var man = MusicVolumeManager;
-	man.addToList(this);
-
-	this.play = function() {
-		audioFile.currentTime = 0;
-		this.updateVolume();
-		if (clipVolume > 0.1) {audioFile.play();};
-		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
-		playing = true;
-	}
-
-	this.stop = function() {
-		audioFile.pause();
-		audioFile.currentTime = 0;
-		AudioEventManager.removeTimerEvent(this);
-		playing = false;
-	}
-
-	this.resume = function() {
-		if (clipVolume > 0.1) {audioFile.play();};
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
-		playing = true;
-	}
-
-	this.pause = function() {
-		if(playing && audioFile.paused && clipVolume < 0.1) {
-			audioFile.currentTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
-		} else {audioFile.pause();}
-		audioFile.pause();
-		AudioEventManager.removeTimerEvent(this);
-		playing = false;
-	}
-
-	this.playFrom = function(time) {
-		this.setTime(time);
-		audioFile.play();
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
-		playing = true;
-	}
-
-	this.trigger = function(callSign) {
-		if(callSign == "tick") {
-			tick++;
-			playing = false;
-		}
-	}
-
-	this.updateVolume = function() {
-		newVolume = clipVolume * mixVolume;
-		if(newVolume > 1) {newVolume = 1;}
-		if(newVolume < 0) {newVolume = 0;}
-		audioFile.volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
-		if(playing && audioFile.paused && newVolume >= 0.1) {
-			var newTime = AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
-			if(newTime != "none") {
-				this.setTime(duration - newTime);
-				audioFile.play();
-			}
-		}
-		if(clipVolume < 0.1) {audioFile.pause();}
-	}
-
-	this.setVolume = function(newVolume) {
-		if(newVolume > 1) {newVolume = 1;}
-		if(newVolume < 0) {newVolume = 0;}
-		clipVolume = newVolume;
-		this.updateVolume();
-	}
-
-	this.getVolume = function() {
-		return clipVolume * !man.getMuted();
-	}
-
-	this.setMixVolume = function(volume) {
-		mixVolume = volume;
-	}
-
-	this.getSourceClip = function() {
-		return this;
-	}
-
-	this.getChildClips = function() {
-		return false;
-	}
-
-	this.getAudioFile = function() {
-		return audioFile;
-	}
-
-	this.getAudioFile = function() {
-		var audioArray = new Array(1);
-		audioArray[0] = audioFile;
-		return audioArray;
-	}
-
-	this.resetTick = function() {
-		tick = 0;
-	}
-
-	this.getTick = function() {
-		return tick;
-	}
-
-	this.setTime = function(time) {
-		var newTime = time;
-		while(newTime >= duration) {newTime -= duration;}
-		if(newTime < 0) {newTime = 0;}
-		audioFile.currentTime = newTime;
-		if(this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
-	}
-
-	this.getTime = function() {
-		return audioFile.currentTime;
-	}
-	
-	this.getDuration = function() {
-		return duration;
-	}
-
-	this.getPaused = function() {
-		return !playing;
-	}
-
-	return this;
-}
-
-function musicClipOverlap(filename, playLength) {//Double buffer music file
-	var audioFile = new Array(new Audio(audioPath+filename+audioFormat()), new Audio(audioPath+filename+audioFormat()));
-	audioFile[0].onerror = function(){audioFile[0] = new Audio(audioPath+filename+audioFormat(true))}
-	audioFile[1].onerror = function(){audioFile[1] = new Audio(audioPath+filename+audioFormat(true))}
-	var currentClip = 0;
-	var duration = playLength;
-	this.name = filename;
-	var clipVolume = 1;
-	var mixVolume = 1;
-	var tick = 0;
-	var playing = false;
-
-	audioFile[0].pause();
-	audioFile[1].pause();
-	var man = MusicVolumeManager;
-	man.addToList(this);
-
-	this.play = function() {
-		currentClip++;
-		if (currentClip > 1) {currentClip = 0;}
-		audioFile[currentClip].currentTime = 0;
-		this.updateVolume();
-		if (clipVolume > 0.1) {audioFile[currentClip].play();};
-		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
-		playing = true;
-	}
-
-	this.stop = function() {
-		audioFile[0].pause();
-		audioFile[0].currentTime = 0;
-		audioFile[1].pause();
-		audioFile[1].currentTime = 0;
-		AudioEventManager.removeTimerEvent(this);
-		playing = false;
-	}
-
-	this.resume = function() {
-		if (clipVolume > 0.1) {audioFile[currentClip].play();};
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
-		playing = true;
-	}
-
-	this.pause = function() {
-		if(playing && audioFile[0].paused && audioFile[1].paused && clipVolume < 0.1) {
-			audioFile[currentClip].currentTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
-		} else {
-			audioFile[0].pause();
-			audioFile[1].pause();
-		}
-		AudioEventManager.removeTimerEvent(this);
-		playing = false;
-	}
-
-	this.playFrom = function(time) {
-		this.setTime(time);
-		audioFile[currentClip].play();
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
-		playing = true;
-	}
-
-	this.trigger = function(callSign) {
-		if(callSign == "tick") {
-			tick++;
-			playing = false;
-		}
-	}
-
-	this.updateVolume = function() {
-		newVolume = clipVolume * mixVolume;
-		if(newVolume > 1) {newVolume = 1;}
-		if(newVolume < 0) {newVolume = 0;}
-		audioFile[0].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
-		audioFile[1].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
-		if(playing && audioFile[currentClip].paused && newVolume >= 0.1) {
-			var newTime = AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
-			if(newTime != "none") {
-				this.setTime(duration - newTime);
-				audioFile[currentClip].play();
-			}
-		}
-		if(clipVolume < 0.1) {
-			audioFile[0].pause();
-			audioFile[1].pause();
-		}
-	}
-
-	this.setVolume = function(newVolume) {
-		if(newVolume > 1) {newVolume = 1;}
-		if(newVolume < 0) {newVolume = 0;}
-		clipVolume = newVolume;
-		this.updateVolume();
-	}
-
-	this.getVolume = function() {
-		return clipVolume * !man.getMuted();
-	}
-
-	this.setMixVolume = function(volume) {
-		mixVolume = volume;
-	}
-
-	this.getSourceClip = function() {
-		return this;
-	}
-
-	this.getChildClips = function() {
-		return false;
-	}
-
-	this.getAudioFile = function() {
-		return audioFile;
-	}
-
-	this.resetTick = function() {
-		tick = 0;
-	}
-
-	this.getTick = function() {
-		return tick;
-	}
-
-	this.setTime = function(time) {
-		var newTime = time;
-		while (newTime >= duration) {newTime -= duration;}
-		if(newTime < 0) {newTime = 0;}
-		audioFile[currentClip].currentTime = newTime;
-		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
-	}
-
-	this.getTime = function() {
-		return audioFile[currentClip].currentTime;
-	}
-	
-	this.getDuration = function() {
-		return duration;
-	}
-
-	this.getPaused = function() {
-		return !playing;
-	}
-
-	return this;
-}
-
-function musicClipOverlapLoop(filename, playLength) {//Double buffer music file that loops
-	var audioFile = new Array(new Audio(audioPath+filename+audioFormat()), new Audio(audioPath+filename+audioFormat()));
-	audioFile[0].onerror = function(){audioFile[0] = new Audio(audioPath+filename+audioFormat(true))}
-	audioFile[1].onerror = function(){audioFile[1] = new Audio(audioPath+filename+audioFormat(true))}
-	var currentClip = 0;
-	var duration = playLength;
-	this.name = filename;
-	var clipVolume = 1;
-	var mixVolume = 1;
-	var tick = 0;
-	var playing = false;
-
-	audioFile[0].pause();
-	audioFile[1].pause();
-	var man = MusicVolumeManager;
-	man.addToList(this);
-
-	this.play = function() {
-		audioFile[currentClip].currentTime = 0;
-		this.updateVolume();
-		if (clipVolume > 0.1) {audioFile[currentClip].play();};
-		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
-		playing = true;
-	}
-
-	this.stop = function() {
-		audioFile[0].pause();
-		audioFile[0].currentTime = 0;
-		audioFile[1].pause();
-		audioFile[1].currentTime = 0;
-		AudioEventManager.removeTimerEvent(this);
-		playing = false;
-	}
-
-	this.resume = function() {
-		if (clipVolume > 0.1) {audioFile[currentClip].play();};
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
-		playing = true;
-	}
-
-	this.pause = function() {
-		if(playing && audioFile[0].paused && audioFile[1].paused && clipVolume < 0.1) {
-			audioFile[currentClip].currentTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
-		} else {
-			audioFile[0].pause();
-			audioFile[1].pause();
-		}
-		AudioEventManager.removeTimerEvent(this);
-		playing = false;
-	}
-
-	this.playFrom = function(time) {
-		this.setTime(time);
-		audioFile[currentClip].play();
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
-		playing = true;
-	}
-
-	this.trigger = function(callSign) {
-		if(callSign == "tick") {
-			currentClip++;
-			if (currentClip > 1) {currentClip = 0;}
-			this.play();
-			tick++;
-		}
-	}
-
-	this.updateVolume = function() {
-		newVolume = clipVolume * mixVolume;
-		if(newVolume > 1) {newVolume = 1;}
-		if(newVolume < 0) {newVolume = 0;}
-		audioFile[0].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
-		audioFile[1].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
-		if(playing && audioFile[currentClip].paused && newVolume >= 0.1) {
-			var newTime = AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
-			if(newTime != "none") {
-				this.setTime(duration - newTime);
-				audioFile[currentClip].play();
-			}
-		}
-		if(clipVolume < 0.1) {
-			audioFile[0].pause();
-			audioFile[1].pause();
-		}
-	}
-
-	this.setVolume = function(newVolume) {
-		if(newVolume > 1) {newVolume = 1;}
-		if(newVolume < 0) {newVolume = 0;}
-		clipVolume = newVolume;
-		this.updateVolume();
-	}
-
-	this.getVolume = function() {
-		return clipVolume * !man.getMuted();
-	}
-
-	this.setMixVolume = function(volume) {
-		mixVolume = volume;
-	}
-
-	this.getSourceClip = function() {
-		return this;
-	}
-
-	this.getChildClips = function() {
-		return false;
-	}
-
-	this.getAudioFile = function() {
-		return audioFile;
-	}
-
-	this.resetTick = function() {
-		tick = 0;
-	}
-
-	this.getTick = function() {
-		return tick;
-	}
-
-	this.setTime = function(time) {
-		var newTime = time;
-		while (newTime >= duration) {newTime -= duration;}
-		if(newTime < 0) {newTime = 0;}
-		audioFile[currentClip].currentTime = newTime;
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
-	}
-
-	this.getTime = function() {
-		return audioFile[currentClip].currentTime;
-	}
-	
-	this.getDuration = function() {
-		return duration;
-	}
-
-	this.getPaused = function() {
-		return !playing;
-	}
-
-	return this;
-}
-
-function musicContainer(trackList) {//Basic containers
-	var audioClip = [];
-	var currentClip = 0;
-	this.name = "musicContainer";
-	var clipVolume = 1;
-	var tick = 0;
-
-	for (var i in trackList) {
-		audioClip[i] = trackList[i];
-	}
-
-	this.play = function() {
-		audioClip[currentClip].play();
-		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
-	}
-
-	this.stop = function() {
-		for (var i in audioClip) {
-			audioClip[i].stop();
-		AudioEventManager.removeTimerEvent(this);
-		}
-	}
-
-	this.resume = function() {
-		audioClip[currentClip].resume();
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
-	}
-
-	this.pause = function() {
-		for (var i in audioClip) {
-			audioClip[i].pause();
-		AudioEventManager.removeTimerEvent(this);
-		}
-	}
-
-	this.playFrom = function(time) {
-		audioClip[currentClip].playFrom(time);
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
-	}
-
-	this.trigger = function(callSign) {
-		if(callSign == "tick") {tick++;}
-	}
-
-	this.setCurrentClip = function(trackNumber) {
-		currentClip = trackNumber;
-	}
-
-	this.loadClip = function(newClip, slot) {
-		var timeNow = audioClip[currentClip].getTime();
-		if(!audioClip[slot].getPaused()) {
-			audioClip[slot].pause();
-			audioClip[slot].setTime(0);
-			audioClip[slot] = newClip;
-			audioClip[slot].setVolume(clipVolume);
-			audioClip[slot].playFrom(timeNow);
-		} else {
-			audioClip[slot] = newClip;
-			audioClip[slot].setVolume(clipVolume);
-			audioClip[slot].setTime(timeNow);
-		}
-	}
-
-	this.loadClipWithCrossfade = function(newClip, slot, fadeTime = 1) {
-		var timeNow = audioClip[currentClip].getTime();
-		if(currentClip == slot && !audioClip[currentClip].getPaused()) {
-			newClip.playFrom(timeNow);
-			AudioEventManager.addCrossfadeEvent(audioClip[currentClip], fadeTime, 0);
-			AudioEventManager.addCrossfadeEvent(newClip, fadeTime, clipVolume);
-			audioClip[slot] = newClip;
-		} else {
-			audioClip[slot] = newClip;
-			audioClip[slot].setVolume(clipVolume);
-			audioClip[slot].setTime(timeNow);
-		}
-	}
-
-	this.addClip = function(newClip) {
-		audioClip.push(newClip);
-	}
-
-	this.removeClip = function(slot) {
-		audioClip.splice(slot,1);
-		if (currentClip >= slot) {currentClip--;}
-	}
-
-	this.updateVolume = function() {
-		for (var i in audioClip) {
-			audioClip[i].updateVolume();
-		}
-	}
-
-	this.setVolume = function(newVolume) {
-		clipVolume = newVolume;
-		for (i in audioClip) {
-			audioClip[i].setVolume(clipVolume);
-		}
-	}
-
-	this.getVolume = function() {
-		return audioClip[currentClip].getVolume();
-	}
-
-	this.getListLength = function() {
-		 return audioClip.length;
-	}
-
-	this.getCurrentClip = function() {
-		 return currentClip;
-	}
-
-	this.getSourceClip = function() {
-		return audioClip[currentClip].getSourceClip();
-	}
-
-	this.getChildClips = function() {
-		return audioClip;
-	}
-
-	this.resetTick = function() {
-		tick = 0;
-	}
-
-	this.getTick = function() {
-		return tick;
-	}
-
-	this.setTime = function(time) {
-		audioClip[currentClip].setTime(time);
-		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
-	}
-
-	this.getTime = function() {
-		return audioClip[currentClip].getTime();
-	}
-	
-	this.getDuration = function() {
-		return audioClip[currentClip].getDuration();
-	}
-
-	this.getPaused = function() {
-		return audioClip[currentClip].getPaused();
-	}
-
-	return this;
-}
-
-function musicContainerRandom(trackList) {//Picks random list-item to play on play
-	var audioClip = [];
-	var currentClip = 0;
-	this.name = "musicContainerRandom";
-	var clipVolume = 1;
-	var tick = 0;
-
-	for (var i in trackList) {
-		audioClip[i] = trackList[i];
-	}
-
-	this.play = function() {
-		currentClip = Math.floor(Math.random() * audioClip.length);
-		audioClip[currentClip].play();
-		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
-	}
-
-	this.stop = function() {
-		for (var i in audioClip) {
-			audioClip[i].stop();
-		}
-		currentClip = Math.floor(Math.random() * audioClip.length);
-		AudioEventManager.removeTimerEvent(this);
-	}
-
-	this.resume = function() {
-		audioClip[currentClip].resume();
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
-	}
-
-	this.pause = function() {
-		for (var i in audioClip) {
-			audioClip[i].pause();
-		}
-		AudioEventManager.removeTimerEvent(this);
-	}
-
-	this.playFrom = function(time) {
-		audioClip[currentClip].playFrom(time);
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
-	}
-
-	this.trigger = function(callSign) {
-		if(callSign == "tick") {tick++;}
-	}
-
-	this.loadClip = function(newClip, slot) {
-		var timeNow = audioClip[currentClip].getTime();
-		if(!audioClip[slot].getPaused()) {
-			audioClip[slot].pause();
-			audioClip[slot].setTime(0);
-			audioClip[slot] = newClip;
-			audioClip[slot].setVolume(clipVolume);
-			audioClip[slot].playFrom(timeNow);
-		} else {
-			audioClip[slot] = newClip;
-			audioClip[slot].setVolume(clipVolume);
-			audioClip[slot].setTime(timeNow);
-		}
-	}
-
-	this.loadClipWithCrossfade = function(newClip, slot, fadeTime = 1) {
-		var timeNow = audioClip[currentClip].getTime();
-		if(currentClip == slot && !audioClip[currentClip].getPaused()) {
-			newClip.playFrom(timeNow);
-			AudioEventManager.addCrossfadeEvent(audioClip[currentClip], fadeTime, 0);
-			AudioEventManager.addCrossfadeEvent(newClip, fadeTime, clipVolume);
-			audioClip[slot] = newClip;
-		} else {
-			audioClip[slot] = newClip;
-			audioClip[slot].setVolume(clipVolume);
-			audioClip[slot].setTime(timeNow);
-		}
-	}
-
-	this.addClip = function(newClip) {
-		audioClip.push(newClip);
-	}
-
-	this.removeClip = function(slot) {
-		audioClip.splice(slot,1);
-		if (currentClip >= slot) {currentClip--;}
-	}
-
-	this.updateVolume = function() {
-		for (var i in audioClip) {
-			audioClip[i].updateVolume();
-		}
-	}
-
-	this.setVolume = function(newVolume) {
-		clipVolume = newVolume;
-		for (i in audioClip) {
-			audioClip[i].setVolume(clipVolume);
-		}
-	}
-
-	this.getVolume = function() {
-		return audioClip[currentClip].getVolume();
-	}
-
-	this.getListLength = function() {
-		 return audioClip.length;
-	}
-
-	this.getCurrentClip = function() {
-		 return currentClip;
-	}
-
-	this.getSourceClip = function() {
-		return audioClip[currentClip].getSourceClip();
-	}
-
-	this.getChildClips = function() {
-		return audioClip;
-	}
-
-	this.resetTick = function() {
-		tick = 0;
-	}
-
-	this.getTick = function() {
-		return tick;
-	}
-
-	this.setTime = function(time) {
-		audioClip[currentClip].setTime(time);
-		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
-	}
-
-	this.getTime = function() {
-		return audioClip[currentClip].getTime();
-	}
-	
-	this.getDuration = function() {
-		return audioClip[currentClip].getDuration();
-	}
-
-	this.getPaused = function() {
-		return audioClip[currentClip].getPaused();
-	}
-
-	return this;
-}
-
-function musicContainerLoop(trackList) {//Loops current list-item
-	var audioClip = [];
-	var currentClip = 0;
-	this.name = "musicContainerLoop";
-	var schedualedClip = 0;
-	var clipVolume = 1;
-	var tick = 0;
-
-	for (var i in trackList) {
-		audioClip[i] = trackList[i];
-	}
-
-	this.play = function() {
-		currentClip = schedualedClip;
-		audioClip[currentClip].play();
-		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
-	}
-
-	this.stop = function() {
-		for (var i in audioClip) {
-			audioClip[i].stop();
-		}
-		AudioEventManager.removeTimerEvent(this);
-	}
-
-	this.resume = function() {
-		audioClip[currentClip].resume();
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
-	}
-
-	this.pause = function() {
-		for (var i in audioClip) {
-			audioClip[i].pause();
-		}
-		AudioEventManager.removeTimerEvent(this);
-	}
-
-	this.playFrom = function(time) {
-		audioClip[currentClip].playFrom(time);
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
-	}
-
-	this.trigger = function(callSign) {
-		if (callSign == "tick") {
-			this.play();
-			tick++;
-		}
-	}
-
-	this.setCurrentClip = function(trackNumber) {
-		schedualedClip = trackNumber;
-	}
-
-	this.loadClip = function(newClip, slot) {
-		var timeNow = audioClip[currentClip].getTime();
-		if(!audioClip[slot].getPaused()) {
-			audioClip[slot].pause();
-			audioClip[slot].setTime(0);
-			audioClip[slot] = newClip;
-			audioClip[slot].setVolume(clipVolume);
-			audioClip[slot].playFrom(timeNow);
-		} else {
-			audioClip[slot] = newClip;
-			audioClip[slot].setVolume(clipVolume);
-			audioClip[slot].setTime(timeNow);
-		}
-	}
-
-	this.loadClipWithCrossfade = function(newClip, slot, fadeTime = 1) {
-		var timeNow = audioClip[currentClip].getTime();
-		if(currentClip == slot && !audioClip[currentClip].getPaused()) {
-			newClip.playFrom(timeNow);
-			AudioEventManager.addCrossfadeEvent(audioClip[currentClip], fadeTime, 0);
-			AudioEventManager.addCrossfadeEvent(newClip, fadeTime, clipVolume);
-			audioClip[slot] = newClip;
-		} else {
-			audioClip[slot] = newClip;
-			audioClip[slot].setVolume(clipVolume);
-			audioClip[slot].setTime(timeNow);
-		}
-	}
-
-	this.addClip = function(newClip) {
-		audioClip.push(newClip);
-	}
-
-	this.removeClip = function(slot) {
-		audioClip.splice(slot,1);
-		if (currentClip >= slot) {currentClip--;}
-	}
-
-	this.updateVolume = function() {
-		for (var i in audioClip) {
-			audioClip[i].updateVolume();
-		}
-	}
-
-	this.setVolume = function(newVolume) {
-		clipVolume = newVolume;
-		for (i in audioClip) {
-			audioClip[i].setVolume(clipVolume);
-		}
-	}
-
-	this.getVolume = function() {
-		return audioClip[currentClip].getVolume();
-	}
-
-	this.getListLength = function() {
-		 return audioClip.length;
-	}
-
-	this.getCurrentClip = function() {
-		 return currentClip;
-	}
-
-	this.getSourceClip = function() {
-		return audioClip[currentClip].getSourceClip();
-	}
-
-	this.getChildClips = function() {
-		return audioClip;
-	}
-
-	this.resetTick = function() {
-		tick = 0;
-	}
-
-	this.getTick = function() {
-		return tick;
-	}
-
-	this.setTime = function(time) {
-		audioClip[currentClip].setTime(time);
-		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
-	}
-
-	this.getTime = function() {
-		return audioClip[currentClip].getTime();
-	}
-	
-	this.getDuration = function() {
-		return audioClip[currentClip].getDuration();
-	}
-
-	this.getPaused = function() {
-		return audioClip[currentClip].getPaused();
-	}
-
-	return this;
-}
-
-function musicContainerLoopRandom(trackList) {//Picks new random list-item to play every loop
-	var audioClip = [];
-	var currentClip = 0;
-	this.name = "musicContainerLoopRandom";
-	var clipVolume = 1;
-	var tick = 0;
-
-	for (var i in trackList) {
-		audioClip[i] = trackList[i];
-	}
-
-	this.play = function() {
-		audioClip[currentClip].play();
-		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
-	}
-
-	this.stop = function() {
-		for (var i in audioClip) {
-			audioClip[i].stop();
-		}
-		AudioEventManager.removeTimerEvent(this);
-	}
-
-	this.resume = function() {
-		audioClip[currentClip].resume();
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
-	}
-
-	this.pause = function() {
-		for (var i in audioClip) {
-			audioClip[i].pause();
-		}
-		AudioEventManager.removeTimerEvent(this);
-	}
-
-	this.playFrom = function(time) {
-		audioClip[currentClip].playFrom(time);
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
-	}
-
-	this.trigger = function(callSign) {
-		if(callSign == "tick") {
-			currentClip = Math.floor(Math.random() * audioClip.length);
-			this.play();
-			tick++;
-		}
-	}
-
-	this.loadClip = function(newClip, slot) {
-		var timeNow = audioClip[currentClip].getTime();
-		if(!audioClip[slot].getPaused()) {
-			audioClip[slot].pause();
-			audioClip[slot].setTime(0);
-			audioClip[slot] = newClip;
-			audioClip[slot].setVolume(clipVolume);
-			audioClip[slot].playFrom(timeNow);
-		} else {
-			audioClip[slot] = newClip;
-			audioClip[slot].setVolume(clipVolume);
-			audioClip[slot].setTime(timeNow);
-		}
-	}
-
-	this.loadClipWithCrossfade = function(newClip, slot, fadeTime = 1) {
-		var timeNow = audioClip[currentClip].getTime();
-		if(currentClip == slot && !audioClip[currentClip].getPaused()) {
-			newClip.playFrom(timeNow);
-			AudioEventManager.addCrossfadeEvent(audioClip[currentClip], fadeTime, 0);
-			AudioEventManager.addCrossfadeEvent(newClip, fadeTime, clipVolume);
-			audioClip[slot] = newClip;
-		} else {
-			audioClip[slot] = newClip;
-			audioClip[slot].setVolume(clipVolume);
-			audioClip[slot].setTime(timeNow);
-		}
-	}
-
-	this.addClip = function(newClip) {
-		audioClip.push(newClip);
-	}
-
-	this.removeClip = function(slot) {
-		audioClip.splice(slot,1);
-		if (currentClip >= slot) {currentClip--;}
-	}
-
-	this.updateVolume = function() {
-		for (var i in audioClip) {
-			audioClip[i].updateVolume();
-		}
-	}
-
-	this.setVolume = function(newVolume) {
-		clipVolume = newVolume;
-		for (i in audioClip) {
-			audioClip[i].setVolume(clipVolume);
-		}
-	}
-
-	this.getVolume = function() {
-		return audioClip[currentClip].getVolume();
-	}
-
-	this.getListLength = function() {
-		 return audioClip.length;
-	}
-
-	this.getCurrentClip = function() {
-		 return currentClip;
-	}
-
-	this.getSourceClip = function() {
-		return audioClip[currentClip].getSourceClip();
-	}
-
-	this.getChildClips = function() {
-		return audioClip;
-	}
-
-	this.resetTick = function() {
-		tick = 0;
-	}
-
-	this.getTick = function() {
-		return tick;
-	}
-
-	this.setTime = function(time) {
-		audioClip[currentClip].setTime(time);
-		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
 	}
 
 	this.getTime = function() {
@@ -4224,208 +4447,6 @@ function musicContainerCrossfadeLoop(trackList) {//Can crossfade between list-it
 	}
 
 	this.getPaused = function() {
-		return audioClip[currentClip].getPaused();
-	}
-
-	return this;
-}
-
-function musicContainerLayers(trackList) {//Plays all list-items together, controls volumes
-	var audioClip = [];
-	var musicClipVolume = [];
-	var clipVolume = 1;
-	var currentClip = 0;
-	this.name = "musicContainerLayers";
-	var clipVolume = 1;
-	var tick = 0;
-
-	for (var i in trackList) {
-		audioClip[i] = trackList[i];
-		musicClipVolume[i] = 1;
-		audioClip[i].setVolume(1);
-	}
-
-	function evaluateCurrentClip(){
-		var trackNow = 0;
-		for(var i = audioClip.length-1; i >= 0; i--) {
-			if (!audioClip[i].getPaused()) {
-				trackNow = i;
-			}
-		}
-		currentClip = trackNow;
-	}
-
-	this.play = function() {
-		for (var i in audioClip) {
-			if (musicClipVolume[i] > 0) {
-				audioClip[i].play();
-			}
-		}
-		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
-	}
-
-	this.stop = function() {
-		for (var i in audioClip) {
-			audioClip[i].stop();
-		}
-		AudioEventManager.removeTimerEvent(this);
-	}
-
-	this.resume = function() {
-		for (var i in audioClip) {
-			if (musicClipVolume[i] > 0) {
-				audioClip[i].resume();
-			}
-		}
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
-	}
-
-	this.pause = function() {
-		for (var i in audioClip) {
-			audioClip[i].pause();
-		}
-		AudioEventManager.removeTimerEvent(this);
-	}
-
-	this.playFrom = function(time) {
-		for (var i in audioClip) {
-			audioClip[i].playFrom(time);
-		}
-		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
-	}
-
-	this.trigger = function(callSign) {
-		if(callSign == "tick") {tick++;}
-	}
-
-	this.setLayerLevel = function(slot, level, fadeTime = 1) {
-		musicClipVolume[slot] = level;
-		if (audioClip[slot].getPaused()) {
-			var timeNow = audioClip[0].getTime();
-			var tracksPlaying = 0;
-			for(var i in audioClip) {
-				if (!audioClip[i].getPaused()) {
-					timeNow = audioClip[i].getTime();
-					tracksPlaying++;
-				}
-			}
-			if (tracksPlaying > 0) {
-				audioClip[slot].setVolume(musicClipVolume[slot] * clipVolume);
-				audioClip[slot].playFrom(timeNow);
-			} else {
-				audioClip[slot].setVolume(musicClipVolume[slot] * clipVolume);
-			}
-		} else {
-			AudioEventManager.addFadeEvent(audioClip[slot], fadeTime, musicClipVolume[slot] * clipVolume);
-		}
-	}
-
-	this.loadClip = function(newClip, slot) {
-		var timeNow = audioClip.getTime();
-		if(!audioClip[slot].getPaused()) {
-			audioClip[slot].pause();
-			audioClip[slot].setTime(0);
-			audioClip[slot] = newClip;
-			audioClip[slot].setVolume(musicClipVolume[slot] * clipVolume);
-			audioClip[slot].playFrom(timeNow);
-		} else {
-			audioClip[slot] = newClip;
-			audioClip[slot].setVolume(musicClipVolume[slot] * clipVolume);
-			audioClip[slot].setTime(timeNow);
-		}
-	}
-
-	this.loadClipWithCrossfade = function(newClip, slot, fadeTime = 1) { //Needs a look
-		evaluateCurrentClip();
-		var timeNow = audioClip[currentClip].getTime();
-		if(!audioClip[slot].getPaused()) {
-			newClip.playFrom(timeNow);
-			AudioEventManager.addCrossfadeEvent(audioClip[slot], fadeTime, 0);
-			AudioEventManager.addCrossfadeEvent(newClip, fadeTime, musicClipVolume[slot] *  clipVolume);
-			audioClip[slot] = newClip;
-		} else {
-			audioClip[slot] = newClip;
-			audioClip[slot].setVolume(musicClipVolume[slot] * clipVolume);
-			audioClip[slot].setTime(timeNow);
-		}
-	}
-
-	this.addClip = function(newClip) {
-		audioClip.push(newClip);
-		musicClipVolume.push(0);
-		newClip.setVolume(0);
-	}
-
-	this.removeClip = function(slot) {
-		evaluateCurrentClip();
-		audioClip.splice(slot,1);
-		musicClipVolume.splice(slot,1);
-		if (currentClip >= slot) {currentClip--;}
-	}
-
-	this.updateVolume = function() {
-		for (var i in audioClip) {
-			audioClip[i].updateVolume();
-		}
-	}
-
-	this.setVolume = function(newVolume) {
-		clipVolume = newVolume;
-		for (var i in audioClip) {
-			audioClip[i].setVolume(musicClipVolume[i] * clipVolume);
-		}
-	}
-
-	this.getVolume = function() {
-		evaluateCurrentClip();
-		return audioClip[currentClip].getVolume();
-	}
-
-	this.getListLength = function() {
-		 return audioClip.length;
-	}
-
-	this.getCurrentClip = function() {
-		evaluateCurrentClip();
-		 return currentClip;
-	}
-
-	this.getSourceClip = function() {
-		evaluateCurrentClip();
-		return audioClip[currentClip].getSourceClip();
-	}
-
-	this.getChildClips = function() {
-		return audioClip;
-	}
-
-	this.resetTick = function() {
-		tick = 0;
-	}
-
-	this.getTick = function() {
-		return tick;
-	}
-
-	this.setTime = function(time) {
-		for (var i in audioClip) {
-			audioClip[i].setTime(time);
-		}
-		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
-	}
-
-	this.getTime = function() {
-		evaluateCurrentClip();
-		return audioClip[currentClip].getTime();
-	}
-	
-	this.getDuration = function() {
-		evaluateCurrentClip();
-		return audioClip[currentClip].getDuration();
-	}
-
-	this.getPaused = function() {
-		evaluateCurrentClip();
 		return audioClip[currentClip].getPaused();
 	}
 

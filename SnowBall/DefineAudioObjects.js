@@ -34,8 +34,6 @@ controles.setMixVolume(0.75);
 
 
 
-var test1 = new musicClipOverlap("lay4tail16", 16);
-var test2 = new musicClipOverlap("cabasatail2", 2);
-var test3 = new musicClipOverlap("kicktail2", 2);
+var test1 = new musicClipOverlapLoop("lay4tail16", 16);
 
-var testC = new musicContainerPlaylistLoopLast([test1,test2]);
+var testC = new sfxContainer([test1]);

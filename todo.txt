@@ -1,0 +1,8 @@
+`~`~` Snowball:
+full check sfxContainerPlayDelayRandom (how does "is playing" work?)
+fullproof callback event
+rename getEventSecondsRemaining to getTimerEventSecondsRemaining, or expand it for move types
+
+devirtualize past end point, what happens? music can catch
+look at set time (example musicClipOverlap)
+musicClip not devirtualizing when the volume comes back up
