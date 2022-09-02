@@ -77,11 +77,11 @@
 	volumeSlider.oninput = function(){MusicVolumeManager.setVolume(this.value/100);}
 
 	track1Button.addEventListener('click', function(){
-		if (backgroundClips.getSourceClip().name != "track1") {backgroundClips.switchTo(0, 0.5);}});
+		if (backgroundFade.getSourceClip().name != "track1") {backgroundFade.switchTo(0, 0.5);}});
 	track2Button.addEventListener('click', function(){
-		if (backgroundClips.getSourceClip().name != "track2") {backgroundClips.switchTo(1, 0.25);}});
+		if (backgroundFade.getSourceClip().name != "track2") {backgroundFade.switchTo(1, 0.25);}});
 	track3Button.addEventListener('click', function(){
-		if (backgroundClips.getSourceClip().name != "track3") {backgroundClips.switchTo(2);}});
+		if (backgroundFade.getSourceClip().name != "track3") {backgroundFade.switchTo(2);}});
 
 	layer1ButtonIn.addEventListener('click', function(){
 		backgroundLayers.setLayerLevel(0, 1, 3);});
