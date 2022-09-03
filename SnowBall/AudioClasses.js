@@ -2123,7 +2123,7 @@ function containerLayer(clipList) {//Plays all list-items together
 
 	this.setTime = function(time) {
 		for (var i in audioClip) {
-			audioClip[currentClip].setTime(time);
+			audioClip[i].setTime(time);
 		}
 		if (!this.getPaused()) {
 			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
@@ -2147,42 +2147,20 @@ function containerLayer(clipList) {//Plays all list-items together
 
 function containerLayersLoop(clipList) {//Plays all list-items together, controls volumes, loops
 	var audioClip = [];
-	var layerVolume = [];
-	var clipVolume = 1;
 	var currentClip = 0;
 	this.name = "containerLayersLoop";
 	var clipVolume = 1;
+	var layerVolume = [];
 	var tick = 0;
 
-	for (var i in layerVolume) {
-		audioClip[i] = layerVolume[i];
+	for (var i in clipList) {
+		audioClip[i] = clipList[i];
 		layerVolume[i] = 1;
-	}
-
-	function evaluateCurrentClip(){
-		var trackNow = 0;
-		for(var i = audioClip.length-1; i >= 0; i--) {
-			if (!audioClip[i].getPaused()) {
-				trackNow = i;
-			}
-		}
-		currentClip = trackNow;
-	}
-
-	function tracksToPlay() {
-		for(var i in layerVolume) {
-			if(layerVolume[i] > 0) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	this.play = function() {
 		for (var i in audioClip) {
-			if (layerVolume[i] > 0) {
-				audioClip[i].play();
-			}
+			audioClip[i].play();
 		}
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
 	}
@@ -2196,9 +2174,7 @@ function containerLayersLoop(clipList) {//Plays all list-items together, control
 
 	this.resume = function() {
 		for (var i in audioClip) {
-			if (layerVolume[i] > 0) {
-				audioClip[i].resume();
-			}
+			audioClip[i].resume();
 		}
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 	}
@@ -2212,8 +2188,8 @@ function containerLayersLoop(clipList) {//Plays all list-items together, control
 
 	this.trigger = function(callSign) {
 		if(callSign == "tick") {
-			this.play();
 			tick++;
+			this.play();
 		}
 	}
 
@@ -2231,27 +2207,16 @@ function containerLayersLoop(clipList) {//Plays all list-items together, control
 
 	this.setVolume = function(newVolume) {
 		clipVolume = newVolume;
-		for (var i in audioClip) {
-			audioClip[i].setVolume(layerVolume[i] * clipVolume);
+		for (i in audioClip) {
+			audioClip[i].setVolume(clipVolume * layerVolume[i]);
 		}
 	}
 
 	this.getVolume = function() {
-		evaluateCurrentClip();
 		return clipVolume;
 	}
 
-	this.getListLength = function() {
-		 return audioClip.length;
-	}
-
-	this.getCurrentClip = function() {
-		evaluateCurrentClip();
-		 return currentClip;
-	}
-
 	this.getSourceClip = function() {
-		evaluateCurrentClip();
 		return audioClip[currentClip].getSourceClip();
 	}
 
@@ -2267,6 +2232,18 @@ function containerLayersLoop(clipList) {//Plays all list-items together, control
 		return tick;
 	}
 
+	this.setCurrentClip = function(clipNumber) {
+		currentClip = clipNumber;
+	}
+
+	this.getCurrentClip = function() {
+		 return currentClip;
+	}
+
+	this.getListLength = function() {
+		 return audioClip.length;
+	}
+
 	this.setTime = function(time) {
 		for (var i in audioClip) {
 			audioClip[i].setTime(time);
@@ -2277,17 +2254,14 @@ function containerLayersLoop(clipList) {//Plays all list-items together, control
 	}
 
 	this.getTime = function() {
-		evaluateCurrentClip();
 		return audioClip[currentClip].getTime();
 	}
 	
 	this.getDuration = function() {
-		evaluateCurrentClip();
 		return audioClip[currentClip].getDuration();
 	}
 
 	this.getPaused = function() {
-		evaluateCurrentClip();
 		return audioClip[currentClip].getPaused();
 	}
 
@@ -2306,14 +2280,14 @@ function containerBlend(clipList, startingLevel = 0) {//Container which blends b
 		audioClip[i] = clipList[i];
 	}
 
-	var overlap = 1/audioClip.length - 1;
+	var overlap = 1 / (audioClip.length-1);
 	function defineVolumes() {
-		for (var i = 0; audioClip.length; i++) {
+		for (var i = 0; i < audioClip.length; i++) {
 			var relativeLevel = Math.abs(currentLevel - i*overlap);
-			if (relativeLevel > overlap) {
+			if (relativeLevel >= overlap) {
 				audioClip[i].setVolume(0);
 			}
-			if (relativeLevel <= overlap) {
+			if (relativeLevel < overlap) {
 				audioClip[i].setVolume(Math.abs(1 - relativeLevel / overlap) * clipVolume);
 			}
 		}

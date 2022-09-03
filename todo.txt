@@ -1,5 +1,7 @@
 `~`~` Snowball:
 musicClip not devirtualizing when the volume comes back up
-check blend container (overlap order of operations?)
-check containerLayersLoop to containerLayers (evaluate is back, let the virtualization do the work)
-double check the volume staging
+test blend container
+
+
+
+
