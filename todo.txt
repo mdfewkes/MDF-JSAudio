@@ -1,5 +1,5 @@
 `~`~` Snowball:
 test blend container
-Documentation
-use scheduledClip in more containers (ex: containerLoop)
-.setAudioManager()
+use scheduledClip in more containers (ex: containerLoop) (done through containerLoopRandomDurationControl)
+
+SpriteSheets be way wack

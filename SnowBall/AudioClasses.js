@@ -4,7 +4,7 @@ AudioClasses.js and AudioManager,js are an attemp my Michael Fewkes to make more
 Functions that all sound objects share:
 .play()    plays from the beggining of the object
 .stop()	    stops playback and resets playback time
-.resume()    plays object from last playback time, recomended if changing the object setting while not playing
+.resume()    plays object from last playback time
 .pause()    stops playback without resetting playback time
 .setVolume()/.getVolume()    reports and sets object volume (0-1)
 .setTime()/.getTime()    controls the playback time
@@ -14,7 +14,7 @@ Functions that all sound objects share:
 .getSourceClip()    returns the lowest level currently active clip
 .getChildClips()    returns a list of objects being managed by the object. returns false for lowest level clips
 
-
+Clip only:
 .setMixLevel()    sets a volume multiplier, used for relative mixing
 .getAudioFile()    returns an array of audio files from lowest level clips
 //.setAudioManager()    assigns the clip to an audio manager
@@ -60,6 +60,10 @@ function volumeManager() {
 
 	this.addToList = function(item) {
 		list.push(item);
+	}
+
+	this.removeFromList = function(item) {
+		list.splice(list.indexOf(item), 1);
 	}
 
 	this.stopAll = function() {
@@ -232,6 +236,12 @@ function sfxClip(filename, playLength = -1) {//A simple, single buffer sound cli
 		return audioArray;
 	}
 
+	this.setVolumeManager = function(newManager) {
+		man.removeFromList(this);
+		man = newManager;
+		man.addToList(this);
+	}
+
 	this.resetTick = function() {
 		tick = 0;
 	}
@@ -368,6 +378,12 @@ function sfxClipLoop(filename) {//A simple, single buffer sound clip that loops
 		var audioArray = new Array(1);
 		audioArray[0] = audioFile;
 		return audioArray;
+	}
+
+	this.setVolumeManager = function(newManager) {
+		man.removeFromList(this);
+		man = newManager;
+		man.addToList(this);
 	}
 
 	this.resetTick = function() {
@@ -519,6 +535,12 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 		return audioFile;
 	}
 
+	this.setVolumeManager = function(newManager) {
+		man.removeFromList(this);
+		man = newManager;
+		man.addToList(this);
+	}
+
 	this.resetTick = function() {
 		tick = 0;
 	}
@@ -658,6 +680,12 @@ function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file th
 		return audioFile;
 	}
 
+	this.setVolumeManager = function(newManager) {
+		man.removeFromList(this);
+		man = newManager;
+		man.addToList(this);
+	}
+
 	this.resetTick = function() {
 		tick = 0;
 	}
@@ -795,6 +823,12 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 		var audioArray = new Array(1);
 		audioArray[0] = audioFile;
 		return audioArray;
+	}
+
+	this.setVolumeManager = function(newManager) {
+		man.removeFromList(this);
+		man = newManager;
+		man.addToList(this);
 	}
 
 	this.resetTick = function() {
@@ -1043,6 +1077,12 @@ function musicClip(filename, playLength) {//Single buffer music file
 		return audioArray;
 	}
 
+	this.setVolumeManager = function(newManager) {
+		man.removeFromList(this);
+		man = newManager;
+		man.addToList(this);
+	}
+
 	this.resetTick = function() {
 		tick = 0;
 	}
@@ -1178,6 +1218,12 @@ function musicClipOverlap(filename, playLength) {//Double buffer music file
 
 	this.getAudioFile = function() {
 		return audioFile;
+	}
+
+	this.setVolumeManager = function(newManager) {
+		man.removeFromList(this);
+		man = newManager;
+		man.addToList(this);
 	}
 
 	this.resetTick = function() {
@@ -1317,6 +1363,12 @@ function musicClipOverlapLoop(filename, playLength) {//Double buffer music file 
 		return audioFile;
 	}
 
+	this.setVolumeManager = function(newManager) {
+		man.removeFromList(this);
+		man = newManager;
+		man.addToList(this);
+	}
+
 	this.resetTick = function() {
 		tick = 0;
 	}
@@ -1352,6 +1404,7 @@ function musicClipOverlapLoop(filename, playLength) {//Double buffer music file 
 function container(clipList) {//Basic Container
 	var audioClip = [];
 	var currentClip = 0;
+	var schedualedClip = 0;
 	this.name = "container";
 	var clipVolume = 1;
 	var tick = 0;
@@ -1361,6 +1414,7 @@ function container(clipList) {//Basic Container
 	}
 
 	this.play = function() {
+		currentClip = schedualedClip;
 		audioClip[currentClip].play();
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
 	}
@@ -1370,6 +1424,7 @@ function container(clipList) {//Basic Container
 			audioClip[i].stop();
 		}
 		AudioEventManager.removeTimerEvent(this);
+		currentClip = schedualedClip;
 	}
 
 	this.resume = function() {
@@ -1424,7 +1479,7 @@ function container(clipList) {//Basic Container
 	}
 
 	this.setCurrentClip = function(clipNumber) {
-		currentClip = clipNumber;
+		schedualedClip = clipNumber;
 	}
 
 	this.getCurrentClip = function() {
@@ -1480,6 +1535,7 @@ function containerLoop(clipList) {//Basic Container
 			audioClip[i].stop();
 		}
 		AudioEventManager.removeTimerEvent(this);
+		currentClip = schedualedClip;
 	}
 
 	this.resume = function() {
@@ -1570,7 +1626,8 @@ function containerLoop(clipList) {//Basic Container
 
 function containerLoopRandom(clipList) {//Plays a random list-item on playback
 	var audioClip = [];
-	var currentClip = 0;
+	var currentClip = Math.floor(Math.random() * audioClip.length);
+	var schedualedClip = currentClip;
 	this.name = "containerLoopRandom";
 	var clipVolume = 1;
 	var tick = 0;
@@ -1580,7 +1637,8 @@ function containerLoopRandom(clipList) {//Plays a random list-item on playback
 	}
 
 	this.play = function() {
-		currentClip = Math.floor(Math.random() * audioClip.length);
+		currentClip = schedualedClip;
+		schedualedClip = Math.floor(Math.random() * audioClip.length);
 		audioClip[currentClip].play();
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
 	}
@@ -1590,6 +1648,7 @@ function containerLoopRandom(clipList) {//Plays a random list-item on playback
 			audioClip[i].stop();
 		}
 		AudioEventManager.removeTimerEvent(this);
+		currentClip = schedualedClip;
 	}
 
 	this.resume = function() {
@@ -1645,7 +1704,7 @@ function containerLoopRandom(clipList) {//Plays a random list-item on playback
 	}
 
 	this.setCurrentClip = function(clipNumber) {
-		currentClip = clipNumber;
+		schedualedClip = clipNumber;
 	}
 
 	this.getCurrentClip = function() {
@@ -1680,9 +1739,9 @@ function containerLoopRandom(clipList) {//Plays a random list-item on playback
 
 function containerLoopRandomRepetitionControl(clipList, maxRepetitions = 3, minRepetitions = 1) {//Picks new random list-item to play every loop
 	var audioClip = [];
-	var currentClip = 0;
+	var currentClip = Math.floor(Math.random() * audioClip.length);
+	var schedualedClip = currentClip;
 	this.name = "containerLoopRandomRepetitionControl";
-	var lastClip = 0;
 	var playCountdown = 0;
 	var playMax = maxRepetitions;
 	var playMin = minRepetitions;
@@ -1694,9 +1753,15 @@ function containerLoopRandomRepetitionControl(clipList, maxRepetitions = 3, minR
 	}
 
 	this.play = function() {
+		if (playCountdown <= 0) {
+			currentClip = schedualedClip;
+			schedualedClip = Math.floor(Math.random() * audioClip.length);
+			if (schedualedClip == currentClip) schedualedClip = (schedualedClip + 1) % audioClip.length;
+			playCountdown = Math.floor(Math.random() * (playMax - playMin + 1) + playMin);
+		}
+
 		audioClip[currentClip].play();
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
-		lastClip = currentClip;
 		playCountdown--;
 	}
 
@@ -1705,6 +1770,8 @@ function containerLoopRandomRepetitionControl(clipList, maxRepetitions = 3, minR
 			audioClip[i].stop();
 		}
 		AudioEventManager.removeTimerEvent(this);
+		currentClip = schedualedClip;
+		playCountdown = 0;
 	}
 
 	this.resume = function() {
@@ -1721,14 +1788,8 @@ function containerLoopRandomRepetitionControl(clipList, maxRepetitions = 3, minR
 
 	this.trigger = function(callSign) {
 		if(callSign == "tick") {
-			if (playCountdown <= 0 && audioClip.length > 1){
-				while(currentClip == lastClip) {
-					currentClip = Math.floor(Math.random() * audioClip.length);
-				}
-				playCountdown = Math.floor(Math.random() * (playMax - playMin + 1) + playMin);
-			}
-			this.play();
 			tick++;
+			this.play();
 		}
 	}
 
@@ -1751,6 +1812,11 @@ function containerLoopRandomRepetitionControl(clipList, maxRepetitions = 3, minR
 
 	this.getListLength = function() {
 		 return audioClip.length;
+	}
+
+	this.setCurrentClip = function(clipNumber) {
+		schedualedClip = clipNumber;
+		playCountdown = 0;
 	}
 
 	this.getCurrentClip = function() {
@@ -1795,9 +1861,9 @@ function containerLoopRandomRepetitionControl(clipList, maxRepetitions = 3, minR
 
 function containerLoopRandomDurationControl(clipList, maxDurationInSeconds = 180, minDurationInSeconds = 60) {//Picks new random list-item to play every loop
 	var audioClip = [];
-	var currentClip = 0;
+	var currentClip = Math.floor(Math.random() * audioClip.length);
+	var schedualedClip = currentClip;
 	this.name = "containerLoopRandomDurationControl";
-	var lastClip = 0;
 	var playTime = 0;
 	var playMax = maxDurationInSeconds;
 	var playMin = minDurationInSeconds;
@@ -1809,9 +1875,15 @@ function containerLoopRandomDurationControl(clipList, maxDurationInSeconds = 180
 	}
 
 	this.play = function() {
+		if (playTime > playMin && Math.random() <= (playTime - playMin)/(playMax - playMin)) {
+			currentClip = schedualedClip;
+			schedualedClip = Math.floor(Math.random() * audioClip.length);
+			if (schedualedClip == currentClip) schedualedClip = (schedualedClip + 1) % audioClip.length;
+			playTime = 0;
+		}
+
 		audioClip[currentClip].play();
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
-		lastClip = currentClip;
 		playTime += audioClip[currentClip].getDuration();
 	}
 
@@ -1820,6 +1892,8 @@ function containerLoopRandomDurationControl(clipList, maxDurationInSeconds = 180
 			audioClip[i].stop();
 		}
 		AudioEventManager.removeTimerEvent(this);
+		currentClip = schedualedClip;
+		playTime = 0;
 	}
 
 	this.resume = function() {
@@ -1836,14 +1910,6 @@ function containerLoopRandomDurationControl(clipList, maxDurationInSeconds = 180
 
 	this.trigger = function(callSign) {
 		if(callSign == "tick") {
-			if (playTime > playMin && audioClip.length > 1){
-				if(Math.random() <= (playTime - playMin)/(playMax - playMin)) {
-					while(currentClip == lastClip) {
-						currentClip = Math.floor(Math.random() * audioClip.length);
-					}
-					playTime = 0;
-				}
-			}
 			this.play();
 			tick++;
 		}
@@ -1868,6 +1934,11 @@ function containerLoopRandomDurationControl(clipList, maxDurationInSeconds = 180
 
 	this.getListLength = function() {
 		 return audioClip.length;
+	}
+
+	this.setCurrentClip = function(clipNumber) {
+		schedualedClip = clipNumber;
+		playTime = 0;
 	}
 
 	this.getCurrentClip = function() {
