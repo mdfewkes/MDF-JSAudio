@@ -2,15 +2,23 @@
 AudioClasses.js and AudioManager,js are an attemp my Michael Fewkes to make more complex audio behaviors simpler to implement.
 
 Functions that all sound objects share:
-.play()    plays from the beggining of the audio file
+.play()    plays from the beggining of the object
 .stop()	    stops playback and resets playback time
-.resume()    plays file from last playback time
+.resume()    plays object from last playback time, recomended if changing the object setting while not playing
 .pause()    stops playback without resetting playback time
-.setVolume()/.getVolume()    reports and sets object volume
-.setMixLevel()    sets a volume pre setVolume(), used for settimg a volume relative to the mix
+.setVolume()/.getVolume()    reports and sets object volume (0-1)
 .setTime()/.getTime()    controls the playback time
-.getDuration()    reports the duration of the file
-.getPaused()    reports true is the file is not currently playing
+.getTick()/resetTick)    gets and resets the number of times the object has played
+.getDuration()    reports the current duration of the object
+.getPaused()    reports true if the object is not currently playing
+.getSourceClip()    returns the lowest level currently active clip
+.getChildClips()    returns a list of objects being managed by the object. returns false for lowest level clips
+
+
+.setMixLevel()    sets a volume multiplier, used for relative mixing
+.getAudioFile()    returns an array of audio files from lowest level clips
+//.setAudioManager()    assigns the clip to an audio manager
+
 
 */
 
@@ -996,10 +1004,8 @@ function musicClip(filename, playLength) {//Single buffer music file
 		audioFile.volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
 		if(playing && virtual && newVolume >= 0.1) {
 			var newTime = AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
-			if(newTime == "none") {
-				this.setTime(duration - newTime);
-				audioFile.play();
-			}
+			this.setTime(duration - newTime);
+			audioFile.play();
 			virtual = false;
 		}
 		if(clipVolume < 0.1) {
@@ -1029,10 +1035,6 @@ function musicClip(filename, playLength) {//Single buffer music file
 
 	this.getChildClips = function() {
 		return false;
-	}
-
-	this.getAudioFile = function() {
-		return audioFile;
 	}
 
 	this.getAudioFile = function() {
@@ -1140,10 +1142,8 @@ function musicClipOverlap(filename, playLength) {//Double buffer music file
 		audioFile[currentClip].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
 		if(playing && virtual && newVolume >= 0.1) {
 			var newTime = AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
-			if(newTime != "none") {
-				this.setTime(duration - newTime);
-				audioFile[currentClip].play();
-			}
+			this.setTime(duration - newTime);
+			audioFile[currentClip].play();
 			virtual = false;
 		}
 		if(clipVolume < 0.1) {
@@ -1279,10 +1279,8 @@ function musicClipOverlapLoop(filename, playLength) {//Double buffer music file 
 		audioFile[1].volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
 		if(playing && virtual && newVolume >= 0.1) {
 			var newTime = AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
-			if(newTime != "none") {
-				this.setTime(duration - newTime);
-				audioFile[currentClip].play();
-			}
+			this.setTime(duration - newTime);
+			audioFile[currentClip].play();
 			virtual = false;
 		}
 		if(clipVolume < 0.1) {
@@ -2453,7 +2451,6 @@ function containerDelayControl(clipList, maxDurationInSeconds = 1, minDurationIn
 			audioClip[i].pause();
 		}
 		timeLeft = AudioEventManager.getEventSecondsRemaining(PLAY, audioClip[currentClip]);
-		if (timeLeft == "none") {timeLeft = 0;}
 		AudioEventManager.removePlayEvent(audioClip[currentClip]);
 		AudioEventManager.removeTimerEvent(this);
 		playing = false;
@@ -2530,7 +2527,6 @@ function containerDelayControl(clipList, maxDurationInSeconds = 1, minDurationIn
 
 	this.getTime = function() {
 		var delayRemaining = AudioEventManager.getEventSecondsRemaining(PLAY, audioClip[currentClip]);
-		if (delayRemaining == "none") delayRemaining = 0;
 		return audioClip[currentClip].getTime() + delayTime - delayRemaining;
 	}
 	

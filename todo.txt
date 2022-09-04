@@ -1,7 +1,5 @@
 `~`~` Snowball:
-musicClip not devirtualizing when the volume comes back up
 test blend container
-
-
-
-
+Documentation
+use scheduledClip in more containers (ex: containerLoop)
+.setAudioManager()

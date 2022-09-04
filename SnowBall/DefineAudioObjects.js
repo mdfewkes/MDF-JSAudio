@@ -34,5 +34,5 @@ controles.setMixVolume(0.75);
 
 
 
-var test1 = new sfxClip("kicktail2", 2);
-var testC = new containerDelayControl([test1], 4, 2);
+var test1 = new musicClip("lay4tail16", 16);
+var testC = new container([test1]);

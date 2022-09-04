@@ -239,7 +239,7 @@ function audioEventManager() {
 		var check = checkListFor(eventType, thisClip, callSign);
 
 		if (check == "none") {
-			return "none";
+			return 0;
 		} else {
 			return (eventList[check][2] - now)/1000;
 		}
