@@ -4,4 +4,6 @@ use scheduledClip in more containers (ex: containerLoop) (done through container
 
 SpriteSheets be way wack
 
-Every container needs to fe tested
+Every container needs to be tested
+
+Add LayersCrossfade and LayersCrossfadeLoop

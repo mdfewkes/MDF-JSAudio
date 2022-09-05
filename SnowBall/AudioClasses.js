@@ -242,7 +242,7 @@ function sfxClip(filename) {//A simple, single buffer sound clip
 
 	this.setTime = function(time) {
 		var newTime = time % duration;
-		if(newTime < 0) {newTime = duration - newTime;}
+		if (newTime < 0) {newTime = duration - newTime;}
 		audioFile[currentClip].currentTime = newTime;
 		if (playing) {
 			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
@@ -386,7 +386,7 @@ function sfxClipLoop(filename) {//A simple, single buffer sound clip that loops
 
 	this.setTime = function(time) {
 		var newTime = time % duration;
-		if(newTime < 0) {newTime = duration - newTime;}
+		if (newTime < 0) {newTime = duration - newTime;}
 		audioFile[currentClip].currentTime = newTime;
 		if (playing) {
 			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
@@ -541,9 +541,9 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 
 	this.setTime = function(time) {
 		var newTime = time % duration;
-		if(newTime < 0) {newTime = duration - newTime;}
+		if (newTime < 0) {newTime = duration - newTime;}
 		audioFile[currentClip].currentTime = newTime;
-		if(playing) {
+		if (playing) {
 			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
 		}
 	}
@@ -686,7 +686,7 @@ function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file th
 
 	this.setTime = function(time) {
 		var newTime = time % duration;
-		if(newTime < 0) {newTime = duration - newTime;}
+		if (newTime < 0) {newTime = duration - newTime;}
 		audioFile[currentClip].currentTime = newTime;
 		if (playing) {
 			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
@@ -1083,9 +1083,9 @@ function musicClip(filename, playLength) {//Single buffer music file
 
 	this.setTime = function(time) {
 		var newTime = time % duration;
-		if(newTime < 0) {newTime = duration - newTime;}
+		if (newTime < 0) {newTime = duration - newTime;}
 		audioFile.currentTime = newTime;
-		if(this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
+		if (this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
 	}
 
 	this.getTime = function() {
@@ -1227,9 +1227,9 @@ function musicClipOverlap(filename, playLength) {//Double buffer music file
 
 	this.setTime = function(time) {
 		var newTime = time % duration;
-		if(newTime < 0) {newTime = duration - newTime;}
+		if (newTime < 0) {newTime = duration - newTime;}
 		audioFile[currentClip].currentTime = newTime;
-		if(!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
+		if (!this.getPaused()) {AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");}
 	}
 
 	this.getTime = function() {
@@ -2090,12 +2090,10 @@ function containerLayer(clipList) {//Plays all list-items together
 	var currentClip = 0;
 	this.name = "containerLayer";
 	var clipVolume = 1;
-	var layerVolume = [];
 	var tick = 0;
 
 	for (var i in clipList) {
 		audioClip[i] = clipList[i];
-		layerVolume[i] = 1;
 	}
 
 	this.play = function() {
@@ -2134,8 +2132,11 @@ function containerLayer(clipList) {//Plays all list-items together
 
 	this.setLayerLevel = function(slot, level) {
 		if (slot >= audioClip.length) return;
-		layerVolume[slot] = level;
 		audioClip[slot].setVolume(clipVolume * level);
+	}
+
+	this.getLayerLevel = function(slot) {
+		return audioClip[slot].getVolume();
 	}
 
 	this.updateVolume = function() {
@@ -2147,7 +2148,7 @@ function containerLayer(clipList) {//Plays all list-items together
 	this.setVolume = function(newVolume) {
 		clipVolume = newVolume;
 		for (i in audioClip) {
-			audioClip[i].setVolume(clipVolume * layerVolume[i]);
+			audioClip[i].setVolume(clipVolume * audioClip[i].getVolume());
 		}
 	}
 
@@ -2212,12 +2213,10 @@ function containerLayersLoop(clipList) {//Plays all list-items together, control
 	var currentClip = 0;
 	this.name = "containerLayersLoop";
 	var clipVolume = 1;
-	var layerVolume = [];
 	var tick = 0;
 
 	for (var i in clipList) {
 		audioClip[i] = clipList[i];
-		layerVolume[i] = 1;
 	}
 
 	this.play = function() {
@@ -2257,8 +2256,11 @@ function containerLayersLoop(clipList) {//Plays all list-items together, control
 
 	this.setLayerLevel = function(slot, level) {
 		if (slot >= audioClip.length) return;
-		layerVolume[slot] = level;
 		audioClip[slot].setVolume(clipVolume * level);
+	}
+
+	this.getLayerLevel = function(slot) {
+		return audioClip[slot].getVolume();
 	}
 
 	this.updateVolume = function() {
@@ -2270,7 +2272,7 @@ function containerLayersLoop(clipList) {//Plays all list-items together, control
 	this.setVolume = function(newVolume) {
 		clipVolume = newVolume;
 		for (i in audioClip) {
-			audioClip[i].setVolume(clipVolume * layerVolume[i]);
+			audioClip[i].setVolume(clipVolume * audioClip[i].getVolume());
 		}
 	}
 
@@ -3201,22 +3203,27 @@ function containerCrossfade(clipList) {//Can crossfade between list-items
 	}
 
 	this.trigger = function(callSign) {
-		if(callSign == "tick") {tick++;}
+		if(callSign == "tick") {
+			tick++;
+		}
 	}
 
 	this.switchTo = function(slot, fadeTime = 1) {
+		if (currentClip == slot) return;
+
 		var timeNow = audioClip[currentClip].getTime();
-		if(currentClip != slot && !audioClip[currentClip].getPaused()) {
+		if(!audioClip[currentClip].getPaused()) {
 			audioClip[slot].setTime(timeNow);
 			audioClip[slot].resume();
 			AudioEventManager.addCrossfadeEvent(audioClip[currentClip], fadeTime, 0);
 			AudioEventManager.addCrossfadeEvent(audioClip[slot], fadeTime, clipVolume);
 			currentClip = slot;
-		} else if (currentClip != slot) {
-			audioClip[slot].setTime(timeNow);
+			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+		} else {
 			audioClip[currentClip].stop();
 			currentClip = slot;
-			audioClip[currentClip].setVolume(clipVolume);
+			audioClip[slot].setTime(timeNow);
+			audioClip[slot].setVolume(clipVolume);
 		}
 	}
 
@@ -3326,19 +3333,21 @@ function containerCrossfadeLoop(clipList) {//Can crossfade between list-items, l
 	}
 
 	this.switchTo = function(slot, fadeTime = 1) {
+		if (currentClip == slot) return;
+
 		var timeNow = audioClip[currentClip].getTime();
-		if(currentClip != slot && !audioClip[currentClip].getPaused()) {
+		if(!audioClip[currentClip].getPaused()) {
 			audioClip[slot].setTime(timeNow);
 			audioClip[slot].resume();
 			AudioEventManager.addCrossfadeEvent(audioClip[currentClip], fadeTime, 0);
 			AudioEventManager.addCrossfadeEvent(audioClip[slot], fadeTime, clipVolume);
 			currentClip = slot;
 			AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
-		} else if (currentClip != slot) {
-			audioClip[slot].setTime(timeNow);
+		} else {
 			audioClip[currentClip].stop();
 			currentClip = slot;
-			audioClip[currentClip].setVolume(clipVolume);
+			audioClip[slot].setTime(timeNow);
+			audioClip[slot].setVolume(clipVolume);
 		}
 	}
 

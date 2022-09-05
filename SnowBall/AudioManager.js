@@ -319,10 +319,11 @@ function audioEventManager() {
 
 	function cleanupList() {
 		//console.log("Cleaning up");
-		eventList.sort(function(a, b){return b[0]-a[0]});
-		while (eventList[eventList.length - 1] == REMOVE) {
-			//console.log("Removing Event");
-			eventList.pop();
+
+		for (var i = eventList.length - 1; i >= 0; i--) {
+			if (eventList[i][0] == REMOVE) {
+				eventList.pop();
+			}
 		}
 	}
 
