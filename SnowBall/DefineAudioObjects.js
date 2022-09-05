@@ -34,5 +34,5 @@ controles.setMixVolume(0.75);
 
 
 
-var test1 = new musicClip("lay4tail16", 16);
+var test1 = new sfxClipLoop("lay4tail16", 16);
 var testC = new container([test1]);

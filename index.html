@@ -74,7 +74,7 @@
 	sys1Button.addEventListener('click', function(){ backgroundMusic.switchTo(0); });
 	sys2Button.addEventListener('click', function(){ backgroundMusic.switchTo(1); });
 
-	volumeSlider.oninput = function(){MusicVolumeManager.setVolume(this.value/100);}
+	volumeSlider.oninput = function(){MasterVolumeManager.setVolume(this.value/100);}
 
 	track1Button.addEventListener('click', function(){
 		if (backgroundFade.getSourceClip().name != "track1") {backgroundFade.switchTo(0, 0.5);}});
@@ -97,7 +97,7 @@
 		backgroundLayers.setLayerLevel(2, 0, 3);});
 	
 	window.onload = function() {
-		MusicVolumeManager.setVolume(0.75);
+		MasterVolumeManager.setVolume(0.75);
 		setInterval(function(){AudioEventManager.updateEvents();}, 10);
 	}
 
