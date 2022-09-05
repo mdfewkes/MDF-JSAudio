@@ -25,12 +25,12 @@ Container only:
 */
 
 //---//---General
-volumeManagerList = [];
-function volumeManager() {
+MasterVolumeManager = new masterVolumeManager();
+function masterVolumeManager() {
 	var list = [];
 	var volume = 1;
 	var muted = false;
-	volumeManagerList.push(this);
+	var resumeList = []
 
 	this.setVolume = function(amount) {
 		if (amount > 1) {volume = 1;}
@@ -68,16 +68,101 @@ function volumeManager() {
 		list.splice(list.indexOf(item), 1);
 	}
 
-	this.stopAll = function() {
+	this.pause = function() {
 		for(var i in list) {
-			list[i].stop();
+			resumeList[i] = !list[i].getPaused();
+			console.log(resumeList[i] + " " + list[i].name)
+			list[i].pause();
+		}
+		AudioEventManager.pause();
+	}
+
+	this.unpause() = function() {
+		for(var i in list) {
+			console.log(resumeList[i] + " " + list[i].name)
+			if (resumeList[i] == true) list[i].resume();
+		}
+		AudioEventManager.unpause();
+	}
+
+	this.getPaused = function() {
+		for(var i in list) {
+			if (list[i].getPaused()) return true;
+		}
+		return false;
+	}
+}
+
+function volumeManager() {
+	var list = [];
+	var volume = 1;
+	var muted = false;
+	var resumeList = []
+	MasterVolumeManager.addToList(this);
+	var man = MasterVolumeManager;
+
+	this.setVolume = function(amount) {
+		if (amount > 1) {volume = 1;}
+		else if (amount < 0) {volume = 0;}
+		else {volume = amount;}
+		for (var i in list) {
+			list[i].updateVolume();
 		}
 	}
 
-	this.pauseAll = function() {
+	this.getVolume = function() {
+		return volume * man.getVolume();
+	}
+
+	this.setMuted = function(ToF) {
+		muted = ToF;
+		this.updateVolume();
+	}
+
+	this.getMuted = function() {
+		return (muted || man.getMuted());
+	}
+
+	this.updateVolume = function() {
 		for(var i in list) {
+			list[i].updateVolume();
+		}
+	}
+
+	this.addToList = function(item) {
+		list.push(item);
+	}
+
+	this.removeFromList = function(item) {
+		list.splice(list.indexOf(item), 1);
+	}
+
+	this.pause = function() {
+		for(var i in list) {
+			resumeList[i] = !list[i].getPaused();
+			console.log(resumeList[i] + " " + list[i].name)
 			list[i].pause();
 		}
+	}
+
+	this.resume = function() {
+		for(var i in list) {
+			console.log(resumeList[i] + " " + list[i].name)
+			if (resumeList[i] == true) list[i].resume();
+		}
+	}
+
+	this.getPaused = function() {
+		for(var i in list) {
+			if (list[i].getPaused()) return true;
+		}
+		return false;
+	}
+
+	this.setVolumeManager = function(newManager) {
+		man.removeFromList(this);
+		man = newManager;
+		man.addToList(this);
 	}
 }
 

@@ -1,9 +1,13 @@
 `~`~` Snowball:
 
-Every container needs to be tested
+Everything needs to be tested
 
 Add LayersFade and LayersFadeLoop
 
 Random containers have a parameter for if random avoids repeats?
 
-Current clip in concatinated containers?
+default volume manager for clips to MasterVolumeManager
+Let containers recursively assign new volume mangers to their clips
+de-abstract sfxClips and musicClips to just clips
+
+Remove auto formating for file types?

@@ -21,36 +21,12 @@ function audioFormat(alt = false) {
 }
 
 
-function toggleMute() {
-	for (i in volumeManagerList) {
-		volumeManagerList[i].setMuted(!volumeManagerList[i].getMuted());
-	}
-}
-
-function setMute(TorF) {
-	for (i in volumeManagerList) {
-		volumeManagerList[i].setMuted(TorF);
-	}
-}
-
-function getMute() {
-	//var isNotMuted = SFXVolumeManager.getMuted() * MusicVolumeManager.getMuted();
-	var isNotMuted = 1;
-
-	for (i in volumeManagerList) {
-		isNotMuted *= volumeManagerList[i].getMuted();
-	}
-
-	return isNotMuted;
-}
-
-
 //Time Manager
 const REMOVE = 0; // Arrayformat [REMOVE]
-const FADE = 1; // Arrayformat [FADE, clip, startTime, endTime, startVolume, endVolume, crossfade]
-const TIMER = 2; // Arrayformat [TIMER, clip, endTime, callSign]
-const PLAY = 3; // Arrayformat [PLAY, clip, endTime]
-const READY = 4; // Arrayformat [READY, clip, file]
+const READY = 1; // Arrayformat [READY, clip, file]
+const FADE = 2; // Arrayformat [FADE, clip, startTime, endTime, startVolume, endVolume, crossfade]
+const TIMER = 3; // Arrayformat [TIMER, clip, endTime, callSign]
+const PLAY = 4; // Arrayformat [PLAY, clip, endTime]
 const STOP = 5; // Arrayformat [STOP, clip, endTime]
 const CALLBACK = 6; // Arrayformat [CALLBACK, callback, endTime]
 
@@ -59,6 +35,30 @@ var AudioEventManager = new audioEventManager();
 function audioEventManager() {
 	var eventList = [];
 	var now = window.performance.now();
+	var paused = false;
+	var pauseTime = 0;
+
+	this.pause = function() {
+		now = window.performance.now();
+		pauseTime = now;
+		paused = true;;
+	}
+
+	this.unpause = function() {
+		now = window.performance.now();
+		var pauseDuration = now - pauseTime;
+
+		for (var i = 0; i < eventList.length; i++) {
+			if (eventList[i][0] >= TIMER) {
+				eventList[i][2] += pauseDuration;
+			} else if (eventList[i][0] == FADE) {
+				eventList[i][2] += pauseDuration;
+				eventList[i][3] += pauseDuration;
+			}
+		}
+
+		paused = false;
+	}
 
 	this.returnEventList = function() {
 		return eventList;
@@ -246,6 +246,8 @@ function audioEventManager() {
 	}
 
 	function runList(){
+		if (paused) return;
+
 		for (var i = 0; i < eventList.length; i++) {
 			var thisClip = eventList[i][1];
 
