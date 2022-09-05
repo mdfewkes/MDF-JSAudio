@@ -1,10 +1,8 @@
 `~`~` Snowball:
 
-SpriteSheets be way wack
-
 Every container needs to be tested
 
-Add LayersCrossfade and LayersCrossfadeLoop
+Add LayersFade and LayersFadeLoop
 
 Random containers have a parameter for if random avoids repeats?
 

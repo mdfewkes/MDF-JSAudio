@@ -228,7 +228,7 @@ function sfxClip(filename) {//A simple, single buffer sound clip
 	return this;
 }
 
-function sfxClipLoop(filename) {//A simple, single buffer sound clip that loops
+function sfxClipLoop(filename) {// A simple, single buffer sound clip that loops
 	var audioFile = new Audio(audioPath+filename+audioFormat());
 	audioFile.onerror = function(){audioFile = new Audio(audioPath+filename+audioFormat(true))};
 	audioFile.onloadedmetadata = init;
@@ -372,7 +372,7 @@ function sfxClipLoop(filename) {//A simple, single buffer sound clip that loops
 	return this;
 }
 
-function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffers as specified
+function sfxClipOverlap(filename, voices = 2) {// A sound clip with as many buffers as specified
 	var audioFile = new Array(voices);
 	var maxVoices = audioFile.length;
 	for (var i = 0; i < audioFile.length; i++) {
@@ -527,7 +527,7 @@ function sfxClipOverlap(filename, voices = 2) {//A sound clip with as many buffe
 	return this;
 }
 
-function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file that loops
+function sfxClipOverlapLoop(filename, playLength) {// Double buffer sound file that loops
 	var audioFile = new Array(new Audio(audioPath+filename+audioFormat()), new Audio(audioPath+filename+audioFormat()));
 	audioFile[0].onerror = function(){audioFile[0] = new Audio(audioPath+filename+audioFormat(true))};
 	audioFile[1].onerror = function(){audioFile[1] = new Audio(audioPath+filename+audioFormat(true))};
@@ -672,23 +672,30 @@ function sfxClipOverlapLoop(filename, playLength) {//Double buffer sound file th
 	return this;
 }
 
-function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding several sound clips
+function sfxClipSpriteSheet(filename, listOfTimePairs) {// A single file holding several sound clips
 	var audioFile = new Audio(audioPath+filename+audioFormat());
 	audioFile.onerror = function(){audioFile = new Audio(audioPath+filename+audioFormat(true))};
 	audioFile.onloadeddata = init;
 	var times = listOfTimePairs;
-	var clipVolume = 1;
 	this.name = filename;
 	var duration = audioFile.duration;
 	var currentClip = 0;
+	var schedualedClip = currentClip;
 	var totalClips = times.length;
+	var clipVolume = 1;
+	var spriteVolume = [];
 	var mixVolume = 1;
 	var playing = false;
+	var virtual = false;
 	var tick = 0;
 
 	audioFile.pause();
 	var man = SFXVolumeManager;
 	man.addToList(this);
+
+	for (var i = 0; i < times.length; i++) {
+	 	spriteVolume[i] = 1;
+	 }
 
 
 	function init() {
@@ -696,38 +703,43 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 	}
 
 	this.play = function() {
+		currentClip = schedualedClip;
+
 		var startAt = times[currentClip][0];
 		audioFile.currentTime = startAt;
-		this.updateVolume();
-		if (clipVolume > 0.1) {audioFile.play();};
-		AudioEventManager.addStopEvent(this, this.getClipDuration(currentClip));
-		AudioEventManager.addTimerEvent(this, this.getClipDuration(currentClip), "tick");
-		playing = true;
+
+		this.resume();
 	}
 
 	this.stop = function() {
-		audioFile.pause();
+		this.pause();
 		audioFile.currentTime = 0;
-		AudioEventManager.removeStopEvent(this);
-		AudioEventManager.removeTimerEvent(this);
-		playing = false;
+
+		currentClip = schedualedClip;
 	}
 
 	this.resume = function() {
 		this.updateVolume();
-		if (clipVolume > 0.1) {audioFile.play();};
-		AudioEventManager.addStopEvent(this, (this.getClipDuration(currentClip) - (times[currentClip][1] - this.getTime())));
-		AudioEventManager.addTimerEvent(this, (this.getClipDuration(currentClip) - (times[currentClip][1] - this.getTime())), "tick");
+		if (clipVolume > 0.1) {
+			audioFile.play();
+		} else {
+			virtual = true;
+		}
+		AudioEventManager.addStopEvent(this, (this.getDuration(currentClip) - this.getTime()));
+		AudioEventManager.addTimerEvent(this, (this.getDuration(currentClip) - this.getTime()), "tick");
 		playing = true;
 	}
 
 	this.pause = function() {
-		if(playing && audioFile.paused && clipVolume < 0.1) {
+		if(playing && virtual && clipVolume < 0.1) {
 			audioFile.currentTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
-		} else {audioFile.pause();}
+		} else {
+			audioFile.pause();
+		}
 		AudioEventManager.removeStopEvent(this);
 		AudioEventManager.removeTimerEvent(this);
 		playing = false;
+		virtual = false;
 	}
 
 	this.trigger = function(callSign) {
@@ -738,16 +750,20 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 	}
 
 	this.updateVolume = function() {
-		newVolume = clipVolume * mixVolume;
+		newVolume = clipVolume * mixVolume * spriteVolume[currentClip];
 		if(newVolume > 1) {newVolume = 1;}
 		if(newVolume < 0) {newVolume = 0;}
 		audioFile.volume = Math.pow(newVolume * man.getVolume() * !man.getMuted(), 2);
-		if(playing && audioFile.paused && newVolume >= 0.1) {
+		if(playing && virtual && newVolume >= 0.1) {
 			var newTime = duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");
 			this.setTime(newTime);
 			audioFile.play();
+			virtual = false;
 		}
-		if(clipVolume < 0.1) {audioFile.pause();}
+		if(clipVolume < 0.1) {
+			audioFile.pause();
+			virtual = true;
+		}
 	}
 
 	this.setVolume = function(newVolume) {
@@ -765,6 +781,12 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 		mixVolume = volume;
 	}
 
+	this.setSpriteVolume = function(clipNumber, volume) {
+		spriteVolume[clipNumber] = volume;
+
+		if (clipNumber == currentClip) this.updateVolume();
+	}
+
 	this.getSourceClip = function() {
 		return this;
 	}
@@ -774,9 +796,7 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 	}
 
 	this.getAudioFile = function() {
-		var audioArray = new Array(1);
-		audioArray[0] = audioFile;
-		return audioArray;
+		return [audioFile];
 	}
 
 	this.setVolumeManager = function(newManager) {
@@ -794,17 +814,13 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 	}
 
 	this.setCurrentClip = function(clipNumber) {
-		this.stop();
-		if (clipNumber >= totalClips) {currentClip = 0;}
-		else {currentClip = clipNumber;}
+		schedualedClip = clipNumber;
+
+		if (this.getPaused()) currentClip = schedualedClip;
 	}
 
 	this.getCurrentClip = function() {
 		 return currentClip;
-	}
-
-	this.getClipDuration = function(clipNumber) {
-		return (times[clipNumber][1] - times[clipNumber][0])
 	}
 
 	this.getTimePair = function(clipNumber) {
@@ -812,18 +828,23 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 	}
 
 	this.setTime = function(time) {
-		audioFile.currentTime = time;
+		audioFile.currentTime = times[currentClip][0] + time;
 		if (playing) {
-			AudioEventManager.addTimerEvent(this, this.getClipDuration(currentClip), "tick");
+			AudioEventManager.addStopEvent(this, this.getDuration(currentClip) - this.getTime());
+			AudioEventManager.addTimerEvent(this, this.getDuration(currentClip) - this.getTime(), "tick");
 		}
 	}
 
 	this.getTime = function() {
-		return audioFile.currentTime;
+		return audioFile.currentTime - times[currentClip][0];
 	}
 	
 	this.getDuration = function() {
-		return duration;
+		return times[currentClip][1] - times[currentClip][0];
+	}
+	
+	this.getClipDuration = function(clipNumber) {
+		return times[clipNumber][1] - times[clipNumber][0];
 	}
 
 	this.getPaused = function() {
@@ -833,18 +854,21 @@ function sfxClipSpriteSheet(filename, listOfTimePairs) {//A single file holding 
 	return this;
 }
 
-function sfxClipSprite(spriteSheet, clipNumber) {//A referance to the clips in sfxClipSpriteSheet
+function sfxClipSprite(spriteSheet, clipNumber) {// A referance to the clips in sfxClipSpriteSheet
 	var spriteFile = spriteSheet;
 	var clip = clipNumber;
-	this.name = "sfxClipSprite " + spriteFile.name;
 	var duration = spriteFile.getClipDuration(clip);
+	var clipVolume = 1;
+	this.name = "sfxClipSprite " + spriteFile.name + " " + clipNumber;
 	var tick = 0;
+	var lastTime = 0;
+	var playing = false;
 
 	this.play = function() {
 		spriteFile.setCurrentClip(clip);
 		spriteFile.play();
-		duration = spriteFile.getClipDuration(clip);
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
+		playing = true;
 	}
 
 	this.stop = function() {
@@ -852,13 +876,19 @@ function sfxClipSprite(spriteSheet, clipNumber) {//A referance to the clips in s
 			spriteFile.stop();
 		}
 		AudioEventManager.removeTimerEvent(this);
+		playing = false;
 	}
 
 	this.resume = function() {
 		if(spriteFile.getCurrentClip() == clip) {
 			spriteFile.resume();
+		} else if (spriteFile.getPaused()) {
+			spriteFile.setCurrentClip(clip);
+			spriteFile.setTime(lastTime);
+			spriteFile.resume();
 		}
 		AudioEventManager.addTimerEvent(this, (this.getDuration() - this.getTime()), "tick");
+		playing = true;
 	}
 
 	this.pause = function() {
@@ -866,11 +896,15 @@ function sfxClipSprite(spriteSheet, clipNumber) {//A referance to the clips in s
 			spriteFile.pause();
 		}
 		AudioEventManager.removeTimerEvent(this);
+		lastTime = this.getTime();
+		playing = false;
 	}
 
 	this.trigger = function(callSign) {
 		if(callSign == "tick") {
 			tick++;
+			playing = false;
+			lastTime = duration;
 		}
 	}
 
@@ -879,19 +913,20 @@ function sfxClipSprite(spriteSheet, clipNumber) {//A referance to the clips in s
 	}
 
 	this.setVolume = function(newVolume) {
-		spriteFile.setVolume(newVolume);
+		clipVolume = newVolume;
+		spriteFile.setSpriteVolume(clip, clipVolume);
 	}
 
 	this.getVolume = function() {
-		return spriteFile.getVolume();
+		return clipVolume;
 	}
 
 	this.getSourceClip = function() {
-		return audioFile.getSourceClip();
+		return spriteFile.getSourceClip();
 	}
 
 	this.getChildClips = function() {
-		return [audioFile];
+		return [spriteFile];
 	}
 
 	this.resetTick = function() {
@@ -910,7 +945,7 @@ function sfxClipSprite(spriteSheet, clipNumber) {//A referance to the clips in s
 	}
 
 	this.getTime = function() {
-		return spriteFile.getTime() - spriteFile.getTimePair(clip)[0];
+		return duration - AudioEventManager.getEventSecondsRemaining(this, TIMER, "tick");;
 	}
 	
 	this.getDuration = function() {
@@ -918,7 +953,7 @@ function sfxClipSprite(spriteSheet, clipNumber) {//A referance to the clips in s
 	}
 
 	this.getPaused = function() {
-		return spriteFile.getPaused();
+		return !playing;
 	}
 
 	return this;
