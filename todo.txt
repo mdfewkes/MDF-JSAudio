@@ -1,5 +1,7 @@
 `~`~` Snowball:
-test blend container
+
 use scheduledClip in more containers (ex: containerLoop) (done through containerLoopRandomDurationControl)
 
 SpriteSheets be way wack
+
+Every container needs to fe tested

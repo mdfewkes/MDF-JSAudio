@@ -2,23 +2,25 @@
 AudioClasses.js and AudioManager,js are an attemp my Michael Fewkes to make more complex audio behaviors simpler to implement.
 
 Functions that all sound objects share:
-.play()    plays from the beggining of the object
-.stop()	    stops playback and resets playback time
-.resume()    plays object from last playback time
-.pause()    stops playback without resetting playback time
-.setVolume()/.getVolume()    reports and sets object volume (0-1)
-.setTime()/.getTime()    controls the playback time
-.getTick()/resetTick)    gets and resets the number of times the object has played
-.getDuration()    reports the current duration of the object
-.getPaused()    reports true if the object is not currently playing
-.getSourceClip()    returns the lowest level currently active clip
-.getChildClips()    returns a list of objects being managed by the object. returns false for lowest level clips
+.play()    Plays from the beggining of the object
+.stop()	    Stops playback and resets playback time
+.resume()    Plays object from last playback time
+.pause()    Stops playback without resetting playback time
+.setVolume()/.getVolume()    Reports and sets object volume (0-1)
+.setTime()/.getTime()    Controls the playback time
+.getTick()/resetTick)    Gets and resets the number of times the object has played
+.getDuration()    Reports the current duration of the object
+.getPaused()    Reports true if the object is not currently playing
+.getSourceClip()    Returns the lowest level currently active clip
+.getChildClips()    Returns a list of objects being managed by the object. returns false for lowest level clips
 
 Clip only:
-.setMixLevel()    sets a volume multiplier, used for relative mixing
-.getAudioFile()    returns an array of audio files from lowest level clips
-//.setAudioManager()    assigns the clip to an audio manager
+.setMixLevel()    Sets a volume multiplier, used for relative mixing. Can be larger than 1, but mixLevel * volume will never be greater than 1, before the volume manager is applied
+.getAudioFile()    Returns an array of audio files from lowest level clips
+//.setAudioManager()    Assigns the clip to an audio manager
 
+Container only:
+.setCurrentClip()/.getCurrentClip()    Sets the currentClip pointer for the next play event.
 
 */
 
@@ -79,50 +81,38 @@ function volumeManager() {
 	}
 
 	this.play = function(name) {
-		var searching = true;
-		var i = 0;
-		while(searching) {
+		for(var i in list) {
 			if (name == list[i].name) {
 				list[i].play();
-				searching = false;
+				return;
 			}
-		i++;
 		}
 	}
 
 	this.stop = function(name) {
-		var searching = true;
-		var i = 0;
-		while(searching) {
+		for(var i in list) {
 			if (name == list[i].name) {
 				list[i].stop();
-				searching = false;
+				return;
 			}
-		i++;
 		}
 	}
 
 	this.resume = function(name) {
-		var searching = true;
-		var i = 0;
-		while(searching) {
+		for(var i in list) {
 			if (name == list[i].name) {
 				list[i].resume();
-				searching = false;
+				return;
 			}
-		i++;
 		}
 	}
 
 	this.pause = function(name) {
-		var searching = true;
-		var i = 0;
-		while(searching) {
+		for(var i in list) {
 			if (name == list[i].name) {
 				list[i].pause();
-				searching = false;
+				return;
 			}
-		i++;
 		}
 	}
 }
@@ -130,13 +120,13 @@ function volumeManager() {
 //---//---SFX Classes
 SFXVolumeManager = new volumeManager();
 
-function sfxClip(filename, playLength = -1) {//A simple, single buffer sound clip
+function sfxClip(filename) {//A simple, single buffer sound clip
 	var audioFile = new Audio(audioPath+filename+audioFormat());
 	audioFile.onerror = function(){audioFile = new Audio(audioPath+filename+audioFormat(true))};
 	audioFile.onloadedmetadata = init;
 	var clipVolume = 1;
 	this.name = filename;
-	var duration = playLength;
+	var duration = 0;
 	var mixVolume = 1;
 	var playing = false;
 	var virtual = false;
@@ -147,7 +137,7 @@ function sfxClip(filename, playLength = -1) {//A simple, single buffer sound cli
 	man.addToList(this);
 
 	function init() {
-		if (duration = -1) duration = audioFile.duration;
+		duration = audioFile.duration;
 	}
 
 	this.play = function() {
@@ -1132,6 +1122,7 @@ function musicClipOverlap(filename, playLength) {//Double buffer music file
 	man.addToList(this);
 
 	this.play = function() {
+		if (playing) audioFile[currentClip].pause();
 		currentClip = (currentClip + 1) % 2;
 		audioFile[currentClip].currentTime = 0;
 		this.resume();
@@ -1275,6 +1266,7 @@ function musicClipOverlapLoop(filename, playLength) {//Double buffer music file 
 	man.addToList(this);
 
 	this.play = function() {
+		if (playing) audioFile[currentClip].pause();
 		currentClip = (currentClip + 1) % 2;
 		audioFile[currentClip].currentTime = 0;
 		this.resume();
@@ -1313,6 +1305,7 @@ function musicClipOverlapLoop(filename, playLength) {//Double buffer music file 
 	this.trigger = function(callSign) {
 		if(callSign == "tick") {
 			tick++;
+			playing = false;
 			this.play();
 		}
 	}
