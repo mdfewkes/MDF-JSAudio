@@ -1,9 +1,11 @@
 `~`~` Snowball:
 
-use scheduledClip in more containers (ex: containerLoop) (done through containerLayersLoop
-
 SpriteSheets be way wack
 
 Every container needs to be tested
 
 Add LayersCrossfade and LayersCrossfadeLoop
+
+Random containers have a parameter for if random avoids repeats?
+
+Current clip in concatinated containers?

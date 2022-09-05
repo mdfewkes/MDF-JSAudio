@@ -79,42 +79,6 @@ function volumeManager() {
 			list[i].pause();
 		}
 	}
-
-	this.play = function(name) {
-		for(var i in list) {
-			if (name == list[i].name) {
-				list[i].play();
-				return;
-			}
-		}
-	}
-
-	this.stop = function(name) {
-		for(var i in list) {
-			if (name == list[i].name) {
-				list[i].stop();
-				return;
-			}
-		}
-	}
-
-	this.resume = function(name) {
-		for(var i in list) {
-			if (name == list[i].name) {
-				list[i].resume();
-				return;
-			}
-		}
-	}
-
-	this.pause = function(name) {
-		for(var i in list) {
-			if (name == list[i].name) {
-				list[i].pause();
-				return;
-			}
-		}
-	}
 }
 
 //---//---SFX Classes
@@ -1408,6 +1372,7 @@ function container(clipList) {//Basic Container
 
 	this.play = function() {
 		currentClip = schedualedClip;
+
 		audioClip[currentClip].play();
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
 	}
@@ -1473,6 +1438,7 @@ function container(clipList) {//Basic Container
 
 	this.setCurrentClip = function(clipNumber) {
 		schedualedClip = clipNumber;
+		if (this.getPaused()) currentClip = schedualedClip;
 	}
 
 	this.getCurrentClip = function() {
@@ -1519,6 +1485,7 @@ function containerLoop(clipList) {//Basic Container
 
 	this.play = function() {
 		currentClip = schedualedClip;
+
 		audioClip[currentClip].play();
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
 	}
@@ -1585,6 +1552,7 @@ function containerLoop(clipList) {//Basic Container
 
 	this.setCurrentClip = function(clipNumber) {
 		schedualedClip = clipNumber;
+		if (this.getPaused()) currentClip = schedualedClip;
 	}
 
 	this.getCurrentClip = function() {
@@ -1632,6 +1600,8 @@ function containerLoopRandom(clipList) {//Plays a random list-item on playback
 	this.play = function() {
 		currentClip = schedualedClip;
 		schedualedClip = Math.floor(Math.random() * audioClip.length);
+		if (schedualedClip == currentClip) schedualedClip = schedualedClip++ % audioClip.length;
+
 		audioClip[currentClip].play();
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
 	}
@@ -1698,6 +1668,7 @@ function containerLoopRandom(clipList) {//Plays a random list-item on playback
 
 	this.setCurrentClip = function(clipNumber) {
 		schedualedClip = clipNumber;
+		if (this.getPaused()) currentClip = schedualedClip;
 	}
 
 	this.getCurrentClip = function() {
@@ -1809,7 +1780,10 @@ function containerLoopRandomRepetitionControl(clipList, maxRepetitions = 3, minR
 
 	this.setCurrentClip = function(clipNumber) {
 		schedualedClip = clipNumber;
-		playCountdown = 0;
+		if (this.getPaused()) {
+			currentClip = schedualedClip;
+			playCountdown = 0;
+		}
 	}
 
 	this.getCurrentClip = function() {
@@ -1931,7 +1905,10 @@ function containerLoopRandomDurationControl(clipList, maxDurationInSeconds = 180
 
 	this.setCurrentClip = function(clipNumber) {
 		schedualedClip = clipNumber;
-		playTime = 0;
+		if (this.getPaused()) {
+			currentClip = schedualedClip;
+			playTime = 0;
+		}
 	}
 
 	this.getCurrentClip = function() {
@@ -1991,6 +1968,7 @@ function containerRandom(clipList) {//Plays a random list-item on playback
 		currentClip = schedualedClip;
 		schedualedClip = Math.floor(Math.random() * audioClip.length);
 		if (schedualedClip == currentClip) schedualedClip = schedualedClip++ % audioClip.length;
+
 		audioClip[currentClip].play();
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
 	}
@@ -2056,6 +2034,7 @@ function containerRandom(clipList) {//Plays a random list-item on playback
 
 	this.setCurrentClip = function(clipNumber) {
 		schedualedClip = clipNumber;
+		if (this.getPaused()) currentClip = schedualedClip;
 	}
 
 	this.getCurrentClip = function() {
@@ -2245,9 +2224,10 @@ function containerLayersLoop(clipList) {//Plays all list-items together, control
 	function findLongestPlayingClip() {
 		var newCurrentClip = 0;
 		var newCurrentDuration = 0;
+		var isPaused = this.getPaused();
 
 		for (var i = 0; i < audioClip.length; i++) {
-			if (!audioClip[i].getPaused() && audioClip[i].getDuration() > newCurrentDuration) {
+			if ((isPaused || !audioClip[i].getPaused()) && audioClip[i].getDuration() > newCurrentDuration) {
 				newCurrentClip = i;
 				newCurrentDuration = audioClip[i].getDuration();
 			}
@@ -2375,7 +2355,7 @@ function containerLayersLoop(clipList) {//Plays all list-items together, control
 	return this;
 }
 
-function containerBlend(clipList, startingLevel = 0) {//Container which blends between the volumes of list-items
+function containerBlend(clipList, startingLevel = 0) {//Container which blends between the volumes of list-items (values 0-1)
 	var audioClip = [];
 	var currentClip = 0;
 	this.name = "containerBlend";
@@ -2494,15 +2474,40 @@ function containerBlend(clipList, startingLevel = 0) {//Container which blends b
 	}
 
 	this.getTime = function() {
-		return audioClip[currentClip].getTime();
+		var newCurrentClip = 0;
+		var newCurrentDuration = 0;
+		var isPaused = this.getPaused();
+
+		for (var i = 0; i < audioClip.length; i++) {
+			if ((isPaused || !audioClip[i].getPaused()) && audioClip[i].getDuration() > newCurrentDuration) {
+				newCurrentClip = i;
+				newCurrentDuration = audioClip[i].getDuration();
+			}
+		}
+		return audioClip[newCurrentClip].getTime();
 	}
 	
 	this.getDuration = function() {
-		return audioClip[currentClip].getDuration();
+		var newCurrentClip = 0;
+		var newCurrentDuration = 0;
+		var isPaused = this.getPaused();
+
+		for (var i = 0; i < audioClip.length; i++) {
+			if ((isPaused || !audioClip[i].getPaused()) && audioClip[i].getDuration() > newCurrentDuration) {
+				newCurrentClip = i;
+				newCurrentDuration = audioClip[i].getDuration();
+			}
+		}
+		return audioClip[newCurrentClip].getDuration();
 	}
 
 	this.getPaused = function() {
-		return audioClip[currentClip].getPaused();
+		for (var i = 0; i < audioClip.length; i++) {
+			if (!audioClip[i].getPaused()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	return this;
@@ -2510,14 +2515,15 @@ function containerBlend(clipList, startingLevel = 0) {//Container which blends b
 
 function containerDelayControl(clipList, maxDurationInSeconds = 1, minDurationInSeconds = 0) {//Plays clip after a random duration
 	var audioClip = [];
-	var currentClip = 0;
+	var currentClip = Math.floor(Math.random() * audioClip.length);
+	var schedualedClip = currentClip;
 	this.name = "containerPlayDelayRandom";
+	var delayTime = (Math.random() * playMax - playMin) + playMin;
+	var schedualedDelayTime = delayTime;
 	var playMax = maxDurationInSeconds;
 	var playMin = minDurationInSeconds;
-	var lastRandomIndex = -1;
 	var clipVolume = 1;
 	var tick = 0;
-	var delayTime = (Math.random() * playMax - playMin) + playMin;
 	var timeLeft = delayTime;
 	var playing = false;
 
@@ -2526,8 +2532,10 @@ function containerDelayControl(clipList, maxDurationInSeconds = 1, minDurationIn
 	}
 
 	this.play = function() {
-		var nextClip = Math.floor(Math.random() * audioClip.length);
-		currentClip = nextClip != lastRandomIndex ? nextClip : nextClip++ % audioClip.length;
+		currentClip = schedualedClip;
+		timeLeft = delayTime;
+		delayTime = schedualedDelayTime;
+		schedualedDelayTime = (Math.random() * playMax - playMin) + playMin;
 
 		AudioEventManager.addPlayEvent(audioClip[currentClip], delayTime);
 		AudioEventManager.addTimerEvent(this, (delayTime + audioClip[currentClip].getDuration()), "tick");
@@ -2538,10 +2546,11 @@ function containerDelayControl(clipList, maxDurationInSeconds = 1, minDurationIn
 		for (var i in audioClip) {
 			audioClip[i].stop();
 		}
-		delayTime = (Math.random() * playMax - playMin) + playMin;
 		AudioEventManager.removePlayEvent(audioClip[currentClip]);
 		AudioEventManager.removeTimerEvent(this);
 		playing = false;
+		currentClip = schedualedClip;
+		delayTime = schedualedDelayTime;
 	}
 
 	this.resume = function() {
@@ -2607,7 +2616,8 @@ function containerDelayControl(clipList, maxDurationInSeconds = 1, minDurationIn
 	}
 
 	this.setCurrentClip = function(clipNumber) {
-		currentClip = clipNumber;
+		schedualedClip = clipNumber;
+		if (this.getPaused()) currentClip = schedualedClip;
 	}
 
 	this.getCurrentClip = function() {
@@ -3211,6 +3221,7 @@ function containerConcatenatedLoopLast(clipList) {//Loop all list-items as one i
 function containerCrossfade(clipList) {//Can crossfade between list-items
 	var audioClip = [];
 	var currentClip = 0;
+	var schedualedClip = currentClip;
 	this.name = "containerCrossfade";
 	var clipVolume = 1;
 	var tick = 0;
@@ -3222,6 +3233,8 @@ function containerCrossfade(clipList) {//Can crossfade between list-items
 	audioClip[0].setVolume(1);
 
 	this.play = function() {
+		currentClip = schedualedClip;
+
 		audioClip[currentClip].play();
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
 	}
@@ -3231,6 +3244,7 @@ function containerCrossfade(clipList) {//Can crossfade between list-items
 			audioClip[i].stop();
 		}
 		AudioEventManager.removeTimerEvent(this);
+		currentClip = schedualedClip;
 	}
 
 	this.resume = function() {
@@ -3251,12 +3265,11 @@ function containerCrossfade(clipList) {//Can crossfade between list-items
 		}
 	}
 
-	this.switchTo = function(slot, fadeTime = 1) {
+	this.switchTo = function(slot, fadeTime = 0.5) {
 		if (currentClip == slot) return;
 
-		var timeNow = audioClip[currentClip].getTime();
 		if(!audioClip[currentClip].getPaused()) {
-			audioClip[slot].setTime(timeNow);
+			audioClip[slot].setTime(audioClip[currentClip].getTime());
 			audioClip[slot].resume();
 			AudioEventManager.addCrossfadeEvent(audioClip[currentClip], fadeTime, 0);
 			AudioEventManager.addCrossfadeEvent(audioClip[slot], fadeTime, clipVolume);
@@ -3265,8 +3278,6 @@ function containerCrossfade(clipList) {//Can crossfade between list-items
 		} else {
 			audioClip[currentClip].stop();
 			currentClip = slot;
-			audioClip[slot].setTime(timeNow);
-			audioClip[slot].setVolume(clipVolume);
 		}
 	}
 
@@ -3289,6 +3300,11 @@ function containerCrossfade(clipList) {//Can crossfade between list-items
 
 	this.getListLength = function() {
 		 return audioClip.length;
+	}
+
+	this.setCurrentClip = function(clipNumber) {
+		schedualedClip = clipNumber;
+		if (this.getPaused()) currentClip = schedualedClip;
 	}
 
 	this.getCurrentClip = function() {
@@ -3334,6 +3350,7 @@ function containerCrossfade(clipList) {//Can crossfade between list-items
 function containerCrossfadeLoop(clipList) {//Can crossfade between list-items, loops current item
 	var audioClip = [];
 	var currentClip = 0;
+	var schedualedClip = currentClip;
 	this.name = "containerCrossfadeLoop";
 	var clipVolume = 1;
 	var tick = 0;
@@ -3345,6 +3362,8 @@ function containerCrossfadeLoop(clipList) {//Can crossfade between list-items, l
 	audioClip[0].setVolume(1);
 
 	this.play = function() {
+		currentClip = schedualedClip;
+
 		audioClip[currentClip].play();
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
 	}
@@ -3354,6 +3373,7 @@ function containerCrossfadeLoop(clipList) {//Can crossfade between list-items, l
 			audioClip[i].stop();
 		}
 		AudioEventManager.removeTimerEvent(this);
+		currentClip = schedualedClip;
 	}
 
 	this.resume = function() {
@@ -3375,12 +3395,11 @@ function containerCrossfadeLoop(clipList) {//Can crossfade between list-items, l
 		}
 	}
 
-	this.switchTo = function(slot, fadeTime = 1) {
+	this.switchTo = function(slot, fadeTime = 0.5) {
 		if (currentClip == slot) return;
 
-		var timeNow = audioClip[currentClip].getTime();
 		if(!audioClip[currentClip].getPaused()) {
-			audioClip[slot].setTime(timeNow);
+			audioClip[slot].setTime(audioClip[currentClip].getTime());
 			audioClip[slot].resume();
 			AudioEventManager.addCrossfadeEvent(audioClip[currentClip], fadeTime, 0);
 			AudioEventManager.addCrossfadeEvent(audioClip[slot], fadeTime, clipVolume);
@@ -3389,8 +3408,6 @@ function containerCrossfadeLoop(clipList) {//Can crossfade between list-items, l
 		} else {
 			audioClip[currentClip].stop();
 			currentClip = slot;
-			audioClip[slot].setTime(timeNow);
-			audioClip[slot].setVolume(clipVolume);
 		}
 	}
 
@@ -3413,6 +3430,11 @@ function containerCrossfadeLoop(clipList) {//Can crossfade between list-items, l
 
 	this.getListLength = function() {
 		 return audioClip.length;
+	}
+
+	this.setCurrentClip = function(clipNumber) {
+		schedualedClip = clipNumber;
+		if (this.getPaused()) currentClip = schedualedClip;
 	}
 
 	this.getCurrentClip = function() {
@@ -3458,6 +3480,7 @@ function containerCrossfadeLoop(clipList) {//Can crossfade between list-items, l
 function containerSequence(clipList) {//Plays list-items in order
 	var audioClip = [];
 	var currentClip = 0;
+	var schedualedClip = currentClip;
 	this.name = "containerSequence";
 	var clipVolume = 1;
 	var tick = 0;
@@ -3467,6 +3490,9 @@ function containerSequence(clipList) {//Plays list-items in order
 	}
 
 	this.play = function() {
+		currentClip = schedualedClip;
+		schedualedClip = schedualedClip++ % audioClip.length;
+
 		audioClip[currentClip].play();
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
 	}
@@ -3476,6 +3502,7 @@ function containerSequence(clipList) {//Plays list-items in order
 			audioClip[i].stop();
 		}
 		AudioEventManager.removeTimerEvent(this);
+		currentClip = schedualedClip;
 	}
 
 	this.resume = function() {
@@ -3492,10 +3519,6 @@ function containerSequence(clipList) {//Plays list-items in order
 
 	this.trigger = function(callSign) {
 		if(callSign == "tick") {
-			currentClip++;
-			if (currentClip >= audioClip.length) {
-				currentClip = 0;
-			}
 			tick++;
 		}
 	}
@@ -3519,6 +3542,11 @@ function containerSequence(clipList) {//Plays list-items in order
 
 	this.getListLength = function() {
 		 return audioClip.length;
+	}
+
+	this.setCurrentClip = function(clipNumber) {
+		schedualedClip = clipNumber;
+		if (this.getPaused()) currentClip = schedualedClip;
 	}
 
 	this.getCurrentClip = function() {
@@ -3564,6 +3592,7 @@ function containerSequence(clipList) {//Plays list-items in order
 function containerSequenceLatch(clipList) {//Plays list-items in order, but stays on current one until indicated
 	var audioClip = [];
 	var currentClip = 0;
+	var schedualedClip = currentClip;
 	this.name = "containerSequenceLatch";
 	var latched = true;
 	var clipVolume = 1;
@@ -3574,6 +3603,9 @@ function containerSequenceLatch(clipList) {//Plays list-items in order, but stay
 	}
 
 	this.play = function() {
+		currentClip = schedualedClip;
+		latched = true;
+
 		audioClip[currentClip].play();
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
 	}
@@ -3583,6 +3615,7 @@ function containerSequenceLatch(clipList) {//Plays list-items in order, but stay
 			audioClip[i].stop();
 		}
 		AudioEventManager.removeTimerEvent(this);
+		currentClip = schedualedClip;
 	}
 
 	this.resume = function() {
@@ -3598,16 +3631,15 @@ function containerSequenceLatch(clipList) {//Plays list-items in order, but stay
 	}
 
 	this.continue = function() {
-		latched = false;
+		if (latched) {
+			schedualedClip++;
+			schedualedClip = schedualedClip++ % audioClip.length;
+			latched = false;
+		}
 	}
 
 	this.trigger = function(callSign) {
 		if(callSign == "tick") {
-			if (!latched) {
-				currentClip++;
-				latched = true;
-			}
-			if (currentClip >= audioClip.length) {currentClip = 0;}
 			tick++;
 		}
 	}
@@ -3631,6 +3663,11 @@ function containerSequenceLatch(clipList) {//Plays list-items in order, but stay
 
 	this.getListLength = function() {
 		 return audioClip.length;
+	}
+
+	this.setCurrentClip = function(clipNumber) {
+		schedualedClip = clipNumber;
+		if (this.getPaused()) currentClip = schedualedClip;
 	}
 
 	this.getCurrentClip = function() {
@@ -3676,6 +3713,7 @@ function containerSequenceLatch(clipList) {//Plays list-items in order, but stay
 function containerSequenceLatchLast(clipList) {//Plays list-items in order, stays on last item
 	var audioClip = [];
 	var currentClip = 0;
+	var schedualedClip = currentClip;
 	this.name = "containerSequenceLatchLast";
 	var clipVolume = 1;
 	var tick = 0;
@@ -3685,6 +3723,9 @@ function containerSequenceLatchLast(clipList) {//Plays list-items in order, stay
 	}
 
 	this.play = function() {
+		currentClip = schedualedClip;
+		if (schedualedClip < audioClip.length - 1) schedualedClip ++;
+
 		audioClip[currentClip].play();
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
 	}
@@ -3694,6 +3735,7 @@ function containerSequenceLatchLast(clipList) {//Plays list-items in order, stay
 			audioClip[i].stop();
 		}
 		AudioEventManager.removeTimerEvent(this);
+		currentClip = schedualedClip;
 	}
 
 	this.resume = function() {
@@ -3710,9 +3752,6 @@ function containerSequenceLatchLast(clipList) {//Plays list-items in order, stay
 
 	this.trigger = function(callSign) {
 		if(callSign == "tick") {
-			if (currentClip < audioClip.length - 1) {
-				currentClip++;
-			}
 			tick++;
 		}
 	}
@@ -3732,6 +3771,11 @@ function containerSequenceLatchLast(clipList) {//Plays list-items in order, stay
 
 	this.getVolume = function() {
 		return clipVolume;
+	}
+
+	this.setCurrentClip = function(clipNumber) {
+		schedualedClip = clipNumber;
+		if (this.getPaused()) currentClip = schedualedClip;
 	}
 
 	this.getCurrentClip = function() {
@@ -3781,6 +3825,7 @@ function containerSequenceLatchLast(clipList) {//Plays list-items in order, stay
 function containerPlaylist(clipList) {//Plays through list-items in order
 	var audioClip = [];
 	var currentClip = 0;
+	var schedualedClip = currentClip;
 	this.name = "containerPlaylist";
 	var clipVolume = 1;
 	var tick = 0;
@@ -3792,6 +3837,9 @@ function containerPlaylist(clipList) {//Plays through list-items in order
 	var clipVolume = 1;
 
 	this.play = function() {
+		currentClip = schedualedClip;
+		schedualedClip = schedualedClip++ % audioClip.length;
+
 		audioClip[currentClip].play();
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
 	}
@@ -3801,6 +3849,7 @@ function containerPlaylist(clipList) {//Plays through list-items in order
 			audioClip[i].stop();
 		}
 		AudioEventManager.removeTimerEvent(this);
+		schedualedClip = currentClip;
 	}
 
 	this.resume = function() {
@@ -3818,10 +3867,8 @@ function containerPlaylist(clipList) {//Plays through list-items in order
 	this.trigger = function(callSign) {
 		if(callSign == "tick") {
 			currentClip++;
-			if (currentClip < audioClip.length) {
+			if (currentClip < audioClip.length - 1) {
 				this.play();
-			} else {
-				currentClip = 0;
 			}
 			tick++;
 		}
@@ -3846,6 +3893,11 @@ function containerPlaylist(clipList) {//Plays through list-items in order
 
 	this.getListLength = function() {
 		 return audioClip.length;
+	}
+
+	this.setCurrentClip = function(clipNumber) {
+		schedualedClip = clipNumber;
+		if (this.getPaused()) currentClip = schedualedClip;
 	}
 
 	this.getCurrentClip = function() {
@@ -3891,6 +3943,7 @@ function containerPlaylist(clipList) {//Plays through list-items in order
 function containerPlaylistLoop(clipList) {//Loops through list-items in order
 	var audioClip = [];
 	var currentClip = 0;
+	var schedualedClip = currentClip;
 	this.name = "containerPlaylistLoop";
 	var clipVolume = 1;
 	var tick = 0;
@@ -3900,6 +3953,9 @@ function containerPlaylistLoop(clipList) {//Loops through list-items in order
 	}
 
 	this.play = function() {
+		currentClip = schedualedClip;
+		schedualedClip = schedualedClip++ % audioClip.length;
+
 		audioClip[currentClip].play();
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
 	}
@@ -3909,6 +3965,7 @@ function containerPlaylistLoop(clipList) {//Loops through list-items in order
 			audioClip[i].stop();
 		}
 		AudioEventManager.removeTimerEvent(this);
+		schedualedClip = currentClip;
 	}
 
 	this.resume = function() {
@@ -3925,8 +3982,6 @@ function containerPlaylistLoop(clipList) {//Loops through list-items in order
 
 	this.trigger = function(callSign) {
 		if(callSign == "tick") {
-			currentClip++;
-			if (currentClip >= audioClip.length) {currentClip = 0;}
 			this.play();
 			tick++;
 		}
@@ -3951,6 +4006,11 @@ function containerPlaylistLoop(clipList) {//Loops through list-items in order
 
 	this.getListLength = function() {
 		 return audioClip.length;
+	}
+
+	this.setCurrentClip = function(clipNumber) {
+		schedualedClip = clipNumber;
+		if (this.getPaused()) currentClip = schedualedClip;
 	}
 
 	this.getCurrentClip = function() {
@@ -3996,6 +4056,7 @@ function containerPlaylistLoop(clipList) {//Loops through list-items in order
 function containerPlaylistLoopLatch(clipList) {//Plays through list-items in order, but loops current one until indicated
 	var audioClip = [];
 	var currentClip = 0;
+	var schedualedClip = currentClip;
 	this.name = "containerPlaylistLoopLatch";
 	var latched = true;
 	var clipVolume = 1;
@@ -4006,6 +4067,9 @@ function containerPlaylistLoopLatch(clipList) {//Plays through list-items in ord
 	}
 
 	this.play = function() {
+		currentClip = schedualedClip;
+		latched = true;
+
 		audioClip[currentClip].play();
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
 	}
@@ -4015,6 +4079,7 @@ function containerPlaylistLoopLatch(clipList) {//Plays through list-items in ord
 			audioClip[i].stop();
 		}
 		AudioEventManager.removeTimerEvent(this);
+		if (latched) schedualedClip = currentClip;
 	}
 
 	this.resume = function() {
@@ -4030,16 +4095,15 @@ function containerPlaylistLoopLatch(clipList) {//Plays through list-items in ord
 	}
 
 	this.continue = function() {
-		latched = false;
+		if (latched) {
+			schedualedClip++;
+			schedualedClip = schedualedClip++ % audioClip.length;
+			latched = false;
+		}
 	}
 
 	this.trigger = function(callSign) {
 		if(callSign == "tick") {
-			if (!latched) {
-				currentClip++;
-				latched = true;
-			}
-			if (currentClip >= audioClip.length) {currentClip = 0;}
 			this.play();
 			tick++;
 		}
@@ -4064,6 +4128,11 @@ function containerPlaylistLoopLatch(clipList) {//Plays through list-items in ord
 
 	this.getListLength = function() {
 		 return audioClip.length;
+	}
+
+	this.setCurrentClip = function(clipNumber) {
+		schedualedClip = clipNumber;
+		if (this.getPaused()) currentClip = schedualedClip;
 	}
 
 	this.getCurrentClip = function() {
@@ -4109,6 +4178,7 @@ function containerPlaylistLoopLatch(clipList) {//Plays through list-items in ord
 function containerPlaylistLoopLast(clipList) {//Plays through list-items in order, loops last item
 	var audioClip = [];
 	var currentClip = 0;
+	var schedualedClip = currentClip;
 	this.name = "containerPlaylistLoopLast";
 	var clipVolume = 1;
 	var tick = 0;
@@ -4119,6 +4189,9 @@ function containerPlaylistLoopLast(clipList) {//Plays through list-items in orde
 
 	this.play = function() {
 		audioClip[currentClip].play();
+		currentClip = schedualedClip;
+		if (schedualedClip < audioClip.length - 1) schedualedClip ++;
+
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
 	}
 
@@ -4128,6 +4201,7 @@ function containerPlaylistLoopLast(clipList) {//Plays through list-items in orde
 			audioClip[i].stop();
 		}
 		AudioEventManager.removeTimerEvent(this);
+		schedualedClip = currentClip;
 	}
 
 	this.resume = function() {
@@ -4167,6 +4241,11 @@ function containerPlaylistLoopLast(clipList) {//Plays through list-items in orde
 
 	this.getVolume = function() {
 		return clipVolume;
+	}
+
+	this.setCurrentClip = function(clipNumber) {
+		schedualedClip = clipNumber;
+		if (this.getPaused()) currentClip = schedualedClip;
 	}
 
 	this.getCurrentClip = function() {
