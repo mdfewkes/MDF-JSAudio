@@ -1,6 +1,6 @@
 `~`~` Snowball:
 
-use scheduledClip in more containers (ex: containerLoop) (done through containerLoopRandomDurationControl)
+use scheduledClip in more containers (ex: containerLoop) (done through containerLayersLoop
 
 SpriteSheets be way wack
 

@@ -1749,7 +1749,7 @@ function containerLoopRandomRepetitionControl(clipList, maxRepetitions = 3, minR
 		if (playCountdown <= 0) {
 			currentClip = schedualedClip;
 			schedualedClip = Math.floor(Math.random() * audioClip.length);
-			if (schedualedClip == currentClip) schedualedClip = (schedualedClip + 1) % audioClip.length;
+			if (schedualedClip == currentClip) schedualedClip = schedualedClip++ % audioClip.length;
 			playCountdown = Math.floor(Math.random() * (playMax - playMin + 1) + playMin);
 		}
 
@@ -1871,7 +1871,7 @@ function containerLoopRandomDurationControl(clipList, maxDurationInSeconds = 180
 		if (playTime > playMin && Math.random() <= (playTime - playMin)/(playMax - playMin)) {
 			currentClip = schedualedClip;
 			schedualedClip = Math.floor(Math.random() * audioClip.length);
-			if (schedualedClip == currentClip) schedualedClip = (schedualedClip + 1) % audioClip.length;
+			if (schedualedClip == currentClip) schedualedClip = schedualedClip++ % audioClip.length;
 			playTime = 0;
 		}
 
@@ -1976,7 +1976,8 @@ function containerLoopRandomDurationControl(clipList, maxDurationInSeconds = 180
 
 function containerRandom(clipList) {//Plays a random list-item on playback
 	var audioClip = [];
-	var currentClip = 0;
+	var currentClip = Math.floor(Math.random() * audioClip.length);;
+	var schedualedClip = currentClip;
 	this.name = "containerRandom";
 	var lastRandomIndex = -1;
 	var clipVolume = 1;
@@ -1987,8 +1988,9 @@ function containerRandom(clipList) {//Plays a random list-item on playback
 	}
 
 	this.play = function() {
-		var nextClip = Math.floor(Math.random() * audioClip.length);
-		currentClip = nextClip != lastRandomIndex ? nextClip : nextClip++ % audioClip.length;
+		currentClip = schedualedClip;
+		schedualedClip = Math.floor(Math.random() * audioClip.length);
+		if (schedualedClip == currentClip) schedualedClip = schedualedClip++ % audioClip.length;
 		audioClip[currentClip].play();
 		AudioEventManager.addTimerEvent(this, this.getDuration(), "tick");
 	}
@@ -1998,6 +2000,7 @@ function containerRandom(clipList) {//Plays a random list-item on playback
 			audioClip[i].stop();
 		}
 		AudioEventManager.removeTimerEvent(this);
+		currentClip = schedualedClip;		
 	}
 
 	this.resume = function() {
@@ -2052,7 +2055,7 @@ function containerRandom(clipList) {//Plays a random list-item on playback
 	}
 
 	this.setCurrentClip = function(clipNumber) {
-		currentClip = clipNumber;
+		schedualedClip = clipNumber;
 	}
 
 	this.getCurrentClip = function() {
@@ -2094,6 +2097,19 @@ function containerLayer(clipList) {//Plays all list-items together
 
 	for (var i in clipList) {
 		audioClip[i] = clipList[i];
+	}
+
+	function findLongestPlayingClip() {
+		var newCurrentClip = 0;
+		var newCurrentDuration = 0;
+
+		for (var i = 0; i < audioClip.length; i++) {
+			if (!audioClip[i].getPaused() && audioClip[i].getDuration() > newCurrentDuration) {
+				newCurrentClip = i;
+				newCurrentDuration = audioClip[i].getDuration();
+			}
+		}
+		return newCurrentClip;
 	}
 
 	this.play = function() {
@@ -2194,15 +2210,22 @@ function containerLayer(clipList) {//Plays all list-items together
 	}
 
 	this.getTime = function() {
-		return audioClip[currentClip].getTime();
+		var longestClip = findLongestPlayingClip();
+		return audioClip[longestClip].getTime();
 	}
 	
 	this.getDuration = function() {
-		return audioClip[currentClip].getDuration();
+		var longestClip = findLongestPlayingClip();
+		return audioClip[longestClip].getDuration();
 	}
 
 	this.getPaused = function() {
-		return audioClip[currentClip].getPaused();
+		for (var i = 0; i < audioClip.length; i++) {
+			if (!audioClip[i].getPaused()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	return this;
@@ -2217,6 +2240,19 @@ function containerLayersLoop(clipList) {//Plays all list-items together, control
 
 	for (var i in clipList) {
 		audioClip[i] = clipList[i];
+	}
+
+	function findLongestPlayingClip() {
+		var newCurrentClip = 0;
+		var newCurrentDuration = 0;
+
+		for (var i = 0; i < audioClip.length; i++) {
+			if (!audioClip[i].getPaused() && audioClip[i].getDuration() > newCurrentDuration) {
+				newCurrentClip = i;
+				newCurrentDuration = audioClip[i].getDuration();
+			}
+		}
+		return newCurrentClip;
 	}
 
 	this.play = function() {
@@ -2318,15 +2354,22 @@ function containerLayersLoop(clipList) {//Plays all list-items together, control
 	}
 
 	this.getTime = function() {
-		return audioClip[currentClip].getTime();
+		var longestClip = findLongestPlayingClip();
+		return audioClip[longestClip].getTime();
 	}
 	
 	this.getDuration = function() {
-		return audioClip[currentClip].getDuration();
+		var longestClip = findLongestPlayingClip();
+		return audioClip[longestClip].getDuration();
 	}
 
 	this.getPaused = function() {
-		return audioClip[currentClip].getPaused();
+		for (var i = 0; i < audioClip.length; i++) {
+			if (!audioClip[i].getPaused()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	return this;
