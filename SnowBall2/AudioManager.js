@@ -1,36 +1,10 @@
-
-function setFormat() {
-	var audio = new Audio();
-	if (audio.canPlayType("audio/ogg")) {
-		audioFormatType = ".ogg";
-	} else {
-		audioFormatType = ".mp3";
-	}
-}
-
-function setAudioPath(path = "") {
-	audioPath = path;
-}
-
-function audioFormat(alt = false) {
-	var format = audioFormatType;
-	if (alt != false) {
-		format = ".mp3";
-	}
-	return format;
-}
-
-
 //Time Manager
-const REMOVE = 0; // Arrayformat [REMOVE]
-const READY = 1; // Arrayformat [READY, clip, file]
-const FADE = 2; // Arrayformat [FADE, clip, startTime, endTime, startVolume, endVolume, crossfade]
-const TIMER = 3; // Arrayformat [TIMER, clip, endTime, callSign]
-const PLAY = 4; // Arrayformat [PLAY, clip, endTime]
-const STOP = 5; // Arrayformat [STOP, clip, endTime]
-const CALLBACK = 6; // Arrayformat [CALLBACK, callback, endTime]
-
-var AudioEventManager = new audioEventManager();
+const REMOVE = 0; 	// Arrayformat [REMOVE]
+const READY = 1; 	// Arrayformat [READY, clip, file]
+const FADE = 2; 	// Arrayformat [FADE, clip, startTime, endTime, startVolume, endVolume, crossfade]
+const TIMER = 3; 	// Arrayformat [TIMER, clip, endTime, callSign]
+const PLAY = 4; 	// Arrayformat [PLAY, clip, endTime]
+const STOP = 5; 	// Arrayformat [STOP, clip, endTime]
 
 function audioEventManager() {
 	var eventList = [];
@@ -308,7 +282,6 @@ function audioEventManager() {
 		if (paused) return;
 
 		for (let i = eventList.length - 1; i >= 0; i--) {
-				//console.log(eventList[i]);
 			if (eventList[i][0] == REMOVE) {
 				//console.log("Pop");
 				eventList.splice(i, 1);
@@ -357,3 +330,5 @@ function audioEventManager() {
 		return outputStart + ((value - inputStart) * scale);
 	}
 }
+
+var AudioEventManager = new audioEventManager();

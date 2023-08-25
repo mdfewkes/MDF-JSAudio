@@ -2891,6 +2891,7 @@ function containerConcatenated(clipList) {//Reports all list-items as one item a
 				totalTime += audioClip[i].getTime();
 			}
 		}
+		return totalTime;
 	}
 	
 	this.getDuration = function() {
