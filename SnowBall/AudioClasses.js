@@ -14,9 +14,12 @@ class volumeManager {
 		this._muted = false;
 		this._paused = false;
 		this._resumeList = [];
+		this._vMan = null;
 	}
 
 	updateVolume() {
+		this._volumeMult = this._vMan ? this._vMan.getVolume() : 1;
+
 		for(let i in this._list) {
 			this._list[i].updateVolume();
 		}
@@ -30,7 +33,7 @@ class volumeManager {
 	}
 
 	getVolume() {
-		return this._volume;
+		return this._volume * this._volumeMult * !this.getMuted();
 	}
 
 	setMuted(ToF) {
@@ -39,7 +42,7 @@ class volumeManager {
 	}
 
 	getMuted() {
-		return this._muted;
+		return this._muted || this._vMan ? this._vMan.getMuted() : false;
 	}
 
 	addToList(item) {
@@ -58,7 +61,7 @@ class volumeManager {
 	pause() {
 		if (this.getPaused()) return;
 
-		for(var i in this._list) {
+		for(let i in this._list) {
 			this._resumeList[i] = this._list[i].getPlaying();
 			this._list[i].pause();
 		}
@@ -68,10 +71,14 @@ class volumeManager {
 	unpause() {
 		if (!this.getPaused()) return;
 
-		for(var i in this._list) {
+		for(let i in this._list) {
 			if (this._resumeList[i] == true) this._list[i].resume();
 		}
 		this._paused = false;
+	}
+
+	getPaused() {
+		return this._paused;
 	}
 
 	updateItemOnResumeList(item) {
@@ -83,8 +90,26 @@ class volumeManager {
 		this._resumeList[index] = this._list[index].getPlaying();
 	}
 
-	getPaused() {
-		return this._paused;
+	getPlaying() {
+		for(let i in this._list) {
+			if (this._list[i].getPlaying()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	setVolumeManager(newManager) {
+		if (this._vMan) this._vMan.removeFromList(this);
+		this._vMan = newManager;
+		this._vMan.addToList(this);
+
+		this.updateVolume();
+
+		if (this._vMan.getPaused() && !this.getPaused()) {
+			this.pause();
+			this._vMan.updateItemOnResumeList(this);
+		}
 	}
 }
 var MasterVolumeManager = new volumeManager();
