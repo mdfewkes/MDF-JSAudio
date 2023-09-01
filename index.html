@@ -7,103 +7,83 @@
 <body>
 	
 <p>
-<button id="B_Play">Play</button>
-<button id="B_Pause">Pause</button>
-<button id="B_Stop">Stop</button><p/>
+<button onclick="backgroundMusic.resume(); conPlay.play();">Play</button>
+<button onclick="backgroundMusic.pause(); conPause.play();">Pause</button>
+<button onclick="backgroundMusic.stop(); conStop.play();"  >Stop</button>
 <p>
-<button id="B_Sys1">System 1</button>
-<button id="B_Sys2">System 2</button><p/>
-<P>Volume<input type="range" min="0" max="100" value="75" class="slider" id="S_Volume"><P/>
+<button onclick="backgroundMusic.switchTo(0);">System 1</button>
+<button onclick="backgroundMusic.switchTo(1);">System 2</button><p/>
+<P>Volume
+<input type="range" min="0" max="100" value="75" class="slider" oninput="MasterVolumeManager.setVolume(this.value/100);">
 <p>System 1
 <p>
-<button id="B_Clip1">Track 1</button>
-<button id="B_Clip2">Track 2</button>
-<button id="B_Clip3">Track 3</button><p/><p/>
+<button onclick="backgroundFade.switchTo(0, 0.5);" >Track 1</button>
+<button onclick="backgroundFade.switchTo(1, 0.25);">Track 2</button>
+<button onclick="backgroundFade.switchTo(2);"      >Track 3</button>
 <p>System 2
 <P>
-<button id="B_Layer1In">Layer 1 In</button>
-<button id="B_Layer2In">Layer 2 In</button>
-<button id="B_Layer3In">Layer 3 In</button><P/>
+<button onclick="backgroundLayers.setLayerLevel(0, 1, 3);">Layer 1 In</button>
+<button onclick="backgroundLayers.setLayerLevel(1, 1, 3);">Layer 2 In</button>
+<button onclick="backgroundLayers.setLayerLevel(2, 1, 3);">Layer 3 In</button>
 <P>
-<button id="B_Layer1Out">Layer 1 Out</button>
-<button id="B_Layer2Out">Layer 2 Out</button>
-<button id="B_Layer3Out">Layer 3 Out</button><p/>
-<p>Projects using SnowBall:</p>
-<p>https://lanthos.itch.io/we-must-prepare</p>
-<p>https://gamkedo.itch.io/dream-racer</p>
-<p>https://raytex.itch.io/arcaninjadroid</p>
-<p>https://gamkedo.itch.io/ghosts-of-neo-tokyo</p>
-<p>https://gamkedo.itch.io/g-type</p>
+<button onclick="backgroundLayers.setLayerLevel(0, 0, 3);">Layer 1 Out</button>
+<button onclick="backgroundLayers.setLayerLevel(1, 0, 3);">Layer 2 Out</button>
+<button onclick="backgroundLayers.setLayerLevel(2, 0, 3);">Layer 3 Out</button>
+<p>Projects using SnowBall:
+<p>https://lanthos.itch.io/we-must-prepare
+<p>https://gamkedo.itch.io/dream-racer
+<p>https://raytex.itch.io/arcaninjadroid
+<p>https://gamkedo.itch.io/ghosts-of-neo-tokyo
+<p>https://gamkedo.itch.io/g-type
 
 <p><input type="range" min="0" max="100" value="100" class="slider" oninput="testC.setVolume(this.value/100);">
-<button onclick="testC.play();">Play</button>
-<button onclick="testC.stop();">Stop</button>
+<button onclick="testC.play();"  >Play</button>
+<button onclick="testC.stop();"  >Stop</button>
 <button onclick="testC.resume();">Resume</button>
-<button onclick="testC.pause();">Pause</button>
+<button onclick="testC.pause();" >Pause</button>
 
 
-<script src="SnowBall2/AudioClasses.js"></script>
-<script src="SnowBall2/AudioManager.js"></script>
-<script src="SnowBall2/DefineAudioObjects.js"></script>
+<script src="SnowBall/AudioClasses.js"></script>
+<script src="SnowBall/AudioManager.js"></script>
 <script>
-	var playButton = document.getElementById("B_Play");
-	var pauseButton = document.getElementById("B_Pause");
-	var stopButton = document.getElementById("B_Stop");
+	setAudioPath("Audio/");
 
-	var sys1Button = document.getElementById("B_Sys1");
-	var sys2Button = document.getElementById("B_Sys2");
+	//set sound clips and music tracks here
+	var track1 = new clipOverlapWTail("lay4tail16.ogg", 16);
+	var track2 = new clipOverlapWTail("lay2tail8.ogg", 8);
+	var track3 = new clipOverlapWTail("LayTail34.ogg", 8);
+	var backgroundFade = new containerCrossfadeLoop([track1, track2, track3]);
+	var layer1 = new clipOverlapWTail("clavtail2.ogg", 2);
+	var layer2 = new clipOverlapWTail("cabasatail2.ogg", 2);
+	var layer3 = new clipOverlapWTail("kicktail2.ogg", 2);
+	var backgroundLayers = new containerLayerLoop([layer1, layer2, layer3]);
+	var backgroundMusic = new containerCrossfade([backgroundFade, backgroundLayers]);
 
-	var volumeSlider = document.getElementById("S_Volume");
+	var controles = new soundSpriteSheet("controls.ogg", [[0.242,0.578],[1.326,1.82],[2.6,3.1]]);
+	var conPlay = new soundSprite(controles, 0);
+	var conPause = new soundSprite(controles, 1);
+	var conStop = new soundSprite(controles, 2);
 
-	var track1Button = document.getElementById("B_Clip1");
-	var track2Button = document.getElementById("B_Clip2");
-	var track3Button = document.getElementById("B_Clip3");
+	track1.name = "track1";
+	track2.name = "track2";
+	track3.name = "track3";
+	track2.setMixVolume(0.85);
+	track3.setMixVolume(0.75);
 
-	var layer1ButtonIn = document.getElementById("B_Layer1In");
-	var layer2ButtonIn = document.getElementById("B_Layer2In");
-	var layer3ButtonIn = document.getElementById("B_Layer3In");
-	var layer1ButtonOut = document.getElementById("B_Layer1Out");
-	var layer2ButtonOut = document.getElementById("B_Layer2Out");
-	var layer3ButtonOut = document.getElementById("B_Layer3Out");
-	
-	playButton.addEventListener('click', function(){
-		backgroundMusic.resume();
-		conPlay.play();});
-	pauseButton.addEventListener('click', function(){
-		backgroundMusic.pause();
-		conPause.play();});
-	stopButton.addEventListener('click', function(){
-		backgroundMusic.stop();
-		conStop.play();});
+	layer1.name = "layer1";
+	layer2.name = "layer2";
+	layer3.name = "layer3";
+	backgroundLayers.setLayerLevel(1,0);
+	backgroundLayers.setLayerLevel(2,0);
 
-	sys1Button.addEventListener('click', function(){ backgroundMusic.switchTo(0); });
-	sys2Button.addEventListener('click', function(){ backgroundMusic.switchTo(1); });
+	controles.setMixVolume(0.75);
 
-	volumeSlider.oninput = function(){MasterVolumeManager.setVolume(this.value/100);}
-
-	track1Button.addEventListener('click', function(){
-		if (backgroundFade.getSourceClip().name != "track1") {backgroundFade.switchTo(0, 0.5);}});
-	track2Button.addEventListener('click', function(){
-		if (backgroundFade.getSourceClip().name != "track2") {backgroundFade.switchTo(1, 0.25);}});
-	track3Button.addEventListener('click', function(){
-		if (backgroundFade.getSourceClip().name != "track3") {backgroundFade.switchTo(2);}});
-
-	layer1ButtonIn.addEventListener('click', function(){
-		backgroundLayers.setLayerLevel(0, 1, 3);});
-	layer2ButtonIn.addEventListener('click', function(){
-		backgroundLayers.setLayerLevel(1, 1, 3);});
-	layer3ButtonIn.addEventListener('click', function(){
-		backgroundLayers.setLayerLevel(2, 1, 3);});
-	layer1ButtonOut.addEventListener('click', function(){
-		backgroundLayers.setLayerLevel(0, 0, 3);});
-	layer2ButtonOut.addEventListener('click', function(){
-		backgroundLayers.setLayerLevel(1, 0, 3);});
-	layer3ButtonOut.addEventListener('click', function(){
-		backgroundLayers.setLayerLevel(2, 0, 3);});
+	var testS = new silence(3);
+	var testC = new container([testS]);
 	
 	window.onload = function() {
 		MasterVolumeManager.setVolume(0.75);
-		setInterval(function(){AudioEventManager.updateEvents();}, 10);
+		setInterval(function(){AudioEventManager.updateEvents();}, 20);
 	}
 
 
