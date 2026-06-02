@@ -69,7 +69,7 @@ function audioEventManager() {
 		}
 	}
 
-	this.addTimerEvent = function(clip, duration, callSign = "none") {
+	this.addTimerEvent = function(clip, duration, callSign = "") {
 		// Arrayformat [TIMER, clip, endTime, callSign]
 		let thisClip = clip;
 		let check = checkListFor(TIMER, thisClip, callSign);
